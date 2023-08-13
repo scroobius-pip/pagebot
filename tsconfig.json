@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        "downlevelIteration": true,
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ]
+    }
+}

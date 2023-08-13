@@ -1,0 +1,8 @@
+.parcel-cache
+node_modules
+dist
+# rust
+target
+**/.env
+# api/database
+api/database
