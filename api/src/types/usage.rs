@@ -1,5 +1,5 @@
 use crate::db::DB;
-use chrono::{Datelike, Timelike};
+use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
 
@@ -41,12 +41,12 @@ impl Usage {
         Self {
             created_at: chrono::Utc::now().timestamp() as u64,
             items: vec![],
-            id: Self::id(get_current_month_timestamp(), user_id),
+            id: Self::id(get_current_month_timestamp(chrono::Utc::now()), user_id),
         }
     }
 
     pub fn current_id(user_id: u64) -> u64 {
-        Self::id(get_current_month_timestamp(), user_id)
+        Self::id(get_current_month_timestamp(chrono::Utc::now()), user_id)
     }
 
     pub fn id(timestamp: u32, user_id: u64) -> u64 {
@@ -109,9 +109,8 @@ impl UsageItem {
     }
 }
 
-fn get_current_month_timestamp() -> u32 {
-    chrono::Utc::now()
-        .with_day(1)
+fn get_current_month_timestamp(date: DateTime<Utc>) -> u32 {
+    date.with_day(1)
         .unwrap()
         .with_hour(0)
         .unwrap()
@@ -123,3 +122,15 @@ fn get_current_month_timestamp() -> u32 {
         .unwrap()
         .timestamp() as u32
 }
+
+// fn get_all_months_timestamps() -> Option<Vec<u32>> {
+//     let start_date_timestamp: u32 = 1691956273;
+//     let start_date = Utc.timestamp_opt(start_date_timestamp as i64, 0);
+//     let current_date_timestamp = get_current_month_timestamp(Utc::now());
+//     let mut timestamps: Vec<u32> = vec![];
+
+//     if let chrono::LocalResult::Single(start_date) = start_date {
+//         let mut current_date = start_date;
+//         while current_date
+//     }
+// }

@@ -23,6 +23,7 @@ pub struct UserOutput {
     pub email: String,
     pub id: String,
     pub subscribed: bool,
+    pub usage: Vec<Usage>,
 }
 
 impl UserInput {
@@ -68,10 +69,16 @@ impl From<UserInput> for User {
 
 impl From<User> for UserOutput {
     fn from(user: User) -> Self {
+        let usage = match Usage::by_id(Usage::current_id(user.id)) {
+            Ok(Some(usage)) => vec![usage],
+            _ => vec![],
+        };
+
         Self {
             id: user.id.to_string(),
             email: user.email,
             subscribed: user.subscribed,
+            usage,
         }
     }
 }
