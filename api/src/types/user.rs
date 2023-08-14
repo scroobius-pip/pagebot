@@ -12,6 +12,7 @@ pub struct User {
     pub id: u64,
     pub email: String,
     pub subscribed: bool,
+    pub stripe_subscription_id: Option<String>,
 }
 
 pub struct UserInput {
@@ -62,7 +63,8 @@ impl From<UserInput> for User {
             created_at: chrono::Utc::now().timestamp() as u32,
             id: Self::id(input.email.as_ref()),
             email: input.email.to_string(),
-            subscribed: true,
+            subscribed: false,
+            stripe_subscription_id: None,
         }
     }
 }

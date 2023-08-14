@@ -81,6 +81,7 @@ impl From<EvaluatedMessage> for UsageItem {
             page_url: message.page_url,
             submitted: false,
             usage_id: Usage::current_id(message.user_id),
+            user_id: message.user_id,
         }
     }
 }
@@ -99,6 +100,7 @@ impl From<&EvaluatedMessage> for UsageItem {
             page_url: message.page_url.clone(),
             submitted: false,
             usage_id: Usage::current_id(message.user_id),
+            user_id: message.user_id,
         }
     }
 }

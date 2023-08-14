@@ -44,16 +44,7 @@ pub async fn main(
 
     let usage_item: UsageItem = evaluated_message.into();
 
-    tokio::spawn(async move {
-        usage_item
-            .submit()
-            .await
-            .map_err(|e| {
-                log::error!("Failed to submit usage item: {}", e);
-                StatusCode::INTERNAL_SERVER_ERROR
-            })
-            .map(|usage_item| usage_item.save())
-    });
+    tokio::spawn(async move { usage_item.submit().await.save() });
 
     let mut response_stream = get_response(evaluated_message.clone()).await.map_err(|e| {
         log::error!("Failed to get response: {}", e);

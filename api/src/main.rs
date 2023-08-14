@@ -16,6 +16,7 @@ mod types;
 use routes::build_router;
 
 use env_logger::Env;
+use stripe::{CheckoutSession, Client, CreateCheckoutSession};
 use tokio::signal;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
@@ -51,4 +52,9 @@ fn setup_logs() {
     std::env::set_var("RUST_BACKTRACE", "1");
     color_eyre::install().expect("Failed to install color_eyre");
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+}
+
+lazy_static! {
+    pub static ref STRIPE_CLIENT: Client = Client::new(dotenv!("STRIPE_SECRET_KEY"))
+        .with_strategy(stripe::RequestStrategy::ExponentialBackoff(5));
 }

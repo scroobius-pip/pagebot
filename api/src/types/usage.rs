@@ -1,8 +1,13 @@
-use crate::db::DB;
+use std::str::FromStr;
+
+use crate::{db::DB, STRIPE_CLIENT};
 use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
+use stripe::{CreateUsageRecord, SubscriptionItemId, UsageRecord, UsageRecordAction};
 
+use super::user::User;
+// use crate::routes::get::
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Usage {
     pub created_at: u64,
@@ -32,6 +37,7 @@ pub struct UsageItem {
     pub submitted: bool,
     // id of the usage this item belongs to
     pub usage_id: u64,
+    pub user_id: u64,
 }
 
 const USAGE_ITEM_THRESHOLD: usize = 100;
@@ -74,31 +80,56 @@ impl Usage {
             let mut items = self.items.clone();
             items.sort_by(|a, b| a.page_url.cmp(&b.page_url));
             let mut merged_items = vec![];
-            let mut current_item = items[0].clone();
-            for item in items {
-                if item.page_url == current_item.page_url {
-                    current_item.message_count += item.message_count;
-                    current_item.source_word_count += item.source_word_count;
-                    current_item.source_retrieval_count += item.source_retrieval_count;
-                } else {
-                    merged_items.push(current_item);
-                    current_item = item;
+
+            if let Some(current_item) = items.first() {
+                let mut current_item = current_item.clone();
+                for item in items {
+                    if item.page_url == current_item.page_url {
+                        current_item.message_count += item.message_count;
+                        current_item.source_word_count += item.source_word_count;
+                        current_item.source_retrieval_count += item.source_retrieval_count;
+                    } else {
+                        merged_items.push(current_item);
+                        current_item = item;
+                    }
                 }
+                merged_items.push(current_item);
+                self.items = merged_items;
             }
-            merged_items.push(current_item);
-            self.items = merged_items;
         }
     }
 }
 
 impl UsageItem {
-    pub async fn submit(mut self) -> Result<Self> {
-        // unimplemented!();
-        //send to stripe
-        //update submitted
-        //return self
-        self.submitted = true;
-        Ok(self)
+    pub async fn submit(mut self) -> Self {
+        let stripe_units: u32 = (&self).into();
+
+        if let Ok(Some(User {
+            stripe_subscription_id: Some(stripe_subscription_id),
+            ..
+        })) = User::by_id(self.user_id)
+        {
+            let subscription_item_id =
+                &SubscriptionItemId::from_str(stripe_subscription_id.as_str())
+                    .expect("Invalid subscription item id");
+
+            let usage_record = CreateUsageRecord {
+                quantity: stripe_units as u64,
+                timestamp: None,
+                action: Some(UsageRecordAction::Increment),
+            };
+
+            match UsageRecord::create(&STRIPE_CLIENT, subscription_item_id, usage_record).await {
+                Ok(_) => {
+                    self.submitted = true;
+                }
+                Err(e) => {
+                    log::error!("Failed to submit usage item to stripe: {}", e);
+                }
+            }
+        }
+
+        self
     }
 
     pub fn save(self) -> Result<()> {
@@ -106,6 +137,21 @@ impl UsageItem {
             .map(|usage| usage.unwrap_or_else(|| Usage::new(self.usage_id)))?;
         usage.add_item(self)?;
         Ok(())
+    }
+}
+
+impl From<&UsageItem> for u32 {
+    fn from(item: &UsageItem) -> Self {
+        let UsageItem {
+            message_count,
+            source_retrieval_count,
+            source_word_count,
+            ..
+        } = item;
+
+        *message_count as u32 * MESSAGE_UNIT
+            + *source_retrieval_count as u32 * SOURCE_RETRIEVAL_UNIT
+            + source_word_count * SOURCE_WORD_UNIT
     }
 }
 
@@ -122,6 +168,12 @@ fn get_current_month_timestamp(date: DateTime<Utc>) -> u32 {
         .unwrap()
         .timestamp() as u32
 }
+
+const MESSAGE_UNIT: u32 = 1000;
+const SOURCE_RETRIEVAL_UNIT: u32 = 100;
+const SOURCE_WORD_UNIT: u32 = 1;
+
+// const MESSAGE_UNIT: u32 = dotenv!("MESSAGE_UNIT").parse::<u32>().unwrap();
 
 // fn get_all_months_timestamps() -> Option<Vec<u32>> {
 //     let start_date_timestamp: u32 = 1691956273;
