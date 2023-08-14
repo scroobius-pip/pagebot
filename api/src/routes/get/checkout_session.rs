@@ -9,8 +9,9 @@ use axum::{
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 use stripe::{
-    CheckoutSession, CheckoutSessionMode, CheckoutSessionPaymentMethodCollection, Client,
-    CreateCheckoutSession, CreateCheckoutSessionLineItems, CreateCheckoutSessionSubscriptionData,
+    CheckoutSession, CheckoutSessionCustomerCreation, CheckoutSessionMode,
+    CheckoutSessionPaymentMethodCollection, Client, CreateCheckoutSession,
+    CreateCheckoutSessionLineItems, CreateCheckoutSessionSubscriptionData,
     CreateCheckoutSessionSubscriptionDataTrialSettings,
     CreateCheckoutSessionSubscriptionDataTrialSettingsEndBehavior,
     CreateCheckoutSessionSubscriptionDataTrialSettingsEndBehaviorMissingPaymentMethod,
@@ -53,9 +54,10 @@ pub async fn main(
             ..Default::default()
         }),
         mode: CheckoutSessionMode::Subscription.into(),
-        payment_method_collection: Some(CheckoutSessionPaymentMethodCollection::IfRequired),
+        payment_method_collection: Some(CheckoutSessionPaymentMethodCollection::Always),
         cancel_url: Some(cancel_url),
         client_reference_id,
+        // customer_creation: Some(CheckoutSessionCustomerCreation::Always),
         ..CreateCheckoutSession::new(success_url)
     };
 
