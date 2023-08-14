@@ -1,6 +1,6 @@
 git pull &&
 cargo build &&
 supervisorctl stop pagebotapi &&
-rm /home/simdi/pagebotapi_bin
-cp /home/simdi/Arible/api_service/target/release/pagebotapi /home/simdi/pagebotapi_bin
+rm /home/alwyzon/pagebotapi_bin
+cp /home/alwyzon/pagebot/api/target/release/pagebotapi /home/alwyzon/pagebotapi_bin
 supervisorctl start pagebotapi
