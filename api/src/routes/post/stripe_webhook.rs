@@ -1,7 +1,7 @@
 use crate::{types::user::User, STRIPE_CLIENT};
 use axum::Json;
 use reqwest::StatusCode;
-use stripe::{Customer, Event, EventObject, EventType, NotificationEventRequest, Object};
+use stripe::{Customer, Event, EventObject, EventType};
 
 use crate::routes::GenericResponse;
 

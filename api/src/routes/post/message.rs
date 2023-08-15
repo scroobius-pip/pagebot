@@ -10,7 +10,6 @@ use async_openai::{
         ChatCompletionResponseStreamMessage, ChatCompletionStreamResponseDelta,
         CreateChatCompletionRequestArgs, CreateChatCompletionStreamResponse, Role,
     },
-    Client,
 };
 use axum::{
     response::{sse::Event, Sse},
