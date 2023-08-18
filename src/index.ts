@@ -15,6 +15,7 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
+const HOST = 'https://api.thepagebot.com/message'
 
 class WebpageTextExtractor {
     private root: Node;
@@ -146,7 +147,7 @@ export class PageBot {
 
         } else {
 
-            const url = 'http://localhost:8000/message'; // Replace with your endpoint URL
+            // const url = 'http://localhost:8000/message'; // Replace with your endpoint URL
             const body = JSON.stringify({
                 user_id: this.id,
                 query: queryText,
@@ -154,7 +155,7 @@ export class PageBot {
                 page_url: window.location.href,
             });
 
-            const response = await fetch(url, {
+            const response = await fetch(HOST, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

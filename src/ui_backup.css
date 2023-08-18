@@ -1,0 +1,327 @@
+@import './normalize.css';
+@import './animations.css';
+
+:root {
+    --radius: 0.7rem;
+    --min-width: 400px;
+    --max-width: 500px;
+    --max-height: 500px;
+    --min-height: 400px;
+}
+
+/* ui.module.css */
+.pb_parent-bottom {
+    position: fixed;
+    bottom: calc(80px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+
+}
+
+.pb_invisible {
+    visibility: hidden;
+    display: none;
+    animation: fade-out 0.5s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+.pb_parent-bottom * {
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+.pb_container {
+    /* height: 100%;
+    width: 100%; */
+    /* min-width: 200px; */
+    /* min-height: 400px; */
+    width: max-content;
+
+    position: absolute;
+    padding: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    border-style: solid;
+    border-width: 5px;
+    border-radius: var(--radius);
+
+    border-color: rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+    max-width: var(--max-width);
+
+
+}
+
+.pb_header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row-reverse;
+    gap: 1rem;
+    margin: -1rem;
+    padding: .2rem;
+    height: 100%;
+    border-top-left-radius: calc(var(--radius) - 5px);
+    border-top-right-radius: calc(var(--radius) - 5px);
+
+
+}
+
+.pb_close-button {
+    /* padding: 0.5rem; */
+    border-radius: var(--radius);
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+    border-width: 2px;
+    cursor: pointer;
+    color: #1a202c;
+    background-color: #F1F2F2;
+}
+
+.pb_heading {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.2rem;
+    opacity: 0.5;
+}
+
+.pb_heading:hover {
+    opacity: 1;
+}
+
+.pb_logo {
+    height: 1rem;
+    width: 1rem;
+    background-color: black;
+    border-radius: 50%;
+}
+
+
+
+.pb_logo-text {
+    font-weight: 600;
+    font-size: 0.8rem;
+    color: #1a202c;
+    text-align: right;
+}
+
+.pb_chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    height: 100%;
+}
+
+
+.pb_question-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.pb_question {
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+    border-width: 2px;
+    cursor: pointer;
+    background-color: #F1F2F2;
+    font-size: 14px;
+    font-weight: 500;
+
+}
+
+.pb_question:hover {
+    /* subtle shadow */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.pb_main-chat {
+    width: 100%;
+}
+
+.pb_chat-input-container {
+    display: flex;
+    align-items: start;
+    padding: .5rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: -1rem;
+
+    border-top-style: solid;
+    border-width: 0.5px;
+    /* position: relative; */
+
+    box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1), 0 -4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.pb_chat-input-container>button {
+    /* position: absolute; */
+    /* right: 4px; */
+    /* bottom: 4px; */
+    padding: 0.6rem;
+    color: white;
+    border-radius: var(--radius);
+    /* shadow */
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* disabled button */
+.pb_chat-input-container>button:disabled {
+    background-color: #E2E8F0;
+    color: #A0AEC0;
+    cursor: not-allowed;
+}
+
+
+.pb_chat-input-container>button svg {
+    height: 1rem;
+    width: 1rem;
+}
+
+.pb_chat-input-container>textarea {
+    width: 100%;
+
+    color: #1a202c;
+    padding: .5rem;
+    font-size: 14px;
+    font-weight: 500;
+    outline: none;
+    border: none;
+    background-color: inherit;
+    /* text opacity */
+    opacity: 0.7;
+    resize: none;
+
+}
+
+
+.pb_button {
+    padding: 0.5rem 1rem;
+    /* width: 100%; */
+    border-radius: 9999px;
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.pb_message-box {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scroll-behavior: smooth;
+    /* resize: vertical; */
+    max-width: var(--max-width);
+    width: var(--min-width);
+    min-height: var(--min-height);
+
+
+    overflow-y: auto;
+    max-height: var(--max-height);
+    padding: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+
+    background-color: #F1F2F2;
+
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+
+}
+
+.pb_message {
+    /* padding: 1rem; */
+    display: flex;
+    /* shadow */
+    box-shadow: inset 0 0 0 0.5px #E2E8F0;
+
+    animation: fade-in 0.8s cubic-bezier(0.390, 0.575, 0.565, 1.000) both;
+}
+
+.pb_message p {
+    padding: 1rem;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-word;
+    hyphens: auto;
+    font-weight: 500;
+}
+
+.pb_message-box .user {
+    align-self: flex-end;
+
+    color: white;
+    border-radius: 1rem 1rem 0 1rem;
+
+}
+
+.pb_message-box .bot {
+    align-self: flex-start;
+    background-color: #fdfdfd;
+
+    color: #1a202c;
+    border-radius: 1rem 1rem 1rem 0;
+}
+
+.bot>.pb_message-text * {
+    color: #1a202c;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* .pb_message-box .bot::before {
+    content: "🤖";
+
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
+    padding: 0.4rem;
+    background-color: red;
+    border-radius: 9999px;
+} */
+
+
+
+/* .closeButton {
+    opacity: 0.8;
+    position: absolute;
+    top: -0.5rem;
+    right: -0.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-style: solid;
+    border-width: 0.5px;
+    border-radius: 9999px;
+    cursor: pointer;
+} */
+
+.closeButton:hover {
+    opacity: 1;
+}
+
+.pb_scroll-start {
+    /* opacity: 0.2; */
+}
+
+.pb_trigger {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    top: calc(100% + 12px);
+    left: calc(100% - 64px);
+    border-radius: 50%;
+    border: 5px solid #fff;
+    border-color: rgba(0, 0, 0, 0.1);
+    background-clip: padding-box;
+    cursor: pointer;
+}
