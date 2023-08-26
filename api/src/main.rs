@@ -6,9 +6,11 @@ extern crate lazy_static;
 #[macro_use]
 extern crate dotenv_codegen;
 extern crate dotenv;
+extern crate unicode_segmentation;
 
 mod auth;
 mod db;
+mod embed_pool;
 mod jwt;
 mod routes;
 mod stats;

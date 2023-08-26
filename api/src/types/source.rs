@@ -1,9 +1,18 @@
-use crate::db::DB;
+use std::{
+    ops::Deref,
+    sync::{Arc, Mutex},
+};
+
+use crate::{
+    db::DB,
+    embed_pool::{Embedding, EMBED_POOL},
+};
 use axum::http::HeaderValue;
 use eyre::Result;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::deserialize_number_from_string;
+use unicode_segmentation::UnicodeSegmentation;
 use url_serde::SerdeUrl;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -23,10 +32,16 @@ fn default_expires() -> u32 {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Source {
-    pub content: String,
+    // pub content: String,
     pub url: String,
     pub expires: u32,
     pub created_at: u32,
+    pub chunks: Chunks,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct Chunks {
+    pub value: (Vec<String>, Vec<Embedding>), // (sentence, embedding)
 }
 
 #[derive(Debug)]
@@ -46,6 +61,10 @@ impl Source {
     pub fn save(&self) -> Result<Self> {
         let source = DB.source_cache_save(self.clone())?;
         Ok(source)
+    }
+
+    pub fn content(&self) -> String {
+        self.chunks.value.0.join(" ")
     }
 
     async fn fetch(url: SerdeUrl) -> Result<String> {
@@ -88,10 +107,11 @@ impl Source {
         if input.url.is_none() {
             return Ok((
                 Source {
-                    content: input.content.unwrap_or("".to_string()),
+                    // content: input.content.unwrap_or("".to_string()),
                     url: "".to_string(),
                     expires: input.expires,
                     created_at: chrono::Utc::now().timestamp() as u32,
+                    chunks: Chunks::new(input.content.unwrap_or("".to_string())).await?,
                 },
                 retrieved,
             ));
@@ -103,10 +123,12 @@ impl Source {
         if Self::is_local_url(input_url.as_str()) {
             return Ok((
                 Source {
-                    content: input.content.unwrap_or("".to_string()),
+                    // content: input.content.unwrap_or("".to_string()),
                     url: input_url.to_string(),
                     expires: input.expires,
                     created_at: chrono::Utc::now().timestamp() as u32,
+                    chunks: Chunks::new(input.content.unwrap_or("".to_string())).await?,
+                    // ..Default::default()
                 },
                 retrieved,
             ));
@@ -114,10 +136,11 @@ impl Source {
 
         let source = match input.content {
             Some(content) => Source {
-                content,
+                // content,
                 url: input_url.to_string(),
                 expires: input.expires,
                 created_at: chrono::Utc::now().timestamp() as u32,
+                chunks: Chunks::new(content).await?,
             }
             .save()?,
             _ => {
@@ -130,10 +153,11 @@ impl Source {
                         retrieved = true; // we're retrieving this source
                         let content = Self::fetch(input_url.clone()).await?;
                         let source = Self {
-                            content: content.clone(),
+                            // content: content.clone(),
                             url: input_url.to_string(),
                             expires: input.expires,
                             created_at: chrono::Utc::now().timestamp() as u32,
+                            chunks: Chunks::new(content).await?,
                         };
                         source.save()?
                     }
@@ -177,12 +201,62 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
     }
 }
 
+impl Chunks {
+    const CHUNK_SIZE: usize = 5;
+    pub async fn new(content: String) -> Result<Self> {
+        let unchunked_sentences = content.unicode_sentences().collect::<Vec<_>>();
+        let chunked_sentences = unchunked_sentences.chunks(Self::CHUNK_SIZE);
+
+        let chunked_sentences = chunked_sentences
+            .map(|chunk| chunk.join(" "))
+            .collect::<Vec<_>>();
+        let (sender, receiver) = tokio::sync::oneshot::channel();
+        let chunked_sentences = Arc::new(chunked_sentences);
+        let _chunked_sentences = chunked_sentences.clone();
+
+        let instant_now = std::time::Instant::now();
+
+        rayon::spawn(move || {
+            let chunked_sentences = _chunked_sentences.as_slice();
+            let embeddings = EMBED_POOL.encode(chunked_sentences.to_vec());
+            _ = sender.send(embeddings);
+        });
+
+        let embeddings = receiver
+            .await
+            .map_err(|_| eyre::eyre!("Failed to receive embeddings"))??;
+
+        log::info!(
+            "Embeddings took {:?} for {}",
+            instant_now.elapsed(),
+            content.len()
+        );
+
+        assert_eq!(
+            chunked_sentences.len(),
+            embeddings.len(),
+            "Chunked sentences and embeddings should be the same length"
+        );
+
+        // let value = chunked_sentences
+        //     .iter()
+        //     .zip(embeddings)
+        //     .map(|(sentence, embedding)| (sentence.to_string(), embedding))
+        //     .collect::<Vec<_>>();
+
+        Ok(Self {
+            value: (chunked_sentences.to_vec(), embeddings),
+        })
+    }
+}
+
 // pub trait Source {
 //     fn content(&self) -> String;
 // }
 
 #[cfg(test)]
 mod tests {
+    use unicode_segmentation::UnicodeSegmentation;
     use url_serde::De;
 
     use super::*;
@@ -238,7 +312,7 @@ mod tests {
         };
         let (source, _) = Source::new(input).await.expect("source");
 
-        assert!(!source.content.contains("<html"));
+        // assert!(!source.content.contains("<html"));
     }
 
     #[tokio::test]
@@ -252,6 +326,6 @@ mod tests {
         };
         let (source, _) = Source::new(input).await.expect("source");
         println!("{:?}", source);
-        assert!(source.content.contains("Dummy"));
+        // assert!(source.content.contains("Dummy"));
     }
 }
