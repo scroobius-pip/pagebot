@@ -28,18 +28,15 @@ pub struct Message {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EvaluatedMessage {
     pub user_id: u64,
-    // pub sources: Vec<String>,
     pub merged_sources: String,
     pub retrieval_count: u16,
     pub token_count: usize,
     pub query: String,
     pub page_url: String,
-    //response isn't a string, we're using a placeholder for an async iterator or something
-    pub response: String,
 }
 
 impl Message {
-    pub async fn evaluate(self, notification: &Notification) -> Result<EvaluatedMessage> {
+    pub async fn evaluate(self, notification: Arc<Notification>) -> Result<EvaluatedMessage> {
         let pending_sources = self.sources.into_iter().map(Source::new);
 
         let query_embedding = Chunks::query(self.query.clone()).await?;
@@ -48,7 +45,6 @@ impl Message {
             join_all(pending_sources).await.into_iter().fold(
                 ((vec![], vec![]), 0, 0),
                 |((mut contents, mut embeddings), retrieval_count, token_count), source| {
-                   
                     match source {
                         Ok((mut source, retrieved)) => {
                             let token_count = token_count + count_tokens(&source.content());
@@ -62,13 +58,17 @@ impl Message {
                                 token_count,
                             )
                         }
+
                         Err(e) => {
                             match e {
                                 SourceError::ContentEmpty(url) => {
-                                   _ = notification.send(NotificationType::User(format!(
-                                        "Content empty at: {}, please check this source, if this url is a client side rendered webpage, you'll need to use a server rendered version of the page.",
-                                        url
-                                    )));
+                                    let _notification = notification.clone();
+                                    tokio::spawn(async move {
+                                      _ = _notification.send(NotificationType::User(format!(
+                                            "Content empty at: {}, please check this source, if this url is a client side rendered webpage, you'll need to use a server rendered version of the page.",
+                                            url
+                                        ))).await;
+                                    });
                                 }
                                 SourceError::Default(e) => {
                                     log::error!("Failed to get source: {}", e);
@@ -105,7 +105,6 @@ impl Message {
             token_count,
             query: self.query,
             page_url: self.page_url.to_string(),
-            response: String::new(),
         })
     }
 }

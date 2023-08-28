@@ -21,7 +21,7 @@ impl EmbeddingModel {
         })
     }
 
-    pub fn encode(&self, sentences: Vec<String>) -> Result<Vec<Embedding>> {
+    pub fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
         let sentences = sentences.clone();
         let model = self.model.clone();
 
@@ -30,7 +30,7 @@ impl EmbeddingModel {
         let result = lock
             .map_err(|e| eyre::eyre!("Failed to lock model: {:?}", e))?
             .encode(&sentences)?;
-//vector size is 512
+        //vector size is 512
         Ok(result)
     }
 }

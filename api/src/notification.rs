@@ -1,5 +1,6 @@
 use crate::types::{message::Message, user::User};
 use eyre::Result;
+use serde_json::json;
 
 #[derive(Clone)]
 pub struct Notification {
@@ -23,17 +24,31 @@ impl Notification {
         }
     }
 
-    pub fn send(&self, event_type: NotificationType) -> Result<()> {
+    pub async fn send(&self, event_type: NotificationType) -> Result<()> {
+        let client = reqwest::Client::new()
+            .post("https://api.resend.com/emails")
+            .bearer_auth("re_LAD7vC9W_4y2arShe7t93T6KYvatbS885");
+
         match event_type {
             NotificationType::Admin(message) => {
-                log::info!("Sending admin notification: {}", message);
+                let html = format!("<p><strong>{}</strong></p>", message);
+                let data = json!({
+                    "from": "notification@notifications.thepagebot.com",
+                    "to": "sim04ful@gmail.com",
+                    "subject": "Admin Notification",
+                    "html": html
+                });
+                client.json(&data).send().await?;
             }
             NotificationType::User(message) => {
-                log::info!(
-                    "Sending user notification: {} to {} ",
-                    message,
-                    self.context.user.email
-                );
+                let html = format!("<p><strong>{}</strong></p>", message);
+                let data = json!({
+                    "from": "notification@notifications.thepagebot.com",
+                    "to": self.context.user.email,
+                    "subject": "PageBot Alert",
+                    "html": html
+                });
+                client.json(&data).send().await?;
             }
         }
         Ok(())

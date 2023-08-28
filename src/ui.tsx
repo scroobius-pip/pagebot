@@ -371,9 +371,9 @@ const Message = (message: Message) => {
             dangerouslySetInnerHTML={{ __html: html }}
         />
         {message.type == 'bot' && <div className='pb_message-rating'>
-            <button>
+            {/* <button>
                 <ThumbsIcon />
-            </button>
+            </button> */}
             <button>
                 <ThumbsIcon />
             </button>

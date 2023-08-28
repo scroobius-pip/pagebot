@@ -150,10 +150,13 @@ export class PageBot {
 
             // const url = 'http://localhost:8000/message'; // Replace with your endpoint URL
             const body = JSON.stringify({
-                user_id: this.id,
-                query: queryText,
-                sources: this.sources,
-                page_url: window.location.href,
+                message: {
+                    user_id: this.id,
+                    query: queryText,
+                    sources: this.sources,
+                    page_url: window.location.href,
+                },
+                history: []
             });
 
             const response = await fetch(HOST, {

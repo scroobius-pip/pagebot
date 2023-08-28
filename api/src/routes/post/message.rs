@@ -55,9 +55,9 @@ pub async fn main(
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let notification = Notification::new(user);
-    
-    let evaluated_message = message.evaluate(&notification).await.map_err(|e| {
+    let notification = Arc::new(Notification::new(user));
+
+    let evaluated_message = message.evaluate(notification.clone()).await.map_err(|e| {
         log::error!("Failed to evaluate message: {}", e);
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
@@ -84,14 +84,17 @@ pub async fn main(
                 ..
             }) = choices.first()
             {
-                if content == "HUMAN" {
-                    yield Ok(Event::default().data("HUMAN"));
-                    break;
-                } else if content == "NOT_FOUND" {
-                    notification.send(NotificationType::User(format!(
-                        "No answer found for: {}",
-                        query
-                    )))?;
+
+                if content.contains("NOT_FOUND") {
+                    let notification_result = notification
+                        .send(NotificationType::User(format!(
+                            "No answer found for the query: {} \n update your sources to account for this knowledge gap.",
+                            query
+                        )))
+                        .await;
+                    if let Err(e) = notification_result {
+                        log::error!("Failed to send notification: {}", e);
+                    }
                     yield Ok(Event::default().data("NOT_FOUND"));
                     break;
                 }
@@ -107,7 +110,7 @@ pub async fn main(
 
     Ok(Sse::new(stream))
 }
-const MAX_HISTORY: usize = 2;
+const MAX_HISTORY: usize = 4;
 async fn get_response(
     message: &EvaluatedMessage,
     history: Vec<HistoryItem>,
@@ -125,7 +128,7 @@ async fn get_response(
         message.page_url, information, PROMPT_GUIDE, message.query
     );
 
-    let chat_message = history[..MAX_HISTORY]
+    let chat_message = history[..history.len().min(MAX_HISTORY)]
         .iter()
         .map(|item| ChatCompletionRequestMessage {
             content: item.content.clone().into(),
@@ -153,18 +156,14 @@ async fn get_response(
         .build()
         .expect("Failed to build request");
 
-    let client = async_openai::Client::with_config(
-        OpenAIConfig::default().with_api_key(dotenv!("OPENAI_API_KEY")),
-    );
-
-    let response_stream = client.chat().create_stream(request).await?;
+    let response_stream = OPENAI_CLIENT.chat().create_stream(request).await?;
 
     Ok(response_stream)
 }
 
 const PROMPT_GUIDE: &str = r#"You're a bot that is knowledgeable about information above, ready to answer questions about it in a friendly manner. Only reply to questions that have information about them above.
 If the question is not about the information above, reply with "NOT_FOUND"
-If the question asks to speak or contact a human, reply with "HUMAN"
+If the question asks to speak or contact a human, reply with "EMAIL"
 
 Write the information in markdown.
 user: Hi!
@@ -177,9 +176,12 @@ user: What is <Information not available> ?
 bot:NOT_FOUND
 
 user: I'd like to speak to someone
-bot: HUMAN
+bot: EMAIL
 "#;
 
 lazy_static! {
-    // pub static ref OPENAI_CLIENT: Client = Client::new().with_api_key(dotenv!("OPENAI_API_KEY"));
+    pub static ref OPENAI_CLIENT: async_openai::Client<OpenAIConfig> =
+        async_openai::Client::with_config(
+            OpenAIConfig::default().with_api_key(dotenv!("OPENAI_API_KEY")),
+        );
 }

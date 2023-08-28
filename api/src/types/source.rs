@@ -272,13 +272,11 @@ impl Chunks {
             .collect::<Vec<_>>();
 
         let (sender, receiver) = tokio::sync::oneshot::channel();
-        let chunked_sentences = Arc::new(chunked_sentences);
-        let _chunked_sentences = chunked_sentences.clone();
 
         let instant_now = std::time::Instant::now();
-
+        let _chunked_sentences = chunked_sentences.clone();
         rayon::spawn(move || {
-            let embeddings = EMBED_POOL.encode(_chunked_sentences.to_vec());
+            let embeddings = EMBED_POOL.encode(_chunked_sentences.as_slice());
             _ = sender.send(embeddings);
         });
 
@@ -293,8 +291,8 @@ impl Chunks {
         );
 
         assert_eq!(
-            chunked_sentences.len(),
-            embeddings.len(),
+            &chunked_sentences.len(),
+            &embeddings.len(),
             "Chunked sentences and embeddings should be the same length"
         );
 
@@ -309,7 +307,7 @@ impl Chunks {
         let (sender, receiver) = tokio::sync::oneshot::channel();
 
         rayon::spawn(move || {
-            let embeddings = EMBED_POOL.encode(vec![query]);
+            let embeddings = EMBED_POOL.encode(&[query]);
             _ = sender.send(embeddings.map(|e| e[0].clone()));
             println!("Query embedding took {:?}", instant_now.elapsed());
         });
