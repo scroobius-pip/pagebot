@@ -1,7 +1,12 @@
-use crate::types::{
-    message::{EvaluatedMessage, Message},
-    usage::UsageItem,
-    user::User,
+use std::sync::Arc;
+
+use crate::{
+    notification::{Notification, NotificationType},
+    types::{
+        message::{EvaluatedMessage, Message},
+        usage::UsageItem,
+        user::User,
+    },
 };
 use async_openai::{
     config::OpenAIConfig,
@@ -18,9 +23,22 @@ use axum::{
 use eyre::Result;
 use futures::{Stream, StreamExt};
 use reqwest::StatusCode;
+use serde::Deserialize;
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct Request {
+    message: Message,
+    history: Vec<HistoryItem>,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct HistoryItem {
+    pub bot: bool,
+    pub content: String,
+}
 
 pub async fn main(
-    Json(message): Json<Message>,
+    Json(Request { message, history }): Json<Request>,
 ) -> Result<Sse<impl Stream<Item = Result<Event>>>, StatusCode> {
     let user = User::by_id(message.user_id)
         .map_err(|e| {
@@ -32,25 +50,28 @@ pub async fn main(
             StatusCode::NOT_FOUND
         })?;
 
+    #[cfg(not(debug_assertions))]
     if !user.subscribed {
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let evaluated_message = &message.evaluate().await.map_err(|e| {
+    let notification = Notification::new(user);
+    
+    let evaluated_message = message.evaluate(&notification).await.map_err(|e| {
         log::error!("Failed to evaluate message: {}", e);
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
 
-    let usage_item: UsageItem = evaluated_message.into();
+    let mut response_stream = get_response(&evaluated_message, history)
+        .await
+        .map_err(|e| {
+            log::error!("Failed to get response: {}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
 
-    tokio::spawn(async move { usage_item.submit().await.save() });
-
-    let mut response_stream = get_response(evaluated_message.clone()).await.map_err(|e| {
-        log::error!("Failed to get response: {}", e);
-        StatusCode::INTERNAL_SERVER_ERROR
-    })?;
-
+    let query = evaluated_message.query.clone();
     let stream = async_stream::stream! {
+
         while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
             response_stream.next().await
         {
@@ -63,6 +84,17 @@ pub async fn main(
                 ..
             }) = choices.first()
             {
+                if content == "HUMAN" {
+                    yield Ok(Event::default().data("HUMAN"));
+                    break;
+                } else if content == "NOT_FOUND" {
+                    notification.send(NotificationType::User(format!(
+                        "No answer found for: {}",
+                        query
+                    )))?;
+                    yield Ok(Event::default().data("NOT_FOUND"));
+                    break;
+                }
 
                 yield Ok(Event::default().data(content));
             }
@@ -70,29 +102,49 @@ pub async fn main(
 
     };
 
+    let usage_item: UsageItem = evaluated_message.into();
+    tokio::spawn(async move { usage_item.submit().await.save() });
+
     Ok(Sse::new(stream))
 }
-
-async fn get_response(message: EvaluatedMessage) -> Result<ChatCompletionResponseStream> {
+const MAX_HISTORY: usize = 2;
+async fn get_response(
+    message: &EvaluatedMessage,
+    history: Vec<HistoryItem>,
+) -> Result<ChatCompletionResponseStream> {
     let max_tokens: u16 = 300;
     let model_name = if message.token_count < (4096 - max_tokens).into() {
         "gpt-3.5-turbo"
     } else {
         "gpt-3.5-turbo-16k"
     };
-    let information = message.sources.join("\n");
+    let information = &message.merged_sources;
 
     let prompted_message = format!(
         "page_url:{}\ninformation:{}\n{}\nuser: {}\nbot:",
         message.page_url, information, PROMPT_GUIDE, message.query
     );
 
-    let chat_message = vec![ChatCompletionRequestMessage {
-        content: prompted_message.into(),
-        name: None,
-        role: Role::User,
-        function_call: None,
-    }];
+    let chat_message = history[..MAX_HISTORY]
+        .iter()
+        .map(|item| ChatCompletionRequestMessage {
+            content: item.content.clone().into(),
+            name: None,
+            role: if item.bot {
+                Role::Assistant
+            } else {
+                Role::User
+            },
+            function_call: None,
+        })
+        .chain(std::iter::once(ChatCompletionRequestMessage {
+            content: prompted_message.into(),
+            name: None,
+            role: Role::User,
+            function_call: None,
+        }))
+        .collect::<Vec<_>>();
+
     let request = CreateChatCompletionRequestArgs::default()
         .model(model_name)
         .messages(chat_message)
@@ -110,10 +162,22 @@ async fn get_response(message: EvaluatedMessage) -> Result<ChatCompletionRespons
     Ok(response_stream)
 }
 
-const PROMPT_GUIDE: &str = r#"You're a bot that is knowledgeable about information above, ready to answer questions about it in a succinct manner. Only reply to questions that have information about them above.
+const PROMPT_GUIDE: &str = r#"You're a bot that is knowledgeable about information above, ready to answer questions about it in a friendly manner. Only reply to questions that have information about them above.
+If the question is not about the information above, reply with "NOT_FOUND"
+If the question asks to speak or contact a human, reply with "HUMAN"
+
 Write the information in markdown.
 user: Hi!
 bot:**Hey!**, _how can I help you today?_
+
+user: What is the capital of France?
+bot: NOT_FOUND
+
+user: What is <Information not available> ?
+bot:NOT_FOUND
+
+user: I'd like to speak to someone
+bot: HUMAN
 "#;
 
 lazy_static! {

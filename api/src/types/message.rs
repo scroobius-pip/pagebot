@@ -1,11 +1,17 @@
+use std::sync::Arc;
+
+use crate::{
+    notification::{Notification, NotificationType},
+    types::source::SourceError,
+};
+
 use super::{
-    source::{Source, SourceInput},
+    source::{Chunks, Source, SourceInput},
     usage::{Usage, UsageItem},
 };
 use eyre::Result;
 use futures::future::join_all;
 use hnsw_rs::prelude::{DistCosine, Hnsw};
-use instant_distance::{Builder, Search};
 use serde::{Deserialize, Serialize};
 use serde_aux::field_attributes::deserialize_number_from_string;
 use url_serde::SerdeUrl;
@@ -22,7 +28,8 @@ pub struct Message {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EvaluatedMessage {
     pub user_id: u64,
-    pub sources: Vec<String>,
+    // pub sources: Vec<String>,
+    pub merged_sources: String,
     pub retrieval_count: u16,
     pub token_count: usize,
     pub query: String,
@@ -32,55 +39,84 @@ pub struct EvaluatedMessage {
 }
 
 impl Message {
-    pub async fn evaluate(self) -> Result<EvaluatedMessage> {
+    pub async fn evaluate(self, notification: &Notification) -> Result<EvaluatedMessage> {
         let pending_sources = self.sources.into_iter().map(Source::new);
+
+        let query_embedding = Chunks::query(self.query.clone()).await?;
 
         let ((contents, embeddings), retrieval_count, token_count) =
             join_all(pending_sources).await.into_iter().fold(
                 ((vec![], vec![]), 0, 0),
                 |((mut contents, mut embeddings), retrieval_count, token_count), source| {
-                    if let Ok((mut source, retrieved)) = source {
-                        let token_count = token_count + count_tokens(&source.content());
+                   
+                    match source {
+                        Ok((mut source, retrieved)) => {
+                            let token_count = token_count + count_tokens(&source.content());
 
-                        contents.append(&mut source.chunks.value.0);
-                        embeddings.append(&mut source.chunks.value.1);
+                            contents.append(&mut source.chunks.value.0);
+                            embeddings.append(&mut source.chunks.value.1);
 
-                        (
-                            (contents, embeddings),
-                            retrieval_count + retrieved as u16,
-                            token_count,
-                        )
-                    } else {
-                        ((contents, embeddings), retrieval_count, token_count)
+                            (
+                                (contents, embeddings),
+                                retrieval_count + retrieved as u16,
+                                token_count,
+                            )
+                        }
+                        Err(e) => {
+                            match e {
+                                SourceError::ContentEmpty(url) => {
+                                   _ = notification.send(NotificationType::User(format!(
+                                        "Content empty at: {}, please check this source, if this url is a client side rendered webpage, you'll need to use a server rendered version of the page.",
+                                        url
+                                    )));
+                                }
+                                SourceError::Default(e) => {
+                                    log::error!("Failed to get source: {}", e);
+                                }
+                            }
+                            ((contents, embeddings), retrieval_count, token_count)
+                        }
                     }
                 },
             );
 
         let mut token_count = token_count + count_tokens(&self.query);
+
         //5% error margin
         token_count = token_count + (token_count / 20);
 
-        unimplemented!()
-        // let sources: Vec<String> = sources.into_iter().map(|source| source.content).collect();
+        log::info!("embeddings count: {}", embeddings.len());
 
-        // Ok(EvaluatedMessage {
-        //     user_id: self.user_id,
-        //     sources,
-        //     retrieval_count,
-        //     query: self.query,
-        //     page_url: self.page_url.to_string(),
-        //     response: String::new(),
-        //     token_count,
-        // })
+        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);
+
+        let merged_similar_content = similar_content_index.iter().map(|i| &contents[*i]).fold(
+            String::with_capacity(contents.len() * contents[0].len()),
+            |mut acc, content| {
+                acc.push_str(content);
+                acc.push('\n');
+                acc
+            },
+        );
+
+        Ok(EvaluatedMessage {
+            user_id: self.user_id,
+            merged_sources: merged_similar_content,
+            retrieval_count,
+            token_count,
+            query: self.query,
+            page_url: self.page_url.to_string(),
+            response: String::new(),
+        })
     }
 }
 
 impl From<EvaluatedMessage> for UsageItem {
     fn from(message: EvaluatedMessage) -> Self {
         let source_word_count = message
-            .sources
-            .iter()
-            .fold(0, |acc, source| acc + source.split_whitespace().count());
+            .merged_sources
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .len();
 
         Self {
             message_count: 1,
@@ -97,9 +133,10 @@ impl From<EvaluatedMessage> for UsageItem {
 impl From<&EvaluatedMessage> for UsageItem {
     fn from(message: &EvaluatedMessage) -> Self {
         let source_word_count = message
-            .sources
-            .iter()
-            .fold(0, |acc, source| acc + source.split_whitespace().count());
+            .merged_sources
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .len();
 
         Self {
             message_count: 1,
@@ -112,6 +149,27 @@ impl From<&EvaluatedMessage> for UsageItem {
         }
     }
 }
+
+impl From<Arc<EvaluatedMessage>> for UsageItem {
+    fn from(message: Arc<EvaluatedMessage>) -> Self {
+        let source_word_count = message
+            .merged_sources
+            .split_whitespace()
+            .collect::<Vec<&str>>()
+            .len();
+
+        Self {
+            message_count: 1,
+            source_word_count: source_word_count as u32,
+            source_retrieval_count: message.retrieval_count,
+            page_url: message.page_url.clone(),
+            submitted: false,
+            usage_id: Usage::current_id(message.user_id),
+            user_id: message.user_id,
+        }
+    }
+}
+
 pub fn count_tokens(text: &str) -> usize {
     let mut tokens = 0;
     let mut chars = 0;
@@ -142,137 +200,19 @@ pub fn count_tokens(text: &str) -> usize {
     tokens
 }
 
-pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &Vec<f32>) -> Vec<usize> {
-    let hnsw = Hnsw::new(100, embeddings.len(), 16, 50, DistCosine);
-    // hnsw.parallel_insert(embeddings);
+pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usize> {
+    let instant = std::time::Instant::now();
+    let hnsw = Hnsw::new(5, embeddings.len(), 16, 50, DistCosine);
     let embedding_w_index: Vec<(&Vec<f32>, usize)> = embeddings
         .iter()
         .enumerate()
         .map(|(i, embedding)| (embedding, i))
         .collect();
-
     hnsw.parallel_insert(&embedding_w_index);
-    let use eyre::Result;
-    use rust_bert::pipelines::sentence_embeddings::{
-        SentenceEmbeddingsBuilder, SentenceEmbeddingsModel, SentenceEmbeddingsModelType,
-    };
-    use std::sync::{Arc, Mutex};
-    
-    pub struct EmbeddingModel {
-        model: Arc<Mutex<SentenceEmbeddingsModel>>,
-    }
-    
-    // pub type Embedding = Vec<f32>;
-    #[derive(Debug, Clone)]
-    pub struct Embedding {
-        embedding: Vec<f32>,
-    }
-    
-    impl Embedding {
-        fn new(embedding: Vec<f32>) -> Self {
-            Self { embedding }
-        }
-    }
-    
-    impl From<Vec<f32>> for Embedding {
-        fn from(embedding: Vec<f32>) -> Self {
-            Self::new(embedding)
-        }
-    }
-    
-    impl EmbeddingModel {
-        fn new() -> Result<Self> {
-            let model = SentenceEmbeddingsBuilder::remote(
-                SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
-            )
-            .create_model()?;
-            Ok(Self {
-                model: Arc::new(Mutex::new(model)),
-            })
-        }
-    
-        pub fn encode(&self, sentences: Vec<String>) -> Result<Vec<Embedding>> {
-            let sentences = sentences.clone();
-            let model = self.model.clone();
-    
-            let lock = model.lock();
-    
-            let result = lock
-                .map_err(|e| eyre::eyre!("Failed to lock model: {:?}", e))?
-                .encode(&sentences)?
-                .into_iter()
-                .map(|embedding| embedding.into())
-                .collect::<Vec<Embedding>>();
-    
-            Ok(result)
-        }
-    }
-    
-    lazy_static! {
-        pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
-    }
-    use eyre::Result;
-    use rust_bert::pipelines::sentence_embeddings::{
-        SentenceEmbeddingsBuilder, SentenceEmbeddingsModel, SentenceEmbeddingsModelType,
-    };
-    use std::sync::{Arc, Mutex};
-    
-    pub struct EmbeddingModel {
-        model: Arc<Mutex<SentenceEmbeddingsModel>>,
-    }
-    
-    // pub type Embedding = Vec<f32>;
-    #[derive(Debug, Clone)]
-    pub struct Embedding {
-        embedding: Vec<f32>,
-    }
-    
-    impl Embedding {
-        fn new(embedding: Vec<f32>) -> Self {
-            Self { embedding }
-        }
-    }
-    
-    impl From<Vec<f32>> for Embedding {
-        fn from(embedding: Vec<f32>) -> Self {
-            Self::new(embedding)
-        }
-    }
-    
-    impl EmbeddingModel {
-        fn new() -> Result<Self> {
-            let model = SentenceEmbeddingsBuilder::remote(
-                SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
-            )
-            .create_model()?;
-            Ok(Self {
-                model: Arc::new(Mutex::new(model)),
-            })
-        }
-    
-        pub fn encode(&self, sentences: Vec<String>) -> Result<Vec<Embedding>> {
-            let sentences = sentences.clone();
-            let model = self.model.clone();
-    
-            let lock = model.lock();
-    
-            let result = lock
-                .map_err(|e| eyre::eyre!("Failed to lock model: {:?}", e))?
-                .encode(&sentences)?
-                .into_iter()
-                .map(|embedding| embedding.into())
-                .collect::<Vec<Embedding>>();
-    
-            Ok(result)
-        }
-    }
-    
-    lazy_static! {
-        pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
-    }
-     let     = hnsw.search(query, 50, 80);
-    search
+    let neighbours = hnsw.search(query, 50, 80);
+    log::info!("hnsw search took {:?}", instant.elapsed());
+    neighbours
         .into_iter()
-        .map(|neigh| index)
+        .map(|n| n.d_id)
         .collect::<Vec<usize>>()
 }

@@ -12,6 +12,7 @@ mod auth;
 mod db;
 mod embed_pool;
 mod jwt;
+mod notification;
 mod routes;
 mod stats;
 mod types;

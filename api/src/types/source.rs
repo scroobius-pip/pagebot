@@ -1,4 +1,5 @@
 use std::{
+    hash::{Hash, Hasher},
     ops::Deref,
     sync::{Arc, Mutex},
 };
@@ -8,7 +9,7 @@ use crate::{
     embed_pool::{Embedding, EMBED_POOL},
 };
 use axum::http::HeaderValue;
-use eyre::Result;
+use eyre::{Report, Result};
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::deserialize_number_from_string;
@@ -41,6 +42,7 @@ pub struct Source {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Chunks {
+    pub url: String,
     pub value: (Vec<String>, Vec<Embedding>), // (sentence, embedding)
 }
 
@@ -50,6 +52,12 @@ enum RemoteSourceType {
     Html,
     Json,
     Text,
+}
+
+#[derive(Debug)]
+pub enum SourceError {
+    ContentEmpty(String),
+    Default(Report),
 }
 
 impl Source {
@@ -71,6 +79,7 @@ impl Source {
         let url = url.to_string();
         let resp = reqwest::get(url).await?;
         let remote_type: RemoteSourceType = resp.headers().get("content-type").into();
+        log::info!("Remote type: {:?}", remote_type);
         let content = match remote_type {
             RemoteSourceType::Pdf => {
                 let content_bytes = resp.bytes().await?;
@@ -93,28 +102,58 @@ impl Source {
             }
             _ => resp.text().await?,
         };
-        Ok(content)
+
+        if content.is_empty() {
+            Ok("CONTENT_EMPTY".to_string())
+        } else {
+            Ok(content)
+        }
     }
 
-    pub async fn new(input: SourceInput) -> Result<(Self, bool)> {
+    pub async fn new(input: SourceInput) -> Result<(Self, bool), SourceError> {
         let mut retrieved: bool = false;
-
+        log::info!("Source input: {:?}", input);
         if input.content.is_none() && input.url.is_none() {
-            return Err(eyre::eyre!("No content or url provided"));
+            // return Err(eyre::eyre!("No content or url provided"));
+            return Err(SourceError::Default(eyre::eyre!(
+                "No content or url provided"
+            )));
         }
 
-        // If there's no URL, we're dealing with a local source, no need to retrieve it or save it
-        if input.url.is_none() {
-            return Ok((
-                Source {
-                    // content: input.content.unwrap_or("".to_string()),
-                    url: "".to_string(),
-                    expires: input.expires,
-                    created_at: chrono::Utc::now().timestamp() as u32,
-                    chunks: Chunks::new(input.content.unwrap_or("".to_string())).await?,
-                },
-                retrieved,
-            ));
+        // If there's no URL, we're dealing with a local source not from the requesting website.
+        if input.url.is_none() && input.content.is_some() {
+            log::info!("No URL provided, using content as URL");
+            let mut hasher = ahash::AHasher::default();
+            input.content.as_ref().unwrap().hash(&mut hasher);
+            let content_hash = format!("_{}", hasher.finish());
+            let cached_source = Source::by_url(content_hash.as_str())
+                .map_err(|e| SourceError::Default(e))?
+                .filter(|source| {
+                    !source.is_expired()
+                        && source.content() == input.content.as_ref().unwrap().as_str()
+                });
+
+            match cached_source {
+                Some(source) => {
+                    return Ok((source, retrieved));
+                }
+                _ => {
+                    retrieved = true; // we're retrieving this source
+                    return Ok((
+                        Source {
+                            url: content_hash,
+                            expires: input.expires,
+                            created_at: chrono::Utc::now().timestamp() as u32,
+                            chunks: Chunks::new(input.content.unwrap_or("".to_string()), "")
+                                .await
+                                .map_err(|e| SourceError::Default(e))?,
+                        }
+                        .save()
+                        .map_err(|e| SourceError::Default(e))?,
+                        retrieved,
+                    ));
+                }
+            }
         }
 
         let input_url = input.url.clone().unwrap();
@@ -127,7 +166,12 @@ impl Source {
                     url: input_url.to_string(),
                     expires: input.expires,
                     created_at: chrono::Utc::now().timestamp() as u32,
-                    chunks: Chunks::new(input.content.unwrap_or("".to_string())).await?,
+                    chunks: Chunks::new(
+                        input.content.unwrap_or("".to_string()),
+                        input_url.as_str(),
+                    )
+                    .await
+                    .map_err(|e| SourceError::Default(e))?,
                     // ..Default::default()
                 },
                 retrieved,
@@ -140,26 +184,38 @@ impl Source {
                 url: input_url.to_string(),
                 expires: input.expires,
                 created_at: chrono::Utc::now().timestamp() as u32,
-                chunks: Chunks::new(content).await?,
+                chunks: Chunks::new(content, input_url.as_str())
+                    .await
+                    .map_err(|e| SourceError::Default(e))?,
             }
-            .save()?,
+            .save()
+            .map_err(|e| SourceError::Default(e))?,
             _ => {
-                let cached_source =
-                    Source::by_url(input_url.as_str())?.filter(|source| !source.is_expired());
+                let cached_source = Source::by_url(input_url.as_str())
+                    .map_err(|e| SourceError::Default(e))?
+                    .filter(|source| !source.is_expired());
 
                 match cached_source {
                     Some(source) => source,
                     _ => {
                         retrieved = true; // we're retrieving this source
-                        let content = Self::fetch(input_url.clone()).await?;
+                        let content = Self::fetch(input_url.clone())
+                            .await
+                            .map_err(|e| SourceError::Default(e))?;
+                        if content == "CONTENT_EMPTY" {
+                            return Err(SourceError::ContentEmpty(input_url.to_string()));
+                        }
+
                         let source = Self {
                             // content: content.clone(),
                             url: input_url.to_string(),
                             expires: input.expires,
                             created_at: chrono::Utc::now().timestamp() as u32,
-                            chunks: Chunks::new(content).await?,
+                            chunks: Chunks::new(content, input_url.as_str())
+                                .await
+                                .map_err(|e| SourceError::Default(e))?,
                         };
-                        source.save()?
+                        source.save().map_err(|e| SourceError::Default(e))?
                     }
                 }
             }
@@ -203,13 +259,18 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
 
 impl Chunks {
     const CHUNK_SIZE: usize = 5;
-    pub async fn new(content: String) -> Result<Self> {
+    pub async fn new(content: String, url: &str) -> Result<Self> {
+        if content.is_empty() || url.is_empty() {
+            return Err(eyre::eyre!("Content or URL is empty"));
+        }
+
         let unchunked_sentences = content.unicode_sentences().collect::<Vec<_>>();
         let chunked_sentences = unchunked_sentences.chunks(Self::CHUNK_SIZE);
 
         let chunked_sentences = chunked_sentences
             .map(|chunk| chunk.join(" "))
             .collect::<Vec<_>>();
+
         let (sender, receiver) = tokio::sync::oneshot::channel();
         let chunked_sentences = Arc::new(chunked_sentences);
         let _chunked_sentences = chunked_sentences.clone();
@@ -217,8 +278,7 @@ impl Chunks {
         let instant_now = std::time::Instant::now();
 
         rayon::spawn(move || {
-            let chunked_sentences = _chunked_sentences.as_slice();
-            let embeddings = EMBED_POOL.encode(chunked_sentences.to_vec());
+            let embeddings = EMBED_POOL.encode(_chunked_sentences.to_vec());
             _ = sender.send(embeddings);
         });
 
@@ -238,15 +298,25 @@ impl Chunks {
             "Chunked sentences and embeddings should be the same length"
         );
 
-        // let value = chunked_sentences
-        //     .iter()
-        //     .zip(embeddings)
-        //     .map(|(sentence, embedding)| (sentence.to_string(), embedding))
-        //     .collect::<Vec<_>>();
-
         Ok(Self {
+            url: url.to_string(),
             value: (chunked_sentences.to_vec(), embeddings),
         })
+    }
+
+    pub async fn query(query: String) -> Result<Vec<f32>> {
+        let instant_now = std::time::Instant::now();
+        let (sender, receiver) = tokio::sync::oneshot::channel();
+
+        rayon::spawn(move || {
+            let embeddings = EMBED_POOL.encode(vec![query]);
+            _ = sender.send(embeddings.map(|e| e[0].clone()));
+            println!("Query embedding took {:?}", instant_now.elapsed());
+        });
+
+        receiver
+            .await
+            .map_err(|_| eyre::eyre!("Failed to receive embeddings"))?
     }
 }
 
@@ -327,5 +397,15 @@ mod tests {
         let (source, _) = Source::new(input).await.expect("source");
         println!("{:?}", source);
         // assert!(source.content.contains("Dummy"));
+    }
+
+    #[tokio::test]
+    async fn fetch_json() {
+        // shiro.nohara111@gmail.com
+        let st = "https://api.arible.co/user_admin/shiro.nohara111@gmail.com?auth_token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzgxMjg2NjAxLCJzdWIiOiI2ZGYwZmMwMC1hZWFjLTQyMmItODllNi1jOWNkNjkxNTZkYjciLCJlbWFpbCI6ImNoaXNpbWRpcmkuZWppbmtlb255ZUBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhZWENpWUJFRXlETWFabm1FdVNlSW5ja0cwajE1THRfN0cyTTRoaT1zOTYtYyIsImVtYWlsIjoiY2hpc2ltZGlyaS5lamlua2VvbnllQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmdWxsX25hbWUiOiJDaGlzaW1kaXJpIEVqaW5rZW9ueWUiLCJpc3MiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS91c2VyaW5mby92Mi9tZSIsIm5hbWUiOiJDaGlzaW1kaXJpIEVqaW5rZW9ueWUiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4WVhDaVlCRUV5RE1hWm5tRXVTZUluY2tHMGoxNUx0XzdHMk00aGk9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwOTUyNDg4MDQzODEwMTMxMjE5NSIsInN1YiI6IjEwOTUyNDg4MDQzODEwMTMxMjE5NSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im9hdXRoIiwidGltZXN0YW1wIjoxNjgxMjY0MzE2fV0sInNlc3Npb25faWQiOiIzYTUyZDFjZi00MDE1LTRlOTAtOTEyZS1iYzZkMTFhZDZlMWUifQ.nF5OFgwR4DPV8nXJ2iQ4uWhLFCkHfZNquwqbwVX5y84";
+        let url: SerdeUrl = serde_json::from_str(format!("\"{}\"", st).as_str()).expect("url");
+
+        let source = Source::fetch(url).await.expect("source");
+        println!("{:?}", source);
     }
 }

@@ -30,7 +30,7 @@ impl EmbeddingModel {
         let result = lock
             .map_err(|e| eyre::eyre!("Failed to lock model: {:?}", e))?
             .encode(&sentences)?;
-
+//vector size is 512
         Ok(result)
     }
 }
