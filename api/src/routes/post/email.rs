@@ -8,6 +8,8 @@ use reqwest::StatusCode;
 use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_number_from_string;
 
+use super::message::HistoryItem;
+
 #[derive(Deserialize, Clone)]
 pub struct Request {
     email: String,
@@ -15,6 +17,8 @@ pub struct Request {
     message: String,
     #[serde(deserialize_with = "deserialize_number_from_string")]
     user_id: u64,
+    history: Vec<HistoryItem>,
+    page_url: String,
 }
 pub async fn main(
     Json(Request {
@@ -22,6 +26,8 @@ pub async fn main(
         name,
         message,
         user_id,
+        history,
+        page_url,
     }): Json<Request>,
 ) -> Result<StatusCode, StatusCode> {
     let user = User::by_id(user_id)

@@ -26,41 +26,20 @@ const PgbtUI = () => {
     const [renderedText, setRenderedText] = useState<string>();
     const ref = useRef<HTMLDivElement>(null);
     const theme = getTheme();
-    const [hidden, setHidden] = useState<boolean>(true);
+    const [hidden, setHidden] = useState<boolean>(false);
 
     useEffect(() => {
         const pgbt: PageBot = globalThis['pgbt']
         setRenderedText(pgbt.text)
         registerScrollHandling();
-        // setInterval(() => {
-        //     location.reload();
-        // }, 10000);
+
     }, []);
 
 
     const registerScrollHandling = () => {
         const element = ref.current;
         if (element) {
-            // element.addEventListener('mouseleave', () => {
-            //     element.classList.add('pb_scroll-start');
-            // })
 
-            // element.addEventListener('mouseover', () => {
-            //     element.classList.remove('pb_scroll-start');
-            // })
-            // document.addEventListener('scroll', () => {
-            //     // check if pb_scroll-start class is already added
-            //     if (!element.classList.contains('pb_scroll-start')) {
-            //         element.classList.add('pb_scroll-start');
-            //         element.classList.add('fade-out');
-            //         element.classList.remove('fade-in');
-            //     }
-            // });
-            // document.addEventListener('scrollend', () => {
-            //     element.classList.toggle('fade-in');
-            //     element.classList.toggle('fade-out');
-            //     element.classList.remove('pb_scroll-start');
-            // });
         }
     }
 
@@ -103,7 +82,7 @@ const PgbtUI = () => {
     );
 
 }
-interface Message {
+export interface Message {
     text: string;
     type: 'user' | 'bot';
 }
@@ -123,12 +102,10 @@ const MainChat = () => {
     const [selectedQuestion, setSelectedQuestion] = useState<string>();
     const beepContext = useRef<AudioContext | null>(null);
     const [inputDisabled, setInputDisabled] = useState<boolean>(false);
-
+    const ref = useRef<HTMLDivElement>(null);
     const setupSounds = () => {
         try {
-
             beepContext.current = new (window.AudioContext || (window as any).webkitAudioContext)();
-
         } catch (e) {
             console.error(e)
         }
@@ -154,12 +131,54 @@ const MainChat = () => {
 
     }
 
+    const [messages, setMessages] = useState<{
+        [key: string]: {
+            message: Message;
+            createdAt: Date;
+        }
+    }>({
+        'default': {
+            message: {
+                text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+                type: 'bot',
+            },
+            createdAt: new Date(),
+        },
+        'default2': {
+            message: {
+                text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+                type: 'user'
+            },
+            createdAt: new Date(),
+        },
+        'default3': {
+            message: {
+                text: 'Arible AI is',
+                type: 'bot'
+            },
+            createdAt: new Date(),
+        },
+        'default4': {
+            message: {
+                text: 'NOT_FOUND',
+                type: 'bot'
+            },
+            createdAt: new Date(),
+        },
+        'default5': {
+            message: {
+                text: 'EMAIL',
+                type: 'bot'
+            },
+            createdAt: new Date(),
+        }
+    });
 
-    const theme = getTheme();
     useEffect(() => {
 
         setupSounds()
         scrollToBottom()
+
         if (selectedQuestion && selectedQuestion !== 'default') {
 
             const userMessage = createMessage({
@@ -180,49 +199,40 @@ const MainChat = () => {
 
             getResponse(botMessage.id, selectedQuestion);
         }
-    }, []);
-    // const [messages, setMessages] = useState<Message[]>([]);
-    const [messages, setMessages] = useState<{
-        [key: string]: {
-            message: Message;
-            createdAt: Date;
-        }
-    }>({
-        // 'default': {
-        //     message: {
-        //         text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
-        //         type: 'bot',
-        //     },
-        //     createdAt: new Date(),
-        // },
-        // 'default2': {
-        //     message: {
-        //         text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
-        //         type: 'user'
-        //     },
-        //     createdAt: new Date(),
-        // },
-        // 'default3': {
-        //     message: {
-        //         text: 'Arible AI is',
-        //         type: 'bot'
-        //     },
-        //     createdAt: new Date(),
-        // },
-        // 'default4': {
-        //     message: {
-        //         text: 'Arible AI is Arible AI is a platform that offers AI-generated portrait profile pictures for social media platforms like Twitter, LinkedIn, Facebook, Instagram, and TikTok. It uses AI technology to create realistic and artistic profile photos of yourself and others. The platform allows you to generate unlimited profile pictures on a monthly basis.                ',
-        //         type: 'bot'
-        //     },
-        //     createdAt: new Date(),
-        // }
-    });
 
+        ref.current.addEventListener('pgbt-notify', (e: CustomEvent) => {
+            const notification = createMessage({
+                text: e.detail,
+                type: 'bot'
+            })
+
+            setMessages({
+                ...messages,
+                [notification.id]: notification,
+            })
+
+            e.stopPropagation();
+
+        })
+    }, []);
+
+    useEffect(() => {
+        let pgbt = globalThis['pgbt'] as PageBot;
+
+        pgbt.history = Object.values(messages).map(({ message }) => {
+            return {
+                bot: message.type === 'bot',
+                content: message.text,
+            }
+        });
+
+        scrollToBottom();
+    }, [messages]);
 
     const scrollToBottom = () => {
         const element = document.getElementById('pb_message-box');
         if (element) {
-            element.scrollTop = element.scrollHeight;
+            element.scrollTop = element.scrollHeight + 100;
         }
 
     }
@@ -266,7 +276,7 @@ const MainChat = () => {
                 beep()
             }
             updateMessage(botMessageId, response);
-            scrollToBottom();
+
         }
 
     }
@@ -275,9 +285,11 @@ const MainChat = () => {
         return a.getTime() - b.getTime();
     }).map((message) => message.message);
 
-    return <div className='pb_main-chat'>
+    return <div className='pb_main-chat' ref={ref}>
         {
-            messageList.length ? <MessageBox messages={messageList} /> :
+            messageList.length ? <MessageBox
+
+                messages={messageList} /> :
 
                 <ChatIntro
                     questionSelected={(question) => {
@@ -297,7 +309,7 @@ const MainChat = () => {
                             [userMessage.id]: userMessage,
                             [botMessage.id]: botMessage,
                         });
-                        scrollToBottom();
+
                         getResponse(botMessage.id, question);
                     }}
                 />
@@ -324,7 +336,7 @@ const MainChat = () => {
                         [userMessage.id]: userMessage,
                         [botMessage.id]: botMessage,
                     });
-                    scrollToBottom();
+
                     getResponse(botMessage.id, message)
                         .finally(() => {
                             setInputDisabled(false);
@@ -338,9 +350,11 @@ const MainChat = () => {
 
 interface MessageBoxProps {
     messages: Message[];
+
 }
 
 const MessageBox = (props: MessageBoxProps) => {
+
     return <div className="pb_message-box" id="pb_message-box">
         {props.messages.map(Message)}
     </div>
@@ -351,6 +365,22 @@ const Message = (message: Message) => {
     let cleanText = message.text.replace(/\n\n/g, '');
     const html = parse(cleanText);
     const theme = getTheme();
+    // const []
+    let [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
+        [true, 'PageBot can\'t find an answer to your question.',
+            'Please leave a message and we\'ll get back to you.'
+        ] : html.includes('EMAIL') ?
+            [true, 'PageBot needs your email.',
+                'Please enter your email and we\'ll get back to you, soon.']
+            : [false, '', ''];
+
+    const displayContent = needsForm ?
+        EmailForm(theme, titleText, descriptionText)
+        : <div
+            className='pb_message-text'
+            dangerouslySetInnerHTML={{ __html: html }}
+        />;
+
     return <div
         style={{
             backgroundColor: message.type === 'user' ? theme.primaryColor : undefined,
@@ -365,15 +395,13 @@ const Message = (message: Message) => {
                 </span>
             }
         </div>
-
-        <div
+        {displayContent}
+        {/* <div
             className='pb_message-text'
             dangerouslySetInnerHTML={{ __html: html }}
-        />
+        /> */}
         {message.type == 'bot' && <div className='pb_message-rating'>
-            {/* <button>
-                <ThumbsIcon />
-            </button> */}
+
             <button>
                 <ThumbsIcon />
             </button>
@@ -413,6 +441,7 @@ const ChatInput = (props: ChatInputProps) => {
                 setMessage(e.currentTarget.value);
             }} placeholder="Type your message here" />
         <button
+
             disabled={message.trim().length === 0 || props.disabled}
             onClick={submit}
         >
@@ -533,6 +562,7 @@ const ThumbsIcon = () => {
 }
 
 const Logo = ({ color }: any) => {
+
     return <svg width="100%" height="100%" viewBox="0 0 121 117" fill={color} xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M113.703 54.9129C118.592 57.4889 121.168 62.9564 120.011 68.3712C118.907 73.7861 114.334 77.7816 108.866 78.2021C105.817 85.6673 102.137 92.4491 98.1943 98.1794C97.984 98.4948 97.7211 98.7051 97.4057 98.8628C96.144 99.3885 94.9349 99.9142 93.3577 100.545C93.3227 100.545 93.3051 100.545 93.3051 100.545L90.6766 114.266C90.3611 115.896 88.9943 117 87.3645 117H80.2148C78.6902 117 77.4285 116.054 76.9554 114.634L72.9074 101.544C72.8723 101.544 72.8197 101.544 72.7496 101.544C68.7542 101.649 65.0216 102.385 60.1325 102.28C55.2433 102.385 51.5633 101.649 47.5153 101.544C47.4802 101.544 47.4452 101.544 47.4101 101.544L43.3095 114.634C42.889 116.054 41.6273 117 40.1027 117H32.9529C31.3232 117 29.9564 115.896 29.6409 114.266L27.0124 100.545C27.0124 100.545 26.9948 100.545 26.9598 100.545C25.3826 99.9142 24.1209 99.3885 22.9118 98.8628C22.5438 98.7051 22.2809 98.4948 22.0706 98.1794C18.1803 92.4491 14.5003 85.6673 11.4512 78.2021C5.93115 77.7816 1.40999 73.7861 0.253412 68.3712C-0.850591 62.9564 1.72542 57.4889 6.562 54.9129C10.3997 35.7243 30.6924 20.9516 60.1325 20.2682V20.6362V20.4785V6.17902C60.1325 3.60301 61.657 1.39499 64.0753 0.448702C66.4936 -0.497587 69.0696 0.0807101 70.8571 1.92072L102.085 34.9883C108.183 40.5609 112.231 47.3952 113.703 54.9129ZM82.9485 86.0879C87.1017 85.1942 91.3074 83.7747 94.8297 81.2513C100.245 76.7827 101.191 72.577 101.349 66.5312C101.401 63.3769 101.349 60.4855 100.875 57.3838C99.8766 50.7597 96.9851 43.978 89.9406 41.1917C89.6251 41.0866 89.4148 40.9288 89.0994 40.8237C85.6822 39.562 83.7897 40.1403 80.1622 40.298C67.8079 41.402 52.5096 41.402 40.1552 40.298C36.5278 40.1403 34.6352 39.562 31.2181 40.8237C30.9026 40.9288 30.6924 41.0866 30.3244 41.1917C23.3323 43.978 20.4409 50.7597 19.442 57.3838C18.9689 60.4855 18.8638 63.3769 18.9689 66.5312C19.1266 72.577 20.0729 76.7827 25.4352 81.2513C28.9575 83.7747 33.1632 85.1942 37.369 86.0879C49.145 88.5062 71.1199 88.5062 82.9485 86.0879ZM85.6822 63.9027C85.6822 69.633 81.792 74.3118 77.0079 74.3118C72.1713 74.3118 68.281 69.633 68.281 63.9027C68.281 58.2249 72.1713 53.546 77.0079 53.546C81.792 53.546 85.6822 58.2249 85.6822 63.9027ZM51.9839 63.9027C51.9839 69.633 48.0936 74.3118 43.3095 74.3118C38.473 74.3118 34.5827 69.633 34.5827 63.9027C34.5827 58.2249 38.473 53.546 43.3095 53.546C48.0936 53.546 51.9839 58.2249 51.9839 63.9027Z" fill="#1E1E1E" />
     </svg>
@@ -551,3 +581,115 @@ const darkenHex = (hex: string, amount: number) => {
     return '#' + newHex.toString(16);
 }
 export default <PgbtUI />;
+
+function EmailForm(theme: Theme, titleText: string, descriptionText: string) {
+    const [formState, setFormState] = useState<{
+        email: string,
+        name: string,
+        message: string,
+        submitted: boolean,
+        loading: boolean,
+    }>({
+        email: '',
+        name: '',
+        message: '',
+        submitted: false,
+        loading: false,
+    });
+
+    const ref = useRef<HTMLDivElement>(null);
+
+    const handleChange = (name: string) => (e: any) => {
+        setFormState({
+            ...formState,
+            [name]: e.target.value,
+        });
+    }
+
+
+    const validateEmail = (email: string) => {
+        if (!email) return false;
+        const re = /\S+@\S+\.\S+/;
+        return re.test(email);
+    }
+
+    const validateForm = () => {
+        return validateEmail(formState.email) && formState.name.length > 2 && formState.message.length > 10;
+    }
+
+    const handleSubmit = async (e: any) => {
+
+        setFormState({
+            ...formState,
+            submitted: false,
+            loading: true,
+        });
+
+        const { email, name, message } = formState;
+        const pgbt = globalThis['pgbt'] as PageBot
+        await pgbt.email(email, name, message)
+        setFormState({
+            ...formState,
+            submitted: true,
+            loading: false,
+        });
+
+        const notifyEvent = new CustomEvent('pgbt-notify', {
+            bubbles: true,
+            detail: `Hey ${formState.name}, \n Your email has been sent! Is there anything else I can help you with?`
+        });
+
+        ref.current.dispatchEvent(notifyEvent);
+    }
+
+    return <div
+        ref={ref}
+        data-disabled={formState.submitted}
+        className='pb_form'>
+        <div
+            style={{
+                backgroundColor: theme.primaryColor,
+                borderColor: theme.borderColor,
+            }}
+            className="pb_form-header">
+
+            <img
+                style={{
+                    filter: 'brightness(100)',
+                }}
+                height={56} width={56} src='https://pub-7bbc6377635e4e588a0a4c5fdfb0df93.r2.dev/pagebot_error.gif' />
+
+            <div className='pb_form-description'>
+                <h3>
+
+                    {titleText}
+                </h3>
+                <p>
+
+                    {descriptionText}
+                </p>
+            </div>
+        </div>
+        <div className='pb_form-inputs'>
+            <input
+                onChange={handleChange('email')}
+                type="email" placeholder='Your email' />
+            <input type='text' placeholder='Your name'
+                onChange={handleChange('name')}
+            />
+            <textarea
+                onChange={handleChange('message')}
+                placeholder='Your message' />
+        </div>
+        <button
+            onClick={handleSubmit}
+            disabled={!validateForm() || formState.submitted}
+            style={{
+                backgroundColor: theme.primaryColor,
+                borderColor: theme.borderColor,
+            }}
+        >
+            {formState.submitted ? formState.loading ? 'Loading' : 'Sent' : 'Send'}
+        </button>
+    </div>;
+}

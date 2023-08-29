@@ -1,5 +1,5 @@
 import { render } from 'preact';
-import PgbtUI from './ui';
+import PgbtUI, { Message } from './ui';
 //@ts-ignore
 import * as cssText from 'bundle-text:./ui.css';
 // import './ui.module.css';
@@ -16,7 +16,7 @@ interface Source {
 }
 
 // const HOST = 'https://api.thepagebot.com/message'
-const HOST = 'http://localhost:8000/message'
+const HOST = 'http://localhost:8000/'
 
 class WebpageTextExtractor {
     private root: Node;
@@ -71,15 +71,23 @@ class WebpageTextExtractor {
     }
 }
 
+interface HistoryItem {
+    bot: boolean;
+    content: string;
+}
+
 export class PageBot {
     private data: ExtractedData;
     private sources: Source[];
     private id: string;
+    public history: HistoryItem[] = [];
     public initialQuestions: Array<[string, string]>;
 
     get text() {
         return this.data.text;
     }
+
+
 
     public constructor(extractedData: ExtractedData, id: string) {
 
@@ -134,6 +142,33 @@ export class PageBot {
             }, []);
     }
 
+    public async email(email: string, name: string, message: string): Promise<boolean> {
+        const body = JSON.stringify({
+            email,
+            name,
+            message,
+            page_url: window.location.href,
+            history: this.history,
+            user_id: this.id,
+        });
+
+        const response = await fetch(HOST + 'email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: body,
+        });
+
+        if (response.ok) {
+            return true;
+        } else {
+            console.error('Error fetching data:', response.status, response.statusText);
+            return false;
+        }
+
+    }
+
 
 
     public async *query(queryText: string): AsyncGenerator<string> {
@@ -148,7 +183,6 @@ export class PageBot {
 
         } else {
 
-            // const url = 'http://localhost:8000/message'; // Replace with your endpoint URL
             const body = JSON.stringify({
                 message: {
                     user_id: this.id,
@@ -156,10 +190,10 @@ export class PageBot {
                     sources: this.sources,
                     page_url: window.location.href,
                 },
-                history: []
+                history: this.history
             });
 
-            const response = await fetch(HOST, {
+            const response = await fetch(HOST + 'message', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
