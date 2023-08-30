@@ -1,3 +1,5 @@
+export LIBTORCH_USE_PYTORCH=1
+
 git pull &&
 cargo build --release &&
 supervisorctl stop pagebotapi:pagebot &&
