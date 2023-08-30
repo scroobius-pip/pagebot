@@ -137,41 +137,41 @@ const MainChat = () => {
             createdAt: Date;
         }
     }>({
-        'default': {
-            message: {
-                text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
-                type: 'bot',
-            },
-            createdAt: new Date(),
-        },
-        'default2': {
-            message: {
-                text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
-                type: 'user'
-            },
-            createdAt: new Date(),
-        },
-        'default3': {
-            message: {
-                text: 'Arible AI is',
-                type: 'bot'
-            },
-            createdAt: new Date(),
-        },
-        'default4': {
-            message: {
-                text: 'NOT_FOUND',
-                type: 'bot'
-            },
-            createdAt: new Date(),
-        },
-        'default5': {
-            message: {
-                text: 'EMAIL',
-                type: 'bot'
-            },
-            createdAt: new Date(),
-        }
+        // 'default': {
+        //     message: {
+        //         text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+        //         type: 'bot',
+        //     },
+        //     createdAt: new Date(),
+        // },
+        // 'default2': {
+        //     message: {
+        //         text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+        //         type: 'user'
+        //     },
+        //     createdAt: new Date(),
+        // },
+        // 'default3': {
+        //     message: {
+        //         text: 'Arible AI is',
+        //         type: 'bot'
+        //     },
+        //     createdAt: new Date(),
+        // },
+        // 'default4': {
+        //     message: {
+        //         text: 'NOT_FOUND',
+        //         type: 'bot'
+        //     },
+        //     createdAt: new Date(),
+        // },
+        // 'default5': {
+        //     message: {
+        //         text: 'EMAIL',
+        //         type: 'bot'
+        //     },
+        //     createdAt: new Date(),
+        // }
     });
 
     useEffect(() => {
@@ -396,17 +396,15 @@ const Message = (message: Message) => {
             }
         </div>
         {displayContent}
-        {/* <div
-            className='pb_message-text'
-            dangerouslySetInnerHTML={{ __html: html }}
-        /> */}
-        {message.type == 'bot' && <div className='pb_message-rating'>
+
+        {/* {message.type == 'bot' && <div className='pb_message-rating'>
 
             <button>
                 <ThumbsIcon />
             </button>
-        </div>}
-    </div>
+        </div>
+        } */}
+    </div >
 }
 interface ChatInputProps {
     onSend: (message: string) => void;

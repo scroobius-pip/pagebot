@@ -19,8 +19,7 @@ mod types;
 use routes::build_router;
 
 use env_logger::Env;
-use stripe::{CheckoutSession, Client, CreateCheckoutSession};
-use tokio::signal;
+use stripe::Client;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 

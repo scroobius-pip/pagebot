@@ -275,7 +275,7 @@ impl Chunks {
 
         let instant_now = std::time::Instant::now();
         let _chunked_sentences = chunked_sentences.clone();
-        rayon::spawn(move || {
+        rayon::spawn_fifo(move || {
             let embeddings = EMBED_POOL.encode(_chunked_sentences.as_slice());
             _ = sender.send(embeddings);
         });
@@ -306,7 +306,7 @@ impl Chunks {
         let instant_now = std::time::Instant::now();
         let (sender, receiver) = tokio::sync::oneshot::channel();
 
-        rayon::spawn(move || {
+        rayon::spawn_fifo(move || {
             let embeddings = EMBED_POOL.encode(&[query]);
             _ = sender.send(embeddings.map(|e| e[0].clone()));
             println!("Query embedding took {:?}", instant_now.elapsed());
