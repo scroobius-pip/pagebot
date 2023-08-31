@@ -57,6 +57,8 @@ pub async fn main(
 
     let notification = Arc::new(Notification::new(user));
 
+    let instant_now = std::time::Instant::now();
+
     let evaluated_message = message.evaluate(notification.clone()).await.map_err(|e| {
         log::error!("Failed to evaluate message: {}", e);
         StatusCode::INTERNAL_SERVER_ERROR
@@ -72,6 +74,7 @@ pub async fn main(
     let query = evaluated_message.query.clone();
     let stream = async_stream::stream! {
 
+        let mut send_elapsed = true;
         while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
             response_stream.next().await
         {
@@ -84,6 +87,11 @@ pub async fn main(
                 ..
             }) = choices.first()
             {
+                if send_elapsed {
+                    let ms_elapsed = format!("MS_{:.2}", instant_now.elapsed().as_millis());
+                    yield Ok(Event::default().data(ms_elapsed));
+                    send_elapsed = false;
+                }
 
                 if content.contains("NOT_FOUND") {
                     let notification_result = notification
@@ -105,8 +113,7 @@ pub async fn main(
 
     };
 
-    let usage_item: UsageItem = evaluated_message.into();
-    tokio::spawn(async move { usage_item.submit().await.save() });
+    tokio::spawn(async move { UsageItem::from(evaluated_message).submit().await.save() });
 
     Ok(Sse::new(stream))
 }
@@ -173,7 +180,7 @@ user: What is the capital of France?
 bot: NOT_FOUND
 
 user: What is <Information not available> ?
-bot:NOT_FOUND
+bot: NOT_FOUND
 
 user: I'd like to speak to someone
 bot: EMAIL

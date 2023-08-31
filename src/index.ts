@@ -15,8 +15,8 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
-// const HOST = 'https://api.thepagebot.com/message'
-const HOST = 'http://localhost:8000/'
+const HOST = 'https://api.thepagebot.com/'
+// const HOST = 'http://localhost:8000/'
 
 class WebpageTextExtractor {
     private root: Node;
