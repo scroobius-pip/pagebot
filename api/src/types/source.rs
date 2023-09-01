@@ -116,11 +116,7 @@ impl Source {
             }
             _ => resp.text().await?,
         };
-        // if content.is_empty() {
-        //     Ok("CONTENT_EMPTY".to_string())
-        // } else {
-        //     Ok(content)
-        // }
+
         Ok(content)
     }
 
