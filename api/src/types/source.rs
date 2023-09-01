@@ -1,8 +1,4 @@
-use std::{
-    hash::{Hash, Hasher},
-    ops::Deref,
-    sync::{Arc, Mutex},
-};
+use std::hash::{Hash, Hasher};
 
 use crate::{
     db::DB,
@@ -59,6 +55,7 @@ pub enum SourceError {
     ContentEmpty(String),
     Default(Report),
 }
+const MIN_CONTENT_LENGTH: usize = 100;
 
 impl Source {
     pub fn by_url(url: &str) -> Result<Option<Source>> {
@@ -75,39 +72,56 @@ impl Source {
         self.chunks.value.0.join(" ")
     }
 
+    fn parse_html(html: String) -> String {
+        let selector_str: &str =
+            "h1, h2, h3, h4, h5, h6, p, a, span, div, li, ul, ol, blockquote, pre, code";
+
+        let selector = Selector::parse(selector_str).expect("Invalid selector"); // TODO: handle error
+        let document = Html::parse_document(html.as_ref());
+        let mut content = String::new();
+        for element in document.select(&selector) {
+            content.push_str(element.text().collect::<Vec<_>>().join("\n").as_str());
+        }
+        content
+    }
+
     async fn fetch(url: SerdeUrl) -> Result<String> {
         let url = url.to_string();
-        let resp = reqwest::get(url).await?;
+        let resp = reqwest::get(&url).await?;
         let remote_type: RemoteSourceType = resp.headers().get("content-type").into();
-        log::info!("Remote type: {:?}", remote_type);
+
         let content = match remote_type {
             RemoteSourceType::Pdf => {
                 let content_bytes = resp.bytes().await?;
                 pdf_extract::extract_text_from_mem(&content_bytes)?
             }
             RemoteSourceType::Html => {
-                let mut content: String = Default::default();
-
-                let selector_str: &str =
-                    "h1, h2, h3, h4, h5, h6, p, a, span, div, li, ul, ol, blockquote, pre, code";
-
-                let selector =
-                    Selector::parse(selector_str).map_err(|_| eyre::eyre!("Invalid selector"))?;
                 let body = resp.text().await?;
-                let document = Html::parse_document(&body);
-                for element in document.select(&selector) {
-                    content.push_str(element.text().collect::<Vec<_>>().join("\n").as_str());
+                let content = Self::parse_html(body);
+                if content.len() < MIN_CONTENT_LENGTH {
+                    //try server rendered version
+                    let scraper_api_url = format!(
+                        "http://api.scraperapi.com?api_key={}&url={}&render=true",
+                        dotenv!("SCRAPER_API_KEY"),
+                        url
+                    );
+
+                    let resp = reqwest::get(scraper_api_url).await?;
+                    let body = resp.text().await?;
+
+                    Self::parse_html(body)
+                } else {
+                    content
                 }
-                content
             }
             _ => resp.text().await?,
         };
-
-        if content.is_empty() {
-            Ok("CONTENT_EMPTY".to_string())
-        } else {
-            Ok(content)
-        }
+        // if content.is_empty() {
+        //     Ok("CONTENT_EMPTY".to_string())
+        // } else {
+        //     Ok(content)
+        // }
+        Ok(content)
     }
 
     pub async fn new(input: SourceInput) -> Result<(Self, bool), SourceError> {
@@ -127,7 +141,7 @@ impl Source {
             input.content.as_ref().unwrap().hash(&mut hasher);
             let content_hash = format!("_{}", hasher.finish());
             let cached_source = Source::by_url(content_hash.as_str())
-                .map_err(|e| SourceError::Default(e))?
+                .map_err(SourceError::Default)?
                 .filter(|source| {
                     !source.is_expired()
                         && source.content() == input.content.as_ref().unwrap().as_str()
@@ -146,10 +160,10 @@ impl Source {
                             created_at: chrono::Utc::now().timestamp() as u32,
                             chunks: Chunks::new(input.content.unwrap_or("".to_string()), "")
                                 .await
-                                .map_err(|e| SourceError::Default(e))?,
+                                .map_err(SourceError::Default)?,
                         }
                         .save()
-                        .map_err(|e| SourceError::Default(e))?,
+                        .map_err(SourceError::Default)?,
                         retrieved,
                     ));
                 }
@@ -171,7 +185,7 @@ impl Source {
                         input_url.as_str(),
                     )
                     .await
-                    .map_err(|e| SourceError::Default(e))?,
+                    .map_err(SourceError::Default)?,
                     // ..Default::default()
                 },
                 retrieved,
@@ -186,13 +200,13 @@ impl Source {
                 created_at: chrono::Utc::now().timestamp() as u32,
                 chunks: Chunks::new(content, input_url.as_str())
                     .await
-                    .map_err(|e| SourceError::Default(e))?,
+                    .map_err(SourceError::Default)?,
             }
             .save()
-            .map_err(|e| SourceError::Default(e))?,
+            .map_err(SourceError::Default)?,
             _ => {
                 let cached_source = Source::by_url(input_url.as_str())
-                    .map_err(|e| SourceError::Default(e))?
+                    .map_err(SourceError::Default)?
                     .filter(|source| !source.is_expired());
 
                 match cached_source {
@@ -201,8 +215,8 @@ impl Source {
                         retrieved = true; // we're retrieving this source
                         let content = Self::fetch(input_url.clone())
                             .await
-                            .map_err(|e| SourceError::Default(e))?;
-                        if content == "CONTENT_EMPTY" {
+                            .map_err(SourceError::Default)?;
+                        if content.is_empty() {
                             return Err(SourceError::ContentEmpty(input_url.to_string()));
                         }
 
@@ -213,9 +227,9 @@ impl Source {
                             created_at: chrono::Utc::now().timestamp() as u32,
                             chunks: Chunks::new(content, input_url.as_str())
                                 .await
-                                .map_err(|e| SourceError::Default(e))?,
+                                .map_err(SourceError::Default)?,
                         };
-                        source.save().map_err(|e| SourceError::Default(e))?
+                        source.save().map_err(SourceError::Default)?
                     }
                 }
             }
@@ -324,8 +338,6 @@ impl Chunks {
 
 #[cfg(test)]
 mod tests {
-    use unicode_segmentation::UnicodeSegmentation;
-    use url_serde::De;
 
     use super::*;
 
