@@ -31,12 +31,12 @@ impl Notification {
 
         match event_type {
             NotificationType::Admin(message) => {
-                let html = format!("<p><strong>{}</strong></p>", message);
+                // let html = format!("<p><strong>{}</strong></p>", message);
                 let data = json!({
                     "from": "notification@notifications.thepagebot.com",
                     "to": "sim04ful@gmail.com",
                     "subject": "Admin Notification",
-                    "html": html
+                    "html": message
                 });
                 client.json(&data).send().await?;
             }

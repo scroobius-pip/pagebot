@@ -59,7 +59,7 @@ pub fn get_history(history: Vec<HistoryItem>) -> String {
         .iter()
         .map(|item| item.to_string())
         .collect::<Vec<_>>()
-        .join("\n")
+        .join("<br>")
 }
 
 pub async fn main(
