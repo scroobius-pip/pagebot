@@ -42,10 +42,16 @@ pub async fn main(
 
     let notification = notification::Notification::new(user);
     notification
-        .send(NotificationType::User(format!(
-            "Email request from: {} ({})\n\n{}",
-            name, email, message
-        )))
+        .send(NotificationType::User(
+            format!("Email request from: {}", name),
+            format!(
+                "Email: {}<br>Message: {}<br>Page: {}<br>History: {}",
+                email,
+                message,
+                page_url,
+                super::message::get_history(history)
+            ),
+        ))
         .await
         .map_err(|e| {
             log::error!("Failed to send notification: {}", e);

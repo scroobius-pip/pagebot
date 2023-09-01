@@ -1,4 +1,7 @@
-use std::sync::Arc;
+use std::{
+    fmt::{Display, Formatter},
+    sync::Arc,
+};
 
 use crate::{
     notification::{Notification, NotificationType},
@@ -35,6 +38,28 @@ pub struct Request {
 pub struct HistoryItem {
     pub bot: bool,
     pub content: String,
+}
+
+impl Display for HistoryItem {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        // write!(f, "{}", self.content)
+        //PageBot: **Hey!**, _how can I help you today?_
+        //User: What is the capital of France?
+        write!(
+            f,
+            "{}: {}",
+            if self.bot { "PageBot" } else { "User" },
+            self.content
+        )
+    }
+}
+
+pub fn get_history(history: Vec<HistoryItem>) -> String {
+    history
+        .iter()
+        .map(|item| item.to_string())
+        .collect::<Vec<_>>()
+        .join("\n")
 }
 
 pub async fn main(
@@ -95,7 +120,10 @@ pub async fn main(
 
                 if content.contains("NOT_FOUND") {
                     let notification_result = notification
-                        .send(NotificationType::User(format!(
+                        .send(NotificationType::User(
+                            "Knowledge gap detected".to_string(),
+                            format!(
+
                             "No answer found for the query: {} \n update your sources to account for this knowledge gap.",
                             query
                         )))

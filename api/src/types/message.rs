@@ -64,7 +64,9 @@ impl Message {
                                 SourceError::ContentEmpty(url) => {
                                     let _notification = notification.clone();
                                     tokio::spawn(async move {
-                                      _ = _notification.send(NotificationType::User(format!(
+                                      _ = _notification.send(NotificationType::User(
+                                        "Failed to get source".to_string(),
+                                        format!(
                                             "Content empty at: {}, please check this source, if this url is a client side rendered webpage, you'll need to use a server rendered version of the page.",
                                             url
                                         ))).await;

@@ -14,7 +14,7 @@ struct Context {
 
 pub enum NotificationType {
     Admin(String),
-    User(String),
+    User(String, String), //heading, message
 }
 
 impl Notification {
@@ -40,12 +40,12 @@ impl Notification {
                 });
                 client.json(&data).send().await?;
             }
-            NotificationType::User(message) => {
+            NotificationType::User(subject, message) => {
                 let html = format!("<p><strong>{}</strong></p>", message);
                 let data = json!({
                     "from": "notification@notifications.thepagebot.com",
                     "to": self.context.user.email,
-                    "subject": "PageBot Alert",
+                    "subject":  format!("{} - Page Bot", subject),
                     "html": html
                 });
                 client.json(&data).send().await?;
