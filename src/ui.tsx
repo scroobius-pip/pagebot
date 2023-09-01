@@ -26,7 +26,7 @@ const PgbtUI = () => {
     const [renderedText, setRenderedText] = useState<string>();
     const ref = useRef<HTMLDivElement>(null);
     const theme = getTheme();
-    const [hidden, setHidden] = useState<boolean>(false);
+    const [hidden, setHidden] = useState<boolean>(true);
 
     useEffect(() => {
         const pgbt: PageBot = globalThis['pgbt']
@@ -153,21 +153,21 @@ const MainChat = () => {
         // },
         // 'default3': {
         //     message: {
-        //         text: 'Arible AI is',
+        //         text: 'MS_123 Arible AI is',
         //         type: 'bot'
         //     },
         //     createdAt: new Date(),
         // },
         // 'default4': {
         //     message: {
-        //         text: 'NOT_FOUND',
+        //         text: 'MS_1689 NOT_FOUND',
         //         type: 'bot'
         //     },
         //     createdAt: new Date(),
         // },
         // 'default5': {
         //     message: {
-        //         text: 'EMAIL',
+        //         text: 'MS_123 EMAIL',
         //         type: 'bot'
         //     },
         //     createdAt: new Date(),
@@ -206,10 +206,11 @@ const MainChat = () => {
                 type: 'bot'
             })
 
-            setMessages({
+
+            setMessages(messages => ({
                 ...messages,
                 [notification.id]: notification,
-            })
+            }))
 
             e.stopPropagation();
 
@@ -362,11 +363,20 @@ const MessageBox = (props: MessageBoxProps) => {
 
 
 const Message = (message: Message) => {
-    let cleanText = message.text.replace(/\n\n/g, '');
-    const html = parse(cleanText);
+
     const theme = getTheme();
     // const []
-    let [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
+    let messageText = message.text;
+    const parsedMilliseconds = messageText.match(/MS_(\d+)/);
+    const milliseconds = parsedMilliseconds ? parseFloat(parsedMilliseconds[1]) : null;
+    // const milliseconds = message.type === 'bot' && message.text ? messageText.match(/MS_(\d+\.\d{2})/)[1] : null;
+    if (milliseconds) {
+        messageText = messageText.replace(/MS_\d+/, '');
+    }
+    let cleanText = messageText.replace(/\n\n/g, '');
+    const html = parse(cleanText);
+
+    const [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
         [true, 'PageBot can\'t find an answer to your question.',
             'Please leave a message and we\'ll get back to you.'
         ] : html.includes('EMAIL') ?
@@ -375,7 +385,8 @@ const Message = (message: Message) => {
             : [false, '', ''];
 
     const displayContent = needsForm ?
-        EmailForm(theme, titleText, descriptionText)
+        // EmailForm(theme, titleText, descriptionText)
+        <EmailForm theme={theme} titleText={titleText} descriptionText={descriptionText} />
         : <div
             className='pb_message-text'
             dangerouslySetInnerHTML={{ __html: html }}
@@ -390,10 +401,16 @@ const Message = (message: Message) => {
     >
         <div className='pb_message-icon'>
             {
-                message.type === 'bot' ? <Logo /> : <span>
-                    Me
-                </span>
+                message.type === 'bot' ?
+                    <>
+                        <Logo />
+
+                    </>
+                    : <span>
+                        Me
+                    </span>
             }
+
         </div>
         {displayContent}
 
@@ -404,6 +421,9 @@ const Message = (message: Message) => {
             </button>
         </div>
         } */}
+        {message.type === 'bot' && milliseconds && <span className='pb_stats'>
+            <span><span style={{ color: theme.primaryColor }}>PageBot</span> Responded in <b>{(milliseconds / 1000).toFixed(2)}s</b></span>
+        </span>}
     </div >
 }
 interface ChatInputProps {
@@ -579,8 +599,14 @@ const darkenHex = (hex: string, amount: number) => {
     return '#' + newHex.toString(16);
 }
 export default <PgbtUI />;
+// theme: Theme, titleText: string, descriptionText: string
+interface EmailFormProps {
+    theme: Theme,
+    titleText: string,
+    descriptionText: string,
+}
 
-function EmailForm(theme: Theme, titleText: string, descriptionText: string) {
+function EmailForm({ theme, titleText, descriptionText }: EmailFormProps) {
     const [formState, setFormState] = useState<{
         email: string,
         name: string,

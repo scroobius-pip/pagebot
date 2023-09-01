@@ -19,7 +19,7 @@
     position: fixed;
     bottom: 20;
     right: 20;
-    z-index: 9999;
+    z-index: 9999999;
 }
 
 .pb_parent-bottom * {
@@ -345,6 +345,11 @@ h1 {
     display: flex;
     flex-direction: column;
     gap: .5em;
+}
+
+.pb_stats {
+    font-size: 0.75em;
+    opacity: 0.8;
 }
 
 .pb_form-description h3 {
