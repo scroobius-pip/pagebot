@@ -1,21 +1,14 @@
-// use crossbeam::{channel::Receiver, queue::SegQueue};
 use eyre::Result;
-use rayon::prelude::*;
 use rust_bert::pipelines::sentence_embeddings::{
     SentenceEmbeddingsBuilder, SentenceEmbeddingsModelType,
 };
 
 pub struct EmbeddingModel {
-    // model: Arc<Mutex<SentenceEmbeddingsModel>>,
-    // models: Vec<SentenceEmbeddingsModel>,
     queue: (
         crossbeam::channel::Sender<EmbedTask>,
         crossbeam::channel::Receiver<EmbedTask>,
     ),
 }
-
-// pub type EmbedResult = Sender<Vec<Embedding>>;
-// const THREAD_COUNT: usize = dotenv!("MODEL_THREAD_COUNT");
 
 pub type Embedding = Vec<f32>;
 pub struct EmbedTask(
@@ -25,7 +18,6 @@ pub struct EmbedTask(
 
 impl EmbeddingModel {
     fn new() -> Result<Self> {
-        // let crossbeam_queue = SegQueue::<EmbedTask>::new();
         let unbounded_channel = crossbeam::channel::unbounded::<EmbedTask>();
         let model = Self {
             queue: unbounded_channel,
@@ -36,6 +28,7 @@ impl EmbeddingModel {
 
     pub fn run(&self) {
         let thread_count = dotenv!("MODEL_THREAD_COUNT").parse::<usize>().unwrap();
+        log::info!("Model Thread Count {}", thread_count);
         let task_worker = |worker_index: usize| {
             let model = SentenceEmbeddingsBuilder::remote(
                 SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
@@ -75,7 +68,6 @@ impl EmbeddingModel {
 
 lazy_static! {
     pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
-    // pub static ref CURRENT_MODE_INDEX: AtomicUsize = AtomicUsize::new(0);
 }
 
 // use eyre::Result;
