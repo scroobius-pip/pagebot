@@ -15,7 +15,7 @@ pub struct EmbeddingModel {
 }
 
 // pub type EmbedResult = Sender<Vec<Embedding>>;
-const THREAD_COUNT: usize = 4;
+// const THREAD_COUNT: usize = dotenv!("MODEL_THREAD_COUNT");
 
 pub type Embedding = Vec<f32>;
 pub struct EmbedTask(
@@ -35,6 +35,7 @@ impl EmbeddingModel {
     }
 
     pub fn run(&self) {
+        let thread_count = dotenv!("MODEL_THREAD_COUNT").parse::<usize>().unwrap();
         let task_worker = |worker_index: usize| {
             let model = SentenceEmbeddingsBuilder::remote(
                 SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
@@ -53,12 +54,12 @@ impl EmbeddingModel {
         };
 
         let pool = rayon::ThreadPoolBuilder::new()
-            .num_threads(THREAD_COUNT)
+            .num_threads(thread_count)
             .build()
             .unwrap();
 
         pool.scope(|s| {
-            for i in 0..THREAD_COUNT {
+            for i in 0..thread_count {
                 s.spawn(move |_| task_worker(i));
             }
         });
