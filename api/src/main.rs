@@ -20,14 +20,12 @@ mod stats;
 mod types;
 use routes::build_router;
 
-use dotenv::dotenv;
 use env_logger::Env;
 use stripe::Client;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<()> {
-    dotenv().ok();
     setup_logs();
 
     let cors = CorsLayer::new()

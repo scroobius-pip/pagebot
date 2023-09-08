@@ -27,10 +27,7 @@ impl EmbeddingModel {
     }
 
     pub fn run(&self) {
-        let thread_count = std::env::var("MODEL_THREAD_COUNT")
-            .expect("MODEL_THREAD_COUNT not set")
-            .parse::<usize>()
-            .expect("MODEL_THREAD_COUNT is not a number");
+        let thread_count = dotenv!("MODEL_THREAD_COUNT").parse::<usize>().unwrap();
 
         log::info!("Model Thread Count {}", thread_count);
         let task_worker = |worker_index: usize| {
