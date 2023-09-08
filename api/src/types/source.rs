@@ -122,7 +122,7 @@ impl Source {
 
     pub async fn new(input: SourceInput) -> Result<(Self, bool), SourceError> {
         let mut retrieved: bool = false;
-        log::info!("Source input: {:?}", input);
+
         if input.content.is_none() && input.url.is_none() {
             // return Err(eyre::eyre!("No content or url provided"));
             return Err(SourceError::Default(eyre::eyre!(
@@ -132,7 +132,6 @@ impl Source {
 
         // If there's no URL, we're dealing with a local source not from the requesting website.
         if input.url.is_none() && input.content.is_some() {
-            log::info!("No URL provided, using content as URL");
             let mut hasher = ahash::AHasher::default();
             input.content.as_ref().unwrap().hash(&mut hasher);
             let content_hash = format!("_{}", hasher.finish());

@@ -10,6 +10,7 @@ extern crate unicode_segmentation;
 
 mod auth;
 mod db;
+mod email_templates;
 mod embed_pool;
 mod jwt;
 mod notification;
@@ -42,8 +43,6 @@ async fn main() -> Result<()> {
             .await
             .unwrap();
     });
-
-    //add new thread for stripe usage tracking
 
     let _ = server_handler.await;
 

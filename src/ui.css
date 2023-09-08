@@ -243,6 +243,10 @@ h1 {
 
 }
 
+.pb_message-text * {
+    color: #1E1E1E;
+}
+
 .pb_message.bot {
     border-radius: 0 24px 24px 24px;
     align-self: stretch;

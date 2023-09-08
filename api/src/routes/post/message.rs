@@ -98,46 +98,46 @@ pub async fn main(
 
     let query = evaluated_message.query.clone();
     let stream = async_stream::stream! {
+        yield Ok(Event::default().data("EVALUATED"));
+        // let mut send_elapsed = true;
+        // while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
+        //     response_stream.next().await
+        // {
+        //     if let Some(ChatCompletionResponseStreamMessage {
+        //         delta:
+        //             ChatCompletionStreamResponseDelta {
+        //                 content: Some(content),
+        //                 ..
+        //             },
+        //         ..
+        //     }) = choices.first()
+        //     {
+        //         if send_elapsed {
+        //             let ms_elapsed = format!("MS_{:.2}", instant_now.elapsed().as_millis());
+        //             yield Ok(Event::default().data(ms_elapsed));
+        //             send_elapsed = false;
+        //         }
 
-        let mut send_elapsed = true;
-        while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
-            response_stream.next().await
-        {
-            if let Some(ChatCompletionResponseStreamMessage {
-                delta:
-                    ChatCompletionStreamResponseDelta {
-                        content: Some(content),
-                        ..
-                    },
-                ..
-            }) = choices.first()
-            {
-                if send_elapsed {
-                    let ms_elapsed = format!("MS_{:.2}", instant_now.elapsed().as_millis());
-                    yield Ok(Event::default().data(ms_elapsed));
-                    send_elapsed = false;
-                }
+        //         if content.contains("NOT_FOUND") {
+        //             let notification_result = notification
+        //                 .send(NotificationType::User(
+        //                     "Knowledge gap detected".to_string(),
+        //                     format!(
 
-                if content.contains("NOT_FOUND") {
-                    let notification_result = notification
-                        .send(NotificationType::User(
-                            "Knowledge gap detected".to_string(),
-                            format!(
+        //                     "No answer found for the query: {} \n update your sources to account for this knowledge gap.",
+        //                     query
+        //                 )))
+        //                 .await;
+        //             if let Err(e) = notification_result {
+        //                 log::error!("Failed to send notification: {}", e);
+        //             }
+        //             yield Ok(Event::default().data("NOT_FOUND"));
+        //             break;
+        //         }
 
-                            "No answer found for the query: {} \n update your sources to account for this knowledge gap.",
-                            query
-                        )))
-                        .await;
-                    if let Err(e) = notification_result {
-                        log::error!("Failed to send notification: {}", e);
-                    }
-                    yield Ok(Event::default().data("NOT_FOUND"));
-                    break;
-                }
-
-                yield Ok(Event::default().data(content));
-            }
-        }
+        //         yield Ok(Event::default().data(content));
+        //     }
+        // }
 
     };
 

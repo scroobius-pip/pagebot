@@ -6,6 +6,7 @@
     "start": "parcel src/index.html",
     "build": "parcel build"
   },
+  "main": "dist/index.js",
   "author": "",
   "source": "src/index.ts",
   "license": "ISC",

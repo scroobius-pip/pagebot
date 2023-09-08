@@ -15,9 +15,10 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
-const HOST = 'https://api.thepagebot.com/'
+// const HOST = 'https://api.thepagebot.com/'
 // const HOST = 'http://localhost:8000/'
-
+//@ts-ignore
+const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : 'https://api.thepagebot.com/'
 class WebpageTextExtractor {
     private root: Node;
     private relevantTags: string[];

@@ -1,4 +1,7 @@
-use crate::types::{message::Message, user::User};
+use crate::{
+    email_templates::FORWARDING,
+    types::{message::Message, user::User},
+};
 use eyre::Result;
 use serde_json::json;
 
@@ -42,11 +45,12 @@ impl Notification {
             }
             NotificationType::User(subject, message) => {
                 let html = format!("<p><strong>{}</strong></p>", message);
+
                 let data = json!({
                     "from": "notification@notifications.thepagebot.com",
                     "to": self.context.user.email,
                     "subject":  format!("{} - Page Bot", subject),
-                    "html": html
+                    "html": FORWARDING
                 });
                 client.json(&data).send().await?;
             }
