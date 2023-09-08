@@ -22,7 +22,7 @@ impl EmbeddingModel {
         };
 
         let mut models = Vec::new();
-        for _ in 0..4 {
+        for _ in 0..10 {
             let model = model()?;
             models.push(Arc::new(Mutex::new(model)));
         }
