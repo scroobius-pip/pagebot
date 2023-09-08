@@ -1,3 +1,5 @@
+use std::env;
+
 use eyre::Result;
 use rust_bert::pipelines::sentence_embeddings::{
     SentenceEmbeddingsBuilder, SentenceEmbeddingsModelType,
@@ -27,7 +29,10 @@ impl EmbeddingModel {
     }
 
     pub fn run(&self) {
-        let thread_count = dotenv!("MODEL_THREAD_COUNT").parse::<usize>().unwrap();
+        let thread_count = env::args()
+            .nth(1)
+            .and_then(|s| s.parse::<usize>().ok())
+            .unwrap_or(4);
 
         log::info!("Model Thread Count {}", thread_count);
         let task_worker = |worker_index: usize| {
