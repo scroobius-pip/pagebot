@@ -280,18 +280,13 @@ impl Chunks {
             .map(|chunk| chunk.join(" "))
             .collect::<Vec<_>>();
 
-        let (sender, receiver) = tokio::sync::oneshot::channel();
-
         let instant_now = std::time::Instant::now();
         let _chunked_sentences = chunked_sentences.clone();
-        rayon::spawn_fifo(move || {
-            let embeddings = EMBED_POOL.encode(_chunked_sentences.as_slice());
-            _ = sender.send(embeddings);
-        });
 
-        let embeddings = receiver
+        let embeddings = EMBED_POOL
+            .encode(chunked_sentences.as_slice())
             .await
-            .map_err(|_| eyre::eyre!("Failed to receive embeddings"))??;
+            .map_err(|_| eyre::eyre!("Failed to receive embeddings"))?;
 
         log::info!(
             "Embeddings took {:?} for {}",
@@ -312,18 +307,9 @@ impl Chunks {
     }
 
     pub async fn query(query: String) -> Result<Vec<f32>> {
-        let instant_now = std::time::Instant::now();
-        let (sender, receiver) = tokio::sync::oneshot::channel();
+        // let instant_now = std::time::Instant::now();
 
-        rayon::spawn_fifo(move || {
-            let embeddings = EMBED_POOL.encode(&[query]);
-            _ = sender.send(embeddings.map(|e| e[0].clone()));
-            println!("Query embedding took {:?}", instant_now.elapsed());
-        });
-
-        receiver
-            .await
-            .map_err(|_| eyre::eyre!("Failed to receive embeddings"))?
+        EMBED_POOL.encode(&[query]).await.map(|e| e[0].clone())
     }
 }
 

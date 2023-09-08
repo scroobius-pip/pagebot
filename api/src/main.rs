@@ -1,3 +1,4 @@
+use embed_pool::EMBED_POOL;
 use eyre::Result;
 
 #[macro_use]
@@ -43,6 +44,8 @@ async fn main() -> Result<()> {
             .await
             .unwrap();
     });
+
+    EMBED_POOL.run();
 
     let _ = server_handler.await;
 

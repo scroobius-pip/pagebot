@@ -1,59 +1,80 @@
+// use crossbeam::{channel::Receiver, queue::SegQueue};
 use eyre::Result;
-use parking_lot::Mutex;
+use rayon::prelude::*;
 use rust_bert::pipelines::sentence_embeddings::{
-    SentenceEmbeddingsBuilder, SentenceEmbeddingsModel, SentenceEmbeddingsModelType,
+    SentenceEmbeddingsBuilder, SentenceEmbeddingsModelType,
 };
-use std::sync::{atomic::AtomicUsize, Arc};
 
 pub struct EmbeddingModel {
     // model: Arc<Mutex<SentenceEmbeddingsModel>>,
-    models: Vec<Arc<Mutex<SentenceEmbeddingsModel>>>,
+    // models: Vec<SentenceEmbeddingsModel>,
+    queue: (
+        crossbeam::channel::Sender<EmbedTask>,
+        crossbeam::channel::Receiver<EmbedTask>,
+    ),
 }
 
+// pub type EmbedResult = Sender<Vec<Embedding>>;
+const THREAD_COUNT: usize = 4;
+
 pub type Embedding = Vec<f32>;
+pub struct EmbedTask(
+    tokio::sync::oneshot::Sender<Result<Vec<Embedding>>>,
+    Vec<String>,
+);
 
 impl EmbeddingModel {
     fn new() -> Result<Self> {
-        let model = || {
-            SentenceEmbeddingsBuilder::remote(
+        // let crossbeam_queue = SegQueue::<EmbedTask>::new();
+        let unbounded_channel = crossbeam::channel::unbounded::<EmbedTask>();
+        let model = Self {
+            queue: unbounded_channel,
+        };
+
+        Ok(model)
+    }
+
+    pub fn run(&self) {
+        let task_worker = |worker_index: usize| {
+            let model = SentenceEmbeddingsBuilder::remote(
                 SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
             )
             .create_model()
+            .expect("Failed to create model");
+
+            loop {
+                while let Ok(task) = self.queue.1.recv() {
+                    log::info!("Worker {} received task", worker_index);
+                    let EmbedTask(sender, sentences) = task;
+                    let result = model.encode(&sentences).map_err(|e| e.into());
+                    sender.send(result).unwrap();
+                }
+            }
         };
 
-        let mut models = Vec::new();
-        for _ in 0..10 {
-            let model = model()?;
-            models.push(Arc::new(Mutex::new(model)));
-        }
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(THREAD_COUNT)
+            .build()
+            .unwrap();
 
-        Ok(Self { models })
-
-        // Ok(Self {
-        //     model: Arc::new(Mutex::new(model)),
-        // })
+        pool.scope(|s| {
+            for i in 0..THREAD_COUNT {
+                s.spawn(move |_| task_worker(i));
+            }
+        });
     }
 
-    pub fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
-        let sentences = sentences.clone();
-        let model = self.select_model();
-
-        let lock = model.lock();
-
-        let result = lock.encode(sentences)?;
-        //vector size is 512
-        Ok(result)
-    }
-
-    pub fn select_model(&self) -> Arc<Mutex<SentenceEmbeddingsModel>> {
-        let current_index = CURRENT_MODE_INDEX.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        self.models[current_index % 4].clone()
+    pub async fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
+        let (sender, receiver) = tokio::sync::oneshot::channel::<Result<Vec<Embedding>>>();
+        let task = EmbedTask(sender, sentences.to_vec());
+        self.queue.0.send(task)?;
+        receiver.await?
     }
 }
 
 lazy_static! {
     pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
-    pub static ref CURRENT_MODE_INDEX: AtomicUsize = AtomicUsize::new(0);
+    // pub static ref CURRENT_MODE_INDEX: AtomicUsize = AtomicUsize::new(0);
 }
 
 // use eyre::Result;

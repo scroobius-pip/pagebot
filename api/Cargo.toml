@@ -49,3 +49,4 @@ rayon = "1.7.0"
 parking_lot = "0.12.1"
 hnsw_rs = "0.1.19"
 # opt-level = 3
+crossbeam = "0.8.2"
