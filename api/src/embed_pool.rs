@@ -6,7 +6,7 @@ use rust_bert::pipelines::sentence_embeddings::{
 use std::sync::{atomic::AtomicUsize, Arc};
 
 pub struct EmbeddingModel {
-    model: Arc<Mutex<SentenceEmbeddingsModel>>,
+    // model: Arc<Mutex<SentenceEmbeddingsModel>>,
     // models: Vec<Arc<Mutex<SentenceEmbeddingsModel>>>,
 }
 
@@ -14,10 +14,10 @@ pub type Embedding = Vec<f32>;
 
 impl EmbeddingModel {
     fn new() -> Result<Self> {
-        let model = SentenceEmbeddingsBuilder::remote(
-            SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
-        )
-        .create_model()?;
+        // let model = SentenceEmbeddingsBuilder::remote(
+        //     SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
+        // )
+        // .create_model()?;
 
         // let mut models = Vec::new();
         // for _ in 0..4 {
@@ -28,19 +28,25 @@ impl EmbeddingModel {
         // Ok(Self { models })
 
         Ok(Self {
-            model: Arc::new(Mutex::new(model)),
+            // model: Arc::new(Mutex::new(model)),
         })
     }
 
     pub fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
-        let sentences = sentences.clone();
-        // let model = self.select_model();
-        let model = self.model.clone();
+        // let sentences = sentences.clone();
+        // // let model = self.select_model();
+        // let model = self.model.clone();
 
-        let lock = model.lock();
+        // let lock = model.lock();
 
-        let result = lock.encode(sentences)?;
-        //vector size is 512
+        // let result = lock.encode(sentences)?;
+        // //vector size is 512
+        // Ok(result)
+        let model = SentenceEmbeddingsBuilder::remote(
+            SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
+        )
+        .create_model()?;
+        let result = model.encode(sentences)?;
         Ok(result)
     }
 
