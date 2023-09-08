@@ -54,7 +54,7 @@ async fn main() -> Result<()> {
 fn setup_logs() {
     std::env::set_var("RUST_BACKTRACE", "1");
     color_eyre::install().expect("Failed to install color_eyre");
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    env_logger::Builder::from_env(Env::default().default_filter_or("error")).init();
 }
 
 lazy_static! {
