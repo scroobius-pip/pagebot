@@ -98,6 +98,11 @@ pub async fn main(
 
     let query = evaluated_message.query.clone();
     let stream = async_stream::stream! {
+        // #[cfg(not(debug_assertions))]
+        {
+            yield Ok(Event::default().data("EVALUATED"));
+            return;
+        }
 
         let mut send_elapsed = true;
         while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
