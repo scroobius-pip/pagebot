@@ -284,7 +284,7 @@ impl Chunks {
         let _chunked_sentences = chunked_sentences.clone();
 
         let embeddings = EMBED_POOL
-            .encode(chunked_sentences.as_slice())
+            .encode(_chunked_sentences)
             .await
             .map_err(|_| eyre::eyre!("Failed to receive embeddings"))?;
 
@@ -294,22 +294,14 @@ impl Chunks {
             content.len()
         );
 
-        assert_eq!(
-            &chunked_sentences.len(),
-            &embeddings.len(),
-            "Chunked sentences and embeddings should be the same length"
-        );
-
         Ok(Self {
             url: url.to_string(),
-            value: (chunked_sentences.to_vec(), embeddings),
+            value: (chunked_sentences, embeddings),
         })
     }
 
     pub async fn query(query: String) -> Result<Vec<f32>> {
-        // let instant_now = std::time::Instant::now();
-
-        EMBED_POOL.encode(&[query]).await.map(|e| e[0].clone())
+        EMBED_POOL.encode(vec![query]).await.map(|e| e[0].clone())
     }
 }
 

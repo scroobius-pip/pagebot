@@ -6,10 +6,8 @@ use rust_bert::pipelines::sentence_embeddings::{
 };
 
 pub struct EmbeddingModel {
-    queue: (
-        crossbeam::channel::Sender<EmbedTask>,
-        crossbeam::channel::Receiver<EmbedTask>,
-    ),
+    queue_recv: crossbeam::channel::Receiver<EmbedTask>,
+    queue_send: crossbeam::channel::Sender<EmbedTask>,
 }
 
 pub type Embedding = Vec<f32>;
@@ -19,13 +17,12 @@ pub struct EmbedTask(
 );
 
 impl EmbeddingModel {
-    fn new() -> Result<Self> {
-        let unbounded_channel = crossbeam::channel::unbounded::<EmbedTask>();
-        let model = Self {
-            queue: unbounded_channel,
-        };
-
-        Ok(model)
+    fn new() -> Self {
+        let (queue_send, queue_recv) = crossbeam::channel::bounded::<EmbedTask>(5000);
+        Self {
+            queue_recv,
+            queue_send,
+        }
     }
 
     pub fn run(&self) {
@@ -43,9 +40,8 @@ impl EmbeddingModel {
             .expect("Failed to create model");
 
             loop {
-                while let Ok(task) = self.queue.1.recv() {
-                    log::info!("Worker {} received task", worker_index);
-                    let EmbedTask(sender, sentences) = task;
+                while let Ok(EmbedTask(sender, sentences)) = self.queue_recv.recv() {
+                    // log::info!("Worker {} received task", worker_index);
                     let result = model.encode(&sentences).map_err(|e| e.into());
                     sender.send(result).unwrap();
                 }
@@ -64,72 +60,14 @@ impl EmbeddingModel {
         });
     }
 
-    pub async fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
+    pub async fn encode(&self, sentences: Vec<String>) -> Result<Vec<Embedding>> {
         let (sender, receiver) = tokio::sync::oneshot::channel::<Result<Vec<Embedding>>>();
-        let task = EmbedTask(sender, sentences.to_vec());
-        self.queue.0.send(task)?;
+        let task = EmbedTask(sender, sentences);
+        self.queue_send.send(task)?;
         receiver.await?
     }
 }
 
 lazy_static! {
-    pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
+    pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new();
 }
-
-// use eyre::Result;
-// use parking_lot::Mutex;
-// use rust_bert::pipelines::sentence_embeddings::{
-//     SentenceEmbeddingsBuilder, SentenceEmbeddingsModel, SentenceEmbeddingsModelType,
-// };
-// use std::sync::{atomic::AtomicUsize, Arc};
-
-// pub struct EmbeddingModel {
-//     // model: Arc<Mutex<SentenceEmbeddingsModel>>,
-//     models: Vec<Arc<Mutex<SentenceEmbeddingsModel>>>,
-// }
-
-// pub type Embedding = Vec<f32>;
-
-// impl EmbeddingModel {
-//     fn new() -> Result<Self> {
-//         let model = || {
-//             SentenceEmbeddingsBuilder::remote(
-//                 SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
-//             )
-//             .create_model()
-//         };
-
-//         let mut models = Vec::new();
-//         for _ in 0..4 {
-//             let model = model()?;
-//             models.push(Arc::new(Mutex::new(model)));
-//         }
-
-//         Ok(Self { models })
-
-//         // Ok(Self {
-//         //     model: Arc::new(Mutex::new(model)),
-//         // })
-//     }
-
-//     pub fn encode(&self, sentences: &[String]) -> Result<Vec<Embedding>> {
-//         let sentences = sentences.clone();
-//         let model = self.select_model();
-
-//         let lock = model.lock();
-
-//         let result = lock.encode(sentences)?;
-//         //vector size is 512
-//         Ok(result)
-//     }
-
-//     pub fn select_model(&self) -> Arc<Mutex<SentenceEmbeddingsModel>> {
-//         let current_index = CURRENT_MODE_INDEX.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-//         self.models[current_index % 4].clone()
-//     }
-// }
-
-// lazy_static! {
-//     pub static ref EMBED_POOL: EmbeddingModel = EmbeddingModel::new().unwrap();
-//     pub static ref CURRENT_MODE_INDEX: AtomicUsize = AtomicUsize::new(0);
-// }
