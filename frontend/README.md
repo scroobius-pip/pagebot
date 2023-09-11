@@ -1,22 +1,40 @@
-# Welcome to Remix!
+# Next.js & NextUI Template
 
-- [Remix Docs](https://remix.run/docs)
+This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
 
-## Development
+## Technologies Used
 
-You will be utilizing Wrangler for local development to emulate the Cloudflare runtime. This is already wired up in your package.json as the `dev` script:
+- [Next.js 13](https://nextjs.org/docs/getting-started)
+- [NextUI v2](https://nextui.org/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [Tailwind Variants](https://tailwind-variants.org)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Framer Motion](https://www.framer.com/motion/)
+- [next-themes](https://github.com/pacocoursey/next-themes)
 
-```sh
-# start the remix dev server and wrangler
+## How to Use
+
+
+### Use the template with create-next-app
+
+To create a new project based on this template using `create-next-app`, run the following command:
+
+```bash
+npx create-next-app -e https://github.com/nextui-org/next-app-template
+```
+
+### Install dependencies
+
+```bash
+npm install
+```
+
+### Run the development server
+
+```bash
 npm run dev
 ```
 
-Open up [http://127.0.0.1:8788](http://127.0.0.1:8788) and you should be ready to go!
+## License
 
-## Deployment
-
-Cloudflare Pages are currently only deployable through their Git provider integrations.
-
-If you don't already have an account, then [create a Cloudflare account here](https://dash.cloudflare.com/sign-up/pages) and after verifying your email address with Cloudflare, go to your dashboard and follow the [Cloudflare Pages deployment guide](https://developers.cloudflare.com/pages/framework-guides/deploy-anything).
-
-Configure the "Build command" should be set to `npm run build`, and the "Build output directory" should be set to `public`.
+Licensed under the [MIT license](https://github.com/nextui-org/next-app-template/blob/main/LICENSE).

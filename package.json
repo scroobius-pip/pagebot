@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@swc/helpers": "^0.5.1",
+    "lucide-react": "^0.276.0",
     "preact": "^10.16.0",
     "tiny-markdown-parser": "^1.0.1"
   },
