@@ -83,6 +83,7 @@ export class PageBot {
     private id: string;
     public history: HistoryItem[] = [];
     public initialQuestions: Array<[string, string]>;
+    public detachedMode: boolean = false;
 
     get text() {
         return this.data.text;
@@ -91,28 +92,46 @@ export class PageBot {
 
 
     public constructor(extractedData: ExtractedData, id: string) {
+        try {
+            const [customRoot, detachedMode] = PageBot.getRoot();
+            document.body.appendChild(customRoot);
 
-        const customRoot = document.createElement('div');
-        customRoot.style.position = 'absolute';
-        customRoot.style.zIndex = "10000";
-        customRoot.style.right = '0px'
-        customRoot.id = 'pgbt-root';
-        document.body.appendChild(customRoot);
+            const style = document.createElement('style');
+            style.textContent = cssText;
+            customRoot.appendChild(style);
 
-        const style = document.createElement('style');
-        style.textContent = cssText;
+            this.detachedMode = detachedMode;
+            this.id = id;
+            this.data = extractedData;
+            this.sources = PageBot.getPageSources()
+                .concat([{ content: extractedData.text, url: window.location.href }])
 
-        customRoot.appendChild(style);
+            this.initialQuestions = this.getQuestions()
 
+            globalThis['pgbt'] = this;
+            render(PgbtUI, customRoot);
 
-        this.id = id;
-        this.data = extractedData;
-        this.sources = PageBot.getPageSources()
-            .concat([{ content: extractedData.text, url: window.location.href }])
+        } catch (e) {
+            console.error(e);
+        }
 
-        this.initialQuestions = this.getQuestions()
-        render(PgbtUI, customRoot);
+    }
 
+    private static getRoot(): [Element, boolean] {
+        const ROOT_ID = 'pgbt-root';
+        let root = document.getElementById(ROOT_ID);
+        let detachedMode = true;
+
+        if (!root) {
+            const customRoot = document.createElement('div');
+            customRoot.style.position = 'absolute';
+            customRoot.style.zIndex = "10000";
+            customRoot.style.right = '0px'
+            customRoot.id = 'pgbt-root';
+            root = customRoot;
+            detachedMode = false;
+        }
+        return [root, detachedMode];
     }
 
 
@@ -229,20 +248,28 @@ export class PageBot {
 
     private getQuestions(): Array<[string, string]> {
         // <meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />
-        return Array.from(document.querySelectorAll('meta[name="pgbt:qa"]'))
-            .map((el: HTMLMetaElement) => {
-                const question = el.getAttribute('data-question');
-                const answer = el.getAttribute('data-answer');
-                return [question, answer] as [string, string];
-            });
+        try {
 
+            const sources = Array.from(document.querySelectorAll('meta[name="pgbt:qa"]'))
+                .map((el: HTMLMetaElement) => {
+                    const question = el.getAttribute('data-question');
+                    const answer = el.getAttribute('data-answer');
+                    return [question, answer] as [string, string];
+                });
+
+            console.log('Questions found:', sources.length);
+            return sources
+
+        } catch (e) {
+            console.error(e)
+        }
     }
 
 }
 
 const normalizeText = (text: string) => text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?\[\]\"\'<>\\|]/g, "").trim();
 const debounce = (func: Function, delay: number) => {
-    let inDebounce: number;
+    let inDebounce;
     return function (this: any, ...args: any[]) {
         clearTimeout(inDebounce);
         inDebounce = setTimeout(() => func.apply(this, args), delay);
@@ -271,8 +298,9 @@ const initializePageBot = () => {
     console.log(`Document length: ${currentLength}`);
     console.log(`Document created in ${performance.now() - timeCreate}ms`);
 
-    const currentScript = document.getElementById('pgbt');
-    const userId = currentScript?.getAttribute('data-id');
+    //data-pgbt_id
+    const currentScript = document.querySelectorAll('script[data-pgbt_id]')[0];
+    const userId = currentScript?.getAttribute('data-pgbt_id');
 
     if (!userId) {
         console.log('No user id provided, skipping');

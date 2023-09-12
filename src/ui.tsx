@@ -27,12 +27,11 @@ const PgbtUI = () => {
     const ref = useRef<HTMLDivElement>(null);
     const theme = getTheme();
     const [hidden, setHidden] = useState<boolean>(true);
+    const pgbt: PageBot = globalThis['pgbt']
 
     useEffect(() => {
-        const pgbt: PageBot = globalThis['pgbt']
         setRenderedText(pgbt.text)
         registerScrollHandling();
-
     }, []);
 
 
@@ -43,42 +42,42 @@ const PgbtUI = () => {
         }
     }
 
-    return (
-        <div ref={ref} className="pb_parent-bottom">
-            <div className={`pb_container ${hidden ? 'pb_hidden' : ''}`}>
-                <div className='pb_logo'
-                    onClick={() => {
-                        setHidden(false);
-                    }}
-                >
-                    <Logo />
-                </div>
-                <div className='pb_main'>
-                    <div className='pb_main-top'>
-                        <a href='#' className="pb_heading">
-                            <LogoText color={theme.primaryColor} />
-                        </a>
-                        <div
-                            className='pb_close-button'
-                            onClick={() => {
-                                setHidden(true)
-                            }}
-                        >
-                            <CloseButton />
-                        </div>
-                    </div>
-                    <h1 style={{
-                        color: "#9257FA",
-                    }}>
-                        What would you like to know ?
-                    </h1>
-                    <MainChat />
-                </div>
-
-            </div>
-
-
+    const Main = <div className='pb_main'>
+        <div className='pb_main-top'>
+            <a href='#' className="pb_heading">
+                <LogoText color={theme.primaryColor} />
+            </a>
+            {!pgbt.detachedMode && <div
+                className='pb_close-button'
+                onClick={() => {
+                    setHidden(true);
+                }}
+            >
+                <CloseButton />
+            </div>}
         </div>
+        <h1 style={{
+            color: "#9257FA",
+        }}>
+            What would you like to know ?
+        </h1>
+        <MainChat />
+    </div>;
+
+    return (
+        pgbt.detachedMode ? Main :
+            <div ref={ref} className="pb_parent-bottom">
+                <div className={`pb_container ${hidden ? 'pb_hidden' : ''}`}>
+                    <div className='pb_logo'
+                        onClick={() => {
+                            setHidden(false);
+                        }}
+                    >
+                        <Logo />
+                    </div>
+                    {Main}
+                </div>
+            </div>
     );
 
 }

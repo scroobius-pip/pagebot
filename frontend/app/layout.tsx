@@ -30,7 +30,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head />
+      <head >
+        <script id='pgbt' data-id="1059050779408717183" src='https://s.thepagebot.com/pgbt.js' />
+      </head>
       <body
         className={clsx(
           "min-h-screen bg-background font-sans antialiased",

@@ -1,13 +1,13 @@
 import { Section } from '@/components/section';
 import { LogoText, IconText, Logo } from '@/components/icons'
-import { SparkleIcon } from 'lucide-react'
+import { HeartHandshakeIcon, SparkleIcon } from 'lucide-react'
 import { Snippet } from '@nextui-org/snippet'
 import { Button } from '@nextui-org/button';
 export default function Home() {
   return (
     <>
-      <Section className='flex flex-col md:flex-row gap-10 '>
-        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-16 items-start flex-1'>
+      <Section className='flex flex-col lg:flex-row gap-10 '>
+        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-16 items-start flex-1 overflow-y-auto scrollbar-hide'>
           <div className='flex gap-9 flex-col items-start'>
             <LogoText className='h-16' />
             <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
@@ -50,11 +50,11 @@ export default function Home() {
             </div>
           </div>
 
-          <h2 className={`text-4xl ${textGrey} font-medium leading-tight`}>
+          <h2 className={`text-4xl ${textGrey} font-medium leading-tight grow max-w-lg`}>
             PageBot is a <span className={textBlack}>customer service</span> agent that<span className={textBlack}> understands</span> your <span className={textBlack}>website's</span> content and <span className={textBlack}>knowledge base</span>.
           </h2>
-          <div className='rounded-[2rem] grow bg-[#9257FA]  border-solid border-[#E2CFF9] border-[6px] p-10 gap-8 flex flex-col items-end'>
-            <div className='flex flex-row gap-6  '>
+          <div className='rounded-[2rem]  bg-[#9257FA]  border-solid border-[#E2CFF9] border-[6px] p-10 gap-8 flex flex-col items-end'>
+            <div className='flex flex-row gap-6 align-middle justify-center '>
               <div className='bg-slate-50 p-2 rounded-3xl self-start'>
                 <Logo className='h-10 text-[#9257FA]' />
               </div>
@@ -88,48 +88,19 @@ export default function Home() {
                 Get Started
               </Button>
             </div>
+            <div className='flex flex-row gap-2.5'>
+              <HeartHandshakeIcon color='white' />
+              <p className='text-slate-50 font-medium'>
+                <b>17,109 users</b> are already using PageBot
+              </p>
+            </div>
           </div>
         </div>
-        <div className='bg-[#E9E9E9]  rounded-[2.5rem] p-10 flex-1'>
+        <div className='bg-[#E9E9E9]  rounded-[2.5rem] p-10 '>
 
         </div>
       </Section>
-      <Section className='flex flex-row gap-10'>
-        <div className='w-1/2 rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-9 items-start'>
-          <LogoText className='h-16' />
-          <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
-        </div>
-        <div className='bg-[#E9E9E9] w-1/2 rounded-[2.5rem] p-10'>
 
-        </div>
-      </Section>
-      <Section className='flex flex-row gap-10'>
-        <div className='w-1/2 rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-9 items-start'>
-          <LogoText className='h-16' />
-          <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
-        </div>
-        <div className='bg-[#E9E9E9] w-1/2 rounded-[2.5rem] p-10'>
-
-        </div>
-      </Section>
-      <Section className='flex flex-row gap-10'>
-        <div className='w-1/2 rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-9 items-start'>
-          <LogoText className='h-16' />
-          <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
-        </div>
-        <div className='bg-[#E9E9E9] w-1/2 rounded-[2.5rem] p-10'>
-
-        </div>
-      </Section>
-      <Section className='flex flex-row gap-10'>
-        <div className='w-1/2 rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-9 items-start'>
-          <LogoText className='h-16' />
-          <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
-        </div>
-        <div className='bg-[#E9E9E9] w-1/2 rounded-[2.5rem] p-10'>
-
-        </div>
-      </Section>
 
     </>
 
