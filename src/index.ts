@@ -92,28 +92,25 @@ export class PageBot {
 
 
     public constructor(extractedData: ExtractedData, id: string) {
-        try {
-            const [customRoot, detachedMode] = PageBot.getRoot();
+
+        const [customRoot, detachedMode] = PageBot.getRoot();
+        if (!detachedMode)
             document.body.appendChild(customRoot);
 
-            const style = document.createElement('style');
-            style.textContent = cssText;
-            customRoot.appendChild(style);
+        const style = document.createElement('style');
+        style.textContent = cssText;
 
-            this.detachedMode = detachedMode;
-            this.id = id;
-            this.data = extractedData;
-            this.sources = PageBot.getPageSources()
-                .concat([{ content: extractedData.text, url: window.location.href }])
+        customRoot.appendChild(style);
 
-            this.initialQuestions = this.getQuestions()
+        this.detachedMode = detachedMode;
+        this.id = id;
+        this.data = extractedData;
+        this.sources = PageBot.getPageSources()
+            .concat([{ content: extractedData.text, url: window.location.href }])
+        this.initialQuestions = this.getQuestions()
 
-            globalThis['pgbt'] = this;
-            render(PgbtUI, customRoot);
-
-        } catch (e) {
-            console.error(e);
-        }
+        globalThis['pgbt'] = this;
+        render(PgbtUI, customRoot);
 
     }
 
@@ -279,7 +276,7 @@ const debounce = (func: Function, delay: number) => {
 let callCount = 0;
 
 //@ts-ignore
-const MIN_DATA_LENGTH = process.env.NODE_ENV === 'development' ? 10 : 500;
+// const MIN_DATA_LENGTH = process.env.NODE_ENV === 'development' ? 0 : 0;
 const initializePageBot = () => {
     callCount++;
 
@@ -290,15 +287,10 @@ const initializePageBot = () => {
 
     const currentLength = extractedData.text.length;
 
-    if (currentLength < MIN_DATA_LENGTH) {
-        console.log('Document too short, skipping');
-        return;
-    }
-
     console.log(`Document length: ${currentLength}`);
     console.log(`Document created in ${performance.now() - timeCreate}ms`);
 
-    //data-pgbt_id
+
     const currentScript = document.querySelectorAll('script[data-pgbt_id]')[0];
     const userId = currentScript?.getAttribute('data-pgbt_id');
 
@@ -307,7 +299,7 @@ const initializePageBot = () => {
         return;
     }
 
-    globalThis['pgbt'] = new PageBot(extractedData, userId);
+    new PageBot(extractedData, userId);
     observer.disconnect();
     console.log(`Observer disconnected after ${callCount} calls`);
 }

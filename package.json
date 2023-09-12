@@ -1,19 +1,35 @@
 {
-  "name": "pagebot",
-  "version": "1.0.0",
+  "name": "pgbt",
+  "version": "1.0.2",
   "description": "",
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build"
   },
-  "main": "dist/index.js",
-  "author": "",
+  "files": [
+    "dist"
+  ],
+  "unpkg": "dist/index.js",
+  "licence": "ISC",
+  "targets": {
+    "lib": {
+      "outputFormat": "global",
+      "context": "browser",
+      "optimize": true,
+      "sourceMap": false,
+      "isLibrary": false,
+      "engines": {
+        "browsers": "> 0.1%, last 2 versions, not dead"
+      }
+    }
+  },
+  "author": "Simdi Jinkins",
   "source": "src/index.ts",
   "license": "ISC",
   "dependencies": {
     "@swc/helpers": "^0.5.1",
     "lucide-react": "^0.276.0",
-    "preact": "^10.16.0",
+    "preact": "^10.17.1",
     "tiny-markdown-parser": "^1.0.1"
   },
   "devDependencies": {

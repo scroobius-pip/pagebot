@@ -6,6 +6,7 @@ import { Button } from '@nextui-org/button';
 export default function Home() {
   return (
     <>
+
       <Section className='flex flex-col lg:flex-row gap-10 '>
         <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-16 items-start flex-1 overflow-y-auto scrollbar-hide'>
           <div className='flex gap-9 flex-col items-start'>
@@ -96,7 +97,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className='bg-[#E9E9E9]  rounded-[2.5rem] p-10 '>
+        <div id='pgbt-root' className='bg-[#E9E9E9]  rounded-[2.5rem] p-10 '>
 
         </div>
       </Section>

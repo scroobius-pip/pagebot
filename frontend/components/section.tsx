@@ -24,7 +24,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
 
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    if (entry.intersectionRatio == 1) {
+                    if (entry.intersectionRatio > 0.8) {
                         transition(targetScale, targetOpacity, entry)
                     }
                     else if (entry.intersectionRatio > prevRatio.current) {
