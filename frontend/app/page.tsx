@@ -1,12 +1,13 @@
 import { Section } from '@/components/section';
 import { LogoText, IconText, Logo } from '@/components/icons'
 import { SparkleIcon } from 'lucide-react'
+import { Snippet } from '@nextui-org/snippet'
+import { Button } from '@nextui-org/button';
 export default function Home() {
   return (
     <>
-
-      <Section className='flex flex-row gap-10'>
-        <div className='w-1/2 rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-16 items-start'>
+      <Section className='flex flex-col md:flex-row gap-10 '>
+        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex flex-col gap-16 items-start flex-1'>
           <div className='flex gap-9 flex-col items-start'>
             <LogoText className='h-16' />
             <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
@@ -49,10 +50,10 @@ export default function Home() {
             </div>
           </div>
 
-          <h2 className={`text-5xl ${textGrey} font-medium leading-tight`}>
+          <h2 className={`text-4xl ${textGrey} font-medium leading-tight`}>
             PageBot is a <span className={textBlack}>customer service</span> agent that<span className={textBlack}> understands</span> your <span className={textBlack}>website's</span> content and <span className={textBlack}>knowledge base</span>.
           </h2>
-          <div className='rounded-[2.5rem] bg-[#9257FA] h-full w-full border-solid border-[#E2CFF9] border-[6px] p-10'>
+          <div className='rounded-[2rem] grow bg-[#9257FA]  border-solid border-[#E2CFF9] border-[6px] p-10 gap-8 flex flex-col items-end'>
             <div className='flex flex-row gap-6  '>
               <div className='bg-slate-50 p-2 rounded-3xl self-start'>
                 <Logo className='h-10 text-[#9257FA]' />
@@ -61,9 +62,35 @@ export default function Home() {
                 Add GPT-4 <b>superpowers</b> to your website with a <b>single</b> line of code
               </p>
             </div>
+            <div>
+              <Snippet hideSymbol size='lg' variant='solid' className='bg-slate-50 text-[#9257FA] '
+                classNames={{
+                  pre: 'whitespace-normal	font-bold'
+                }}
+              >
+                {`<script data-pgbt_id="<YOUR_ID>" src='https://s.thepagebot.com/pgbt.js' />`}
+              </Snippet>
+            </div>
+            <div className='p-2 pl-6 bg-[#AA7CFB] rounded-r-full rounded-bl-full flex-row flex gap-8'>
+              <div className='flex flex-col items-end'>
+                <p className='text-slate-50 font-medium'>
+                  <b>1 month free</b> trial
+                </p>
+                <p className='text-slate-50 font-medium'>
+                  cancel anytime
+                </p>
+              </div>
+              <Button size='lg' className='rounded-3xl text-2xl font-medium text-[#9257FA] bg-slate-50'
+                endContent={
+                  <SparkleIcon size={24} strokeWidth={2} color='#9257FA' />
+                }
+              >
+                Get Started
+              </Button>
+            </div>
           </div>
         </div>
-        <div className='bg-[#E9E9E9] w-1/2 rounded-[2.5rem] p-10'>
+        <div className='bg-[#E9E9E9]  rounded-[2.5rem] p-10 flex-1'>
 
         </div>
       </Section>

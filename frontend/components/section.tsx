@@ -16,20 +16,28 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
         //@ts-ignore
         ref.current && (ref.current.style.transform = `scale(${startScale})`)
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-
-                    const progress = entry.intersectionRatio / 1;
-                    const scale = startScale + (targetScale - startScale) * progress;
-                    const opacity = startOpacity + (targetOpacity - startOpacity) * progress;
+            const transition =
+                (scale: number, opacity: number, entry: IntersectionObserverEntry) => {
                     //@ts-ignore
-                    entry.target.style.transform = `scale(${scale})`
-                    //@ts-ignore
-                    entry.target.style.opacity = opacity
+                    (entry.target.style.transform = `scale(${scale})`, entry.target.style.opacity = opacity)
                 }
 
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    if (entry.intersectionRatio == 1) {
+                        transition(targetScale, targetOpacity, entry)
+                    }
+                    else if (entry.intersectionRatio > prevRatio.current) {
+                        const progress = entry.intersectionRatio / 1;
+                        const scale = startScale + (targetScale - startScale) * progress;
+                        const opacity = startOpacity + (targetOpacity - startOpacity) * progress;
+                        transition(scale, opacity, entry)
+                    }
+                } else {
+                    transition(startScale, startOpacity, entry)
+                }
 
-                // prevRatio.current = entry.intersectionRatio;
+                prevRatio.current = entry.intersectionRatio;
             })
         }, {
             threshold: buildThresholdArray()
@@ -43,7 +51,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
     return <section
         ref={ref}
         style={{
-            height: 'calc(100vh - 2.5rem * 2)',
+            minHeight: 'calc(100vh - 2.5rem * 2)',
             margin: '2.5rem',
             padding: '2.5rem',
             borderRadius: '4.5rem',
