@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head >
-        <script data-pgbt_id="1059050779408717183" src='https://s.thepagebot.com/pgbt.js' />
+        <script data-pgbt_id="1059050779408717183" src='https://s.thepagebot.com/pgbt_1.0.3.js' />
       </head>
       <body
         className={clsx(

@@ -22,9 +22,7 @@
     z-index: 9999999;
 }
 
-.pb_parent-bottom * {
-    font-family: 'IBM Plex Sans', sans-serif;
-}
+
 
 .pb_container {
     background: rgba(233, 233, 233, 0.8);
@@ -34,6 +32,10 @@
     max-width: var(--max-width);
     border-radius: var(--container-radius);
     box-sizing: content-box;
+}
+
+.pb_main * {
+    font-family: 'IBM Plex Sans', sans-serif;
 }
 
 .pb_main {
@@ -125,7 +127,7 @@
 
 h1 {
     font-size: 2em;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .pb_chat-container {

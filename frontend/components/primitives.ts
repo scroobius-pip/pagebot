@@ -51,3 +51,7 @@ export const subtitle = tv({
         fullWidth: true
     }
 });
+
+
+export const textGrey = 'text-[#8B8B8B]'
+export const textBlack = 'text-[#1E1E1E]'

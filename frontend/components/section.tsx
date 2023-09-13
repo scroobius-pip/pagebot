@@ -7,7 +7,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
     const buildThresholdArray = () => Array.from(Array(100).keys(), i => i / 100)
     const prevRatio = useRef(0.0)
 
-    const startScale = 0.65;
+    const startScale = 0.9;
     const targetScale = 1;
     const startOpacity = 0;
     const targetOpacity = 1;
@@ -24,7 +24,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
 
             entries.forEach((entry) => {
                 if (entry.isIntersecting) {
-                    if (entry.intersectionRatio > 0.8) {
+                    if (entry.intersectionRatio > 0.5) {
                         transition(targetScale, targetOpacity, entry)
                     }
                     else if (entry.intersectionRatio > prevRatio.current) {
@@ -51,7 +51,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
     return <section
         ref={ref}
         style={{
-            height: 'calc(100vh - 2.5rem * 2)',
+            minHeight: 'calc(100vh - 2.5rem * 2)',
             // margin: '2.5rem',
             padding: '2.5rem',
             borderRadius: '4.5rem',
