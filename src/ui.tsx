@@ -42,7 +42,7 @@ const PgbtUI = () => {
         }
     }
 
-    const Main = <div className='pb_main'>
+    const Main = <div className={`pb_main ${pgbt.detachedMode ? 'detached' : ''}`}>
         <div className='pb_main-top'>
             <a href='#' className="pb_heading">
                 <LogoText color={theme.primaryColor} />

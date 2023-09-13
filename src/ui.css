@@ -48,8 +48,11 @@
     height: auto;
     width: auto;
     box-sizing: content-box;
+}
 
-
+.pb_main.detached {
+    height: 100%;
+    width: 100%;
 }
 
 .pb_close-button {
@@ -172,6 +175,8 @@ h1 {
     align-items: center;
     align-self: stretch;
     gap: 12px;
+    height: 100%;
+    justify-content: flex-end;
 }
 
 .pb_chat-input-container {
