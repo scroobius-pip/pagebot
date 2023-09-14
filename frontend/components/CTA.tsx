@@ -2,6 +2,7 @@ import { Logo } from '@/components/icons';
 import { HeartHandshakeIcon, SparkleIcon } from 'lucide-react';
 import { Snippet } from '@nextui-org/snippet';
 import { Button } from '@nextui-org/button';
+import Link from 'next/link';
 
 
 export const CTA = ({ mini }: { mini?: boolean; }) => {
@@ -14,7 +15,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
                 cancel anytime
             </p>
         </div>
-        <Button size='lg' className='rounded-3xl text-2xl font-medium text-[#9257FA] bg-slate-50 '
+        <Button as={'a'} href='https://noteforms.com/forms/pagebot-ursaz3' size='lg' className='rounded-3xl text-2xl font-medium text-[#9257FA] bg-slate-50 '
             endContent={<SparkleIcon size={24} strokeWidth={2} color='#9257FA' />}
         >
             Get Started
