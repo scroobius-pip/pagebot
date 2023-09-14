@@ -2,6 +2,7 @@ import { Section } from '@/components/section';
 import { LogoText, IconText } from '@/components/icons'
 import { textBlack, textGrey } from './primitives';
 import { CTA } from './CTA';
+import { Progress } from '@nextui-org/progress'
 
 const TitleIconText = IconText(({ text }) => {
     const textStyle = text === 'engaging' ? 'font-bold' : text === 'instant' ? 'font-medium italic' : 'font-medium'
@@ -11,12 +12,11 @@ const TitleIconText = IconText(({ text }) => {
 })
 
 
-
-export const Section1 = () => {
-    return <Section className='flex flex-col lg:flex-row gap-10 '>
-        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex-1 flex flex-col gap-16 items-start '>
+export const Intro = () => {
+    return <Section className='flex flex-col xl:flex-row gap-10 '>
+        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex-1 flex flex-col gap-16 items-start justify-end ' style={{ flex: 2 }}>
             <div className='flex gap-9 flex-col items-start'>
-                <LogoText className='h-16' />
+                <LogoText className='h-12' />
                 <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
                 <div className='flex flex-row gap-5 flex-wrap'>
                     <TitleIconText
@@ -60,11 +60,15 @@ export const Section1 = () => {
             <h2 className={`text-4xl ${textGrey} font-medium leading-tight grow max-w-lg`}>
                 PageBot is a <span className={textBlack}>customer service</span> agent that<span className={textBlack}> understands</span> your <span className={textBlack}>website's</span> content and <span className={textBlack}>knowledge base</span>.
             </h2>
-            <CTA />
+            <div className='self-end w-full'>
+                <CTA />
+            </div>
 
         </div>
-        <div id='pgbt-root' className='bg-[#E9E9E9] rounded-[2.5rem] p-10 flex-1 shadow-xl' >
-
+        <div style={{ flex: 1 }} id='pgbt-root' className='bg-[#FFFCF9] rounded-[2.5rem] p-10 ' >
+            <div className='flex items-center flex-col h-full justify-center'>
+                <Progress isIndeterminate size='lg' color='secondary' />
+            </div>
         </div>
     </Section>
 

@@ -4,99 +4,23 @@ import { Snippet } from '@nextui-org/snippet'
 import { Button } from '@nextui-org/button';
 import { textBlack, textGrey } from '@/components/primitives';
 import React from 'react';
-import { Section2 } from '@/components/Section2';
-import { Section1 } from '@/components/section1';
+import { You } from '@/components/you';
+import { Intro } from '@/components/intro';
 import { Section } from '@/components/section';
 import { SectionIconTitle } from '@/components/SectionIconTitle';
 import { Card } from '@/components/Card';
 import { CTA } from '@/components/CTA';
+import FeaturesSection from '@/components/features';
+import Pricing from '@/components/pricing';
+import Documentation from '@/components/documentation';
 
 export default function Home() {
   return <>
-    <Section1 />
-    <Section2 />
-    <Section className='flex flex-col gap-14 justify-between'>
-      <div className='p-4 bg-[#FFFCF9] rounded-full flex flex-col justify-between gap-2'>
-        <SectionIconTitle text='Features' color={textBlack} icon={<GoalIcon size={36} />} />
-
-      </div>
-      <div className='flex flex-col gap-6'>
-        <Card
-          bg='#FFBB0C'
-        >
-          <div className='flex gap-6 flex-col'>
-            <div className='flex flex-col gap-2'>
-              <h4 className='text-3xl font-bold'>supports most data sources</h4>
-              <p className='text-xl'>PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD</p>
-            </div>
-            <Snippet hideSymbol size='lg' variant='solid' className='bg-[#fad16a] text-[#] '
-              classNames={{
-                pre: 'whitespace-normal	font-bold '
-              }}
-            >
-              {`<meta name=’pgbt:source’ content=’url.pdf’ data-expires='3600' />`}
-              {`<meta name=’pgbt:source’ content=’url.html’ data-expires='3600' />`}
-              {`<meta name=’pgbt:source’ content=’url.csv data-expires='3600' />`}
-
-            </Snippet>
-          </div>
-        </Card>
-        <Card
-          bg='#FFFCF9'
-        >
-          <>
-            <div className='flex flex-col gap-2'>
-              <h4 className='text-3xl font-bold'>include data from your own api’s</h4>
-              <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
-            </div>
-            <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA]'
-              classNames={{
-                pre: 'whitespace-normal	font-bold '
-              }}
-            >
-              {`<meta name='pgbt:source' content='https://jsonplaceholder.typicode.com/users/1/todos' data-expires='0'  />`}
-
-            </Snippet>
-          </>
-        </Card>
-        <Card
-          bg='#9257FA'
-        >
-          <div className='flex flex-col gap-2'>
-            <h4 className='text-3xl font-bold text-slate-50'>usage based billing</h4>
-            <p className='text-xl text-slate-50'>only pay for what you use, stop billing by simply removing the script tag from your code.</p>
-          </div>
-        </Card>
-        <Card
-          bg='#FFFCF9'
-        >
-          <div className='flex flex-col gap-2'>
-            <h4 className='text-3xl font-bold '>multilingual</h4>
-            <p className='text-xl '>Pagebot supports languages in Arabic, English, Spanish, Turkish, French, Italian and Dutch.</p>
-          </div>
-        </Card>
-        <Card
-          bg='#FFFCF9'
-        >
-          <div className='flex flex-col gap-2'>
-            <h4 className='text-3xl font-bold '>tiny footprint</h4>
-            <p className='text-xl '>unlike other chatbots, pagebot keeps your webpage fast in <b>{`<50kb`}</b> of Javascript.</p>
-          </div>
-        </Card>
-        <Card
-          bg='#FFFCF9'
-        >
-          <div className='flex flex-col gap-2'>
-            <h4 className='text-3xl font-bold '>unlimited messages & page sources</h4>
-            <p className='text-xl '>use pagebot as little or as much as you want</p>
-          </div>
-        </Card>
-
-      </div>
-
-      <CTA mini />
-
-    </Section>
+    <Intro />
+    <You />
+    <FeaturesSection />
+    <Pricing />
+    <Documentation />
   </>
 
 }

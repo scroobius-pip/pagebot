@@ -1,6 +1,6 @@
 import { Section } from '@/components/section';
 import { GoalIcon, ShapesIcon, TimerIcon, TrendingDownIcon, Zap } from 'lucide-react';
-import { Section1 } from '@/components/Section1';
+import { Intro } from '@/components/intro';
 import { textBlack } from '@/components/primitives';
 import { CTA } from '@/components/CTA';
 import React from 'react';
@@ -10,7 +10,7 @@ import { SectionIconTitle, Card } from './page';
 export default function Home() {
     return (
         <>
-            <Section1 />
+            <Intro />
 
             <Section className='flex flex-col gap-14 justify-between'>
                 <div className='p-4 bg-[#FFFCF9] rounded-full flex flex-col justify-between gap-2'>
