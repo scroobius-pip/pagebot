@@ -6,6 +6,7 @@ import { Intro } from '@/components/intro';
 import FeaturesSection from '@/components/features';
 import Pricing from '@/components/pricing';
 import Documentation from '@/components/documentation';
+export const runtime = 'edge';
 
 export default function Home() {
   return <>
