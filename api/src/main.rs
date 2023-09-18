@@ -1,3 +1,5 @@
+use std::sync::atomic::AtomicU32;
+
 use embed_pool::EMBED_POOL;
 use eyre::Result;
 
@@ -21,12 +23,15 @@ mod types;
 use routes::build_router;
 
 use env_logger::Env;
+use stats::{read_stats, write_stats};
 use stripe::Client;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
+
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> Result<()> {
     setup_logs();
+    read_stats();
 
     let cors = CorsLayer::new()
         .allow_methods(Any)
@@ -39,7 +44,10 @@ async fn main() -> Result<()> {
         let app = build_router().layer(service);
         axum::Server::bind(&format!("0.0.0.0:{}", dotenv!("PORT")).parse().unwrap())
             .serve(app.into_make_service())
-            // .with_graceful_shutdown(shutdown_signal())
+            .with_graceful_shutdown(async {
+                shutdown_signal().await;
+                write_stats();
+            })
             .await
             .unwrap();
     });
@@ -49,6 +57,23 @@ async fn main() -> Result<()> {
     let _ = server_handler.await;
 
     Ok(())
+}
+
+async fn shutdown_signal() {
+    let mut sigint = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::interrupt())
+        .expect("Failed to register SIGINT handler");
+
+    let mut sigterm = tokio::signal::unix::signal(tokio::signal::unix::SignalKind::terminate())
+        .expect("Failed to register SIGTERM handler");
+
+    tokio::select! {
+        _ = sigint.recv() => {
+            log::info!("Received SIGINT");
+        }
+        _ = sigterm.recv() => {
+            log::info!("Received SIGTERM");
+        }
+    }
 }
 
 fn setup_logs() {

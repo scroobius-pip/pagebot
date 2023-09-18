@@ -8,7 +8,7 @@ pub static USER_COUNT: AtomicU32 = AtomicU32::new(0);
 pub static MESSAGE_COUNT: AtomicU64 = AtomicU64::new(0);
 pub static PAGE_COUNT: AtomicU64 = AtomicU64::new(0);
 
-fn read_stats() {
+pub fn read_stats() {
     let mut file = File::open("stats.txt").unwrap_or_else(|_| {
         let mut file = File::create("stats.txt").expect("Failed to create stats.txt");
         file.write_all("0 0 0".as_bytes())
@@ -30,4 +30,18 @@ fn read_stats() {
     USER_COUNT.store(user_count, std::sync::atomic::Ordering::Relaxed);
     MESSAGE_COUNT.store(message_count, std::sync::atomic::Ordering::Relaxed);
     PAGE_COUNT.store(page_count, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn write_stats() {
+    let mut file = File::create("stats.txt").expect("Failed to create stats.txt");
+    file.write_all(
+        format!(
+            "{} {} {}",
+            USER_COUNT.load(std::sync::atomic::Ordering::Relaxed),
+            MESSAGE_COUNT.load(std::sync::atomic::Ordering::Relaxed),
+            PAGE_COUNT.load(std::sync::atomic::Ordering::Relaxed)
+        )
+        .as_bytes(),
+    )
+    .expect("Failed to write to stats.txt");
 }
