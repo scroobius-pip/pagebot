@@ -6,6 +6,7 @@ use std::{
 use crate::{
     notification::{Notification, NotificationType},
     types::{
+        history_item::HistoryItem,
         message::{EvaluatedMessage, Message},
         usage::UsageItem,
         user::User,
@@ -32,34 +33,6 @@ use serde::Deserialize;
 pub struct Request {
     message: Message,
     history: Vec<HistoryItem>,
-}
-
-#[derive(Debug, Clone, Deserialize)]
-pub struct HistoryItem {
-    pub bot: bool,
-    pub content: String,
-}
-
-impl Display for HistoryItem {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        // write!(f, "{}", self.content)
-        //PageBot: **Hey!**, _how can I help you today?_
-        //User: What is the capital of France?
-        write!(
-            f,
-            "{}: {}",
-            if self.bot { "PageBot" } else { "User" },
-            self.content
-        )
-    }
-}
-
-pub fn get_history(history: Vec<HistoryItem>) -> String {
-    history
-        .iter()
-        .map(|item| item.to_string())
-        .collect::<Vec<_>>()
-        .join("<br>")
 }
 
 pub async fn main(
@@ -125,13 +98,7 @@ pub async fn main(
 
                 if content.contains("NOT_FOUND") {
                     let notification_result = notification
-                        .send(NotificationType::User(
-                            "Knowledge gap detected".to_string(),
-                            format!(
-
-                            "No answer found for the query: {} \n update your sources to account for this knowledge gap.",
-                            query
-                        )))
+                        .send(NotificationType::KnowledgeGap(query))
                         .await;
                     if let Err(e) = notification_result {
                         log::error!("Failed to send notification: {}", e);

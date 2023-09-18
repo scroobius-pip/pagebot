@@ -1,6 +1,6 @@
 use crate::{
-    email_templates::FORWARDING,
-    types::{message::Message, user::User},
+    email_templates::*,
+    types::{history_item::HistoryItem, message::Message, user::User},
 };
 use eyre::Result;
 use serde_json::json;
@@ -17,7 +17,16 @@ struct Context {
 
 pub enum NotificationType {
     Admin(String),
-    User(String, String), //heading, message
+    EmailForwarding(EmailForwarding),
+    SourceError(String),
+    KnowledgeGap(String),
+}
+
+pub struct EmailForwarding {
+    pub email: String,
+    pub name: String,
+    pub message: String,
+    pub history: Vec<HistoryItem>,
 }
 
 impl Notification {
@@ -43,14 +52,36 @@ impl Notification {
                 });
                 client.json(&data).send().await?;
             }
-            NotificationType::User(subject, message) => {
-                let html = format!("<p><strong>{}</strong></p>", message);
 
+            NotificationType::EmailForwarding(email) => {
+                let html = render_forwarding(email.email, email.message, email.history);
                 let data = json!({
                     "from": "notification@notifications.thepagebot.com",
                     "to": self.context.user.email,
-                    "subject":  format!("{} - Page Bot", subject),
-                    "html": FORWARDING
+                    "subject":  format!("Email Request from: {} - Page Bot", email.name),
+                    "html": html
+                });
+                client.json(&data).send().await?;
+            }
+
+            NotificationType::SourceError(url) => {
+                let html = render_source_error(&url);
+                let data = json!({
+                    "from": "notification@notifications.thepagebot.com",
+                    "to": self.context.user.email,
+                    "subject": "Source Error - Page Bot",
+                    "html": html
+                });
+                client.json(&data).send().await?;
+            }
+
+            NotificationType::KnowledgeGap(query) => {
+                let html = render_knowledge_gap(&query);
+                let data = json!({
+                    "from": "notification@notifications.thepagebot.com",
+                    "to": self.context.user.email,
+                    "subject": "Knowledge Gap Detected - Page Bot",
+                    "html": html
                 });
                 client.json(&data).send().await?;
             }

@@ -1,3 +1,4 @@
+pub mod history_item;
 pub mod message;
 pub mod query;
 pub mod source;

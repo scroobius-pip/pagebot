@@ -1,14 +1,12 @@
 use crate::{
-    notification::{self, NotificationType},
-    types::user::User,
+    notification::{self, EmailForwarding, NotificationType},
+    types::{history_item::HistoryItem, user::User},
 };
 use axum::Json;
 use eyre::Result;
 use reqwest::StatusCode;
 use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_number_from_string;
-
-use super::message::HistoryItem;
 
 #[derive(Deserialize, Clone)]
 pub struct Request {
@@ -42,16 +40,13 @@ pub async fn main(
 
     let notification = notification::Notification::new(user);
     notification
-        .send(NotificationType::User(
-            format!("Email request from: {}", name),
-            format!(
-                "Email: {}<br>Message: {}<br>Page: {}<br>History: {}",
-                email,
-                message,
-                page_url,
-                super::message::get_history(history)
-            ),
-        ))
+        .send(NotificationType::EmailForwarding(EmailForwarding {
+            email,
+            name,
+            message,
+            history,
+            // page_url,
+        }))
         .await
         .map_err(|e| {
             log::error!("Failed to send notification: {}", e);

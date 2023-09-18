@@ -9,10 +9,10 @@ use super::{
     source::{Chunks, Source, SourceInput},
     usage::{Usage, UsageItem},
 };
-use itertools::Itertools;
 use eyre::Result;
 use futures::future::join_all;
 use hnsw_rs::prelude::{DistCosine, Hnsw};
+use itertools::Itertools;
 use serde::{Deserialize, Serialize};
 use serde_aux::field_attributes::deserialize_number_from_string;
 use url_serde::SerdeUrl;
@@ -65,18 +65,15 @@ impl Message {
                                 SourceError::ContentEmpty(url) => {
                                     let _notification = notification.clone();
                                     tokio::spawn(async move {
-                                      _ = _notification.send(NotificationType::User(
-                                        "Failed to get source".to_string(),
-                                        format!(
-                                            "Content empty at: {}, please check this source, if this url is a client side rendered webpage, you'll need to use a server rendered version of the page.",
-                                            url
-                                        ))).await;
+                                        _ = _notification
+                                            .send(NotificationType::SourceError(url))
+                                            .await;
                                     });
                                 }
                                 SourceError::Default(e) => {
                                     log::error!("Failed to get source: {}", e);
                                 }
-                            } 
+                            }
                             ((contents, embeddings), retrieval_count, token_count)
                         }
                     }
@@ -90,22 +87,25 @@ impl Message {
 
         log::info!("embeddings count: {}", embeddings.len());
 
-        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);     
-        let similar_content_index_with_neighbours_index = similar_content_index.iter()
+        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);
+        let similar_content_index_with_neighbours_index = similar_content_index
+            .iter()
             // get all neighbours of indexes (left and right, including self)
-            .flat_map(|&index| &similar_content_index[(index - NEIGHBOUR_COUNT)..(index + NEIGHBOUR_COUNT + 1)] )
+            .flat_map(|&index| {
+                &similar_content_index[(index - NEIGHBOUR_COUNT)..(index + NEIGHBOUR_COUNT + 1)]
+            })
             .unique();
-        
-        let merged_similar_content = similar_content_index_with_neighbours_index.map(|i| 
-            &contents[*i]
-        ).fold(
-            String::with_capacity(contents.len() * contents[0].len()),
-            |mut acc, content| {
-                acc.push_str(content);
-                acc.push('\n');
-                acc
-            },
-        );
+
+        let merged_similar_content = similar_content_index_with_neighbours_index
+            .map(|i| &contents[*i])
+            .fold(
+                String::with_capacity(contents.len() * contents[0].len()),
+                |mut acc, content| {
+                    acc.push_str(content);
+                    acc.push('\n');
+                    acc
+                },
+            );
 
         Ok(EvaluatedMessage {
             user_id: self.user_id,
