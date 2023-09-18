@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{ops::Sub, sync::Arc};
 
 use crate::{
     notification::{Notification, NotificationType},
@@ -92,7 +92,9 @@ impl Message {
             .iter()
             // get all neighbours of indexes (left and right, including self)
             .flat_map(|&index| {
-                &similar_content_index[(index - NEIGHBOUR_COUNT)..(index + NEIGHBOUR_COUNT + 1)]
+                let start_index = index.saturating_sub(NEIGHBOUR_COUNT);
+                let end_index = (index + NEIGHBOUR_COUNT + 1).min(contents.len());
+                &similar_content_index[start_index..end_index]
             })
             .unique();
 
