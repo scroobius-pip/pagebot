@@ -267,13 +267,14 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
 }
 
 impl Chunks {
-    const CHUNK_SIZE: usize = 5;
+    const CHUNK_SIZE: usize = 20;
     pub async fn new(content: String, url: &str) -> Result<Self> {
         if content.is_empty() || url.is_empty() {
             return Err(eyre::eyre!("Content or URL is empty"));
         }
 
         let unchunked_sentences = content.unicode_sentences().collect::<Vec<_>>();
+        //@todo: chunk by sentence length
         let chunked_sentences = unchunked_sentences.chunks(Self::CHUNK_SIZE);
 
         let chunked_sentences = chunked_sentences

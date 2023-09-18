@@ -9,6 +9,7 @@ use super::{
     source::{Chunks, Source, SourceInput},
     usage::{Usage, UsageItem},
 };
+use itertools::Itertools;
 use eyre::Result;
 use futures::future::join_all;
 use hnsw_rs::prelude::{DistCosine, Hnsw};
@@ -34,7 +35,7 @@ pub struct EvaluatedMessage {
     pub query: String,
     pub page_url: String,
 }
-
+const NEIGHBOUR_COUNT: usize = 2;
 impl Message {
     pub async fn evaluate(self, notification: Arc<Notification>) -> Result<EvaluatedMessage> {
         let pending_sources = self.sources.into_iter().map(Source::new);
@@ -75,7 +76,7 @@ impl Message {
                                 SourceError::Default(e) => {
                                     log::error!("Failed to get source: {}", e);
                                 }
-                            }
+                            } 
                             ((contents, embeddings), retrieval_count, token_count)
                         }
                     }
@@ -89,9 +90,15 @@ impl Message {
 
         log::info!("embeddings count: {}", embeddings.len());
 
-        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);
-
-        let merged_similar_content = similar_content_index.iter().map(|i| &contents[*i]).fold(
+        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);     
+        let similar_content_index_with_neighbours_index = similar_content_index.iter()
+            // get all neighbours of indexes (left and right, including self)
+            .flat_map(|&index| &similar_content_index[(index - NEIGHBOUR_COUNT)..(index + NEIGHBOUR_COUNT + 1)] )
+            .unique();
+        
+        let merged_similar_content = similar_content_index_with_neighbours_index.map(|i| 
+            &contents[*i]
+        ).fold(
             String::with_capacity(contents.len() * contents[0].len()),
             |mut acc, content| {
                 acc.push_str(content);
@@ -203,14 +210,14 @@ pub fn count_tokens(text: &str) -> usize {
 
 pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usize> {
     let instant = std::time::Instant::now();
-    let hnsw = Hnsw::new(5, embeddings.len(), 16, 50, DistCosine);
+    let hnsw = Hnsw::new(90, embeddings.len(), 16, 50, DistCosine);
     let embedding_w_index: Vec<(&Vec<f32>, usize)> = embeddings
         .iter()
         .enumerate()
         .map(|(i, embedding)| (embedding, i))
         .collect();
     hnsw.parallel_insert(&embedding_w_index);
-    let neighbours = hnsw.search(query, 50, 80);
+    let neighbours = hnsw.search(query, 50, 60);
     log::info!("hnsw search took {:?}", instant.elapsed());
     neighbours
         .into_iter()

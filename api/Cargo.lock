@@ -1707,6 +1707,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "itertools"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1c173a5686ce8bfa551b3563d0c2170bf24ca44da99c7ca4bfdab5418c3fe57"
+dependencies = [
+ "either",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2117,6 +2126,7 @@ dependencies = [
  "hashbrown 0.14.0",
  "heed",
  "hnsw_rs",
+ "itertools 0.11.0",
  "jsonwebtoken",
  "lazy_static",
  "log",
@@ -2678,7 +2688,7 @@ checksum = "1f367f6b13bc686e822237b97caeb4b2e366dd1936ec204f11d266ede402c31b"
 dependencies = [
  "csv",
  "hashbrown 0.13.2",
- "itertools",
+ "itertools 0.10.5",
  "lazy_static",
  "protobuf",
  "rayon",
