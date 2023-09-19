@@ -5,6 +5,7 @@ use crate::{
     embed_pool::{Embedding, EMBED_POOL},
 };
 use axum::http::HeaderValue;
+use docx::document::{ParagraphContent, RunContent};
 use eyre::{Report, Result};
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
@@ -48,6 +49,7 @@ enum RemoteSourceType {
     Html,
     Json,
     Text,
+    DOCX,
 }
 
 #[derive(Debug)]
@@ -113,6 +115,58 @@ impl Source {
                 } else {
                     content
                 }
+            }
+            RemoteSourceType::DOCX => {
+                let content_bytes = resp.bytes().await?;
+                let buffer = std::io::Cursor::new(content_bytes);
+
+                let docx_file = docx::DocxFile::from_reader(buffer)
+                    .map_err(|_| eyre::eyre!("Failed to read docx"))?;
+
+                let parsed = docx_file
+                    .parse()
+                    .map_err(|_| eyre::eyre!("Failed to parse docx"))?;
+
+                let document = parsed.document;
+
+                let content = document
+                    .body
+                    .content
+                    .into_iter()
+                    .flat_map(|content| match content {
+                        docx::document::BodyContent::Paragraph(paragraph) => {
+                            let contents =
+                                paragraph
+                                    .content
+                                    .into_iter()
+                                    .flat_map(|content| match content {
+                                        ParagraphContent::Run(run) => run
+                                            .content
+                                            .into_iter()
+                                            .map(|content| match content {
+                                                RunContent::Text(text) => text.text.to_string(),
+                                                RunContent::Break(_) => "\n".to_string(),
+                                            })
+                                            .collect::<Vec<String>>(),
+
+                                        ParagraphContent::Link(link) => link
+                                            .content
+                                            .content
+                                            .into_iter()
+                                            .map(|content| match content {
+                                                RunContent::Text(text) => text.text.to_string(),
+                                                RunContent::Break(_) => "\n".to_string(),
+                                            })
+                                            .collect::<Vec<String>>(),
+                                        _ => vec![],
+                                    });
+                            contents.collect::<Vec<_>>()
+                        }
+                        _ => vec![],
+                    });
+
+                //merge iterator of strings into one string seperated by newlines
+                content.collect::<Vec<_>>().join("")
             }
             _ => resp.text().await?,
         };
@@ -257,6 +311,10 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
                     Self::Html
                 } else if header.contains("json") {
                     Self::Json
+                } else if header.contains(
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                ) {
+                    Self::DOCX
                 } else {
                     Self::Text
                 }

@@ -1,4 +1,4 @@
-use std::{ops::Sub, sync::Arc};
+use std::sync::Arc;
 
 use crate::{
     notification::{Notification, NotificationType},
