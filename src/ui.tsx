@@ -57,7 +57,7 @@ const PgbtUI = () => {
             </div>}
         </div>
         <h1 style={{
-            color: "#9257FA",
+            color: theme.primaryColor
         }}>
             What would you like to know ?
         </h1>
@@ -66,7 +66,7 @@ const PgbtUI = () => {
 
     return (
         pgbt.detachedMode ? Main :
-            <div ref={ref} className="pb_parent-bottom">
+            <div ref={ref} className={`pb_parent-bottom ${hidden ? '' : 'opened'} `}>
                 <div className={`pb_container ${hidden ? 'pb_hidden' : ''}`}>
                     <div className='pb_logo'
                         onClick={() => {

@@ -19,9 +19,26 @@
     position: fixed;
     bottom: 20;
     right: 20;
+    /*triggered when mobile opened */
+    /* bottom: 0;
+    right: 0;
+    top: 0;
+    left: 0; */
     z-index: 9999999;
+    /* max-width: var(--max-width); */
 }
 
+
+@media only screen and (max-width: 768px) {
+    .pb_parent-bottom {
+        max-width: 100%;
+    }
+
+    .pb_parent-bottom.opened {
+        inset: 0;
+        max-height: calc(100vh - var(--container-padding) * 2);
+    }
+}
 
 
 .pb_container {
@@ -29,9 +46,10 @@
     padding: var(--container-padding);
 
     backdrop-filter: blur(20px);
-    max-width: var(--max-width);
+
     border-radius: var(--container-radius);
     box-sizing: content-box;
+    height: 100%;
 }
 
 .pb_main * {
@@ -48,6 +66,7 @@
     gap: var(--container-gap);
     opacity: 1;
     height: auto;
+    min-height: 100%;
     width: auto;
     box-sizing: content-box;
 }
@@ -178,6 +197,7 @@ h1 {
     align-self: stretch;
     gap: 12px;
     height: 100%;
+    flex: 1;
     justify-content: flex-end;
 }
 
@@ -237,7 +257,7 @@ h1 {
     align-items: end;
     overflow-y: auto;
 
-    max-height: var(--max-height);
+    /* max-height: var(--max-height); */
 }
 
 .pb_message-box::-webkit-scrollbar {
