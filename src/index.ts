@@ -142,6 +142,16 @@ export class PageBot {
             }
         }
 
+        const isAbsoluteUrl = (str: string) => {
+            const regex = new RegExp('^(?:[a-z+]+:)?//', 'i');
+            return regex.test(str);
+        }
+
+        const getAbsoluteUrl = (relativeUrl: string) => {
+            const absoluteUrl = new URL(relativeUrl, document.baseURI);
+            return absoluteUrl.href;
+        }
+
         return Array.from(document.querySelectorAll('meta[name="pgbt:source"]:not([content=""])'))
             .reduce((acc: Array<Source>, el: HTMLMetaElement) => {
                 const expiresAttribute = el.getAttribute('data-expires') as string;
@@ -151,7 +161,13 @@ export class PageBot {
                 const existingSource = acc.find(s => s.content === content);
 
                 if (!existingSource && content) {
-                    acc.push(isUrl(content) ? { url: content, expires } : { content, expires });
+                    acc.push(isUrl(content) ? {
+                        url: isAbsoluteUrl(content) ? content : getAbsoluteUrl(content),
+                        expires
+                    } : {
+                        content,
+                        expires
+                    });
                 }
 
                 return acc;
