@@ -14,7 +14,7 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
     return <Section className='flex flex-col xl:flex-row gap-10 '>
-        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex-1 flex flex-col gap-16 items-start justify-end ' style={{ flex: 2 }}>
+        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-10 flex-1 flex flex-col gap-16 items-start justify-end ' style={{ flex: 3 }}>
             <div className='flex gap-9 flex-col items-start'>
                 <LogoText className='h-12' />
                 <h1 className={`text-6xl ${textGrey} font-bold`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>
@@ -65,7 +65,7 @@ export const Intro = () => {
             </div>
 
         </div>
-        <div style={{ flex: 1 }} id='pgbt-root' className='bg-[#FFFCF9] rounded-[2.5rem] p-10 ' >
+        <div style={{ flex: 1 }} id='dpgbt-root' className='bg-[#FFFCF9] rounded-[2.5rem] p-10 shadow-2xl ' >
             <div className='flex items-center flex-col h-full justify-center'>
                 <Progress isIndeterminate size='lg' color='secondary' />
             </div>

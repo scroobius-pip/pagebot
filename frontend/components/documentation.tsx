@@ -15,7 +15,7 @@ interface Doc {
 }
 
 
-const Docs = () => {
+export const Docs = () => {
     return <Section className='flex flex-col gap-14 justify-between'>
         <div className='p-4 bg-[#FFFCF9] rounded-full flex flex-col justify-between gap-2'>
             <SectionIconTitle text='Documentation' color={textBlack} icon={<FileTextIcon size={36} />} />
@@ -34,7 +34,7 @@ const Docs = () => {
             />
             <DocElement
                 code={<>
-                    {`<meta name='pgbt:source' content='/' /> {*/ relative url */}`}
+                    {`<meta name='pgbt:source' content='/' /> {*/ relative url to the current page */}`}
                     {`<meta name='pgbt:source' content='https://example.com' /> {*/ absolute url */}`}
                     {`<meta name='pgbt:source' content='https://example.com/api' /> {*/ api endpoint */}`}
                     {`<meta name='pgbt:source' content='https://example.com/api' data-expires='3600' /> {*/ cached for 1 hour */}`}
@@ -58,7 +58,7 @@ const Docs = () => {
 }
 
 
-const DocElement = ({ code, title, description }: Doc) => {
+export const DocElement = ({ code, title, description }: Doc) => {
     return <Card
         className='flex-auto'
         bg='#FFFCF9'

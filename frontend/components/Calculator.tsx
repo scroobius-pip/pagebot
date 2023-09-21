@@ -28,14 +28,15 @@ export const Calculator = () => {
 
     return <div className='flex flex-col gap-3'>
         <p className='text-xl font-medium'>A source containing
-            <b ref={sourceRef} className='text-[#FFBB0C] p-1 mx-1 rounded-full'>{sourceCount}</b>
+            <b ref={sourceRef} className='text-[#9257FA] p-1 mx-1 rounded-full'>{sourceCount}</b>
             words, updated <b>weekly </b>
             for
-            <b ref={messageRef} className='text-[#FF6565] ring-[#FF6565] transition-all duration-100 p-1 mx-1 rounded-full'>{messageCount}</b>
+            <b ref={messageRef} className='text-[#9257FA] ring-[#FF6565] transition-all duration-100 p-1 mx-1 rounded-full'>{messageCount}</b>
             messages monthly would cost:
         </p>
         <p className='text-2xl font-medium'>
-            <b>4 weeks</b> * $0.0005/source + ((0.00004 * <b className='text-[#FFBB0C]'>{sourceCount}</b>) + 0.05) * <b className='text-[#FF6565]'>{messageCount}</b>) = ~${cost}/month
+            {/* <b>4 weeks</b> * $0.0005/source + ((0.00004 * <b className='text-[#9257FA]'>{sourceCount}</b>) + 0.05) * <b className='text-[#FF6565]'>{messageCount}</b>) = */}
+            ~${cost}/month
         </p>
     </div>;
 

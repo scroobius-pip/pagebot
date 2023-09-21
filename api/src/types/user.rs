@@ -13,6 +13,7 @@ pub struct User {
     pub email: String,
     pub subscribed: bool,
     pub stripe_subscription_id: Option<String>,
+    pub allowed_domains: Option<Vec<String>>,
 }
 
 pub struct UserInput {
@@ -65,6 +66,7 @@ impl From<UserInput> for User {
             email: input.email.to_string(),
             subscribed: false,
             stripe_subscription_id: None,
+            allowed_domains: None,
         }
     }
 }

@@ -15,7 +15,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
                 cancel anytime
             </p>
         </div>
-        <Button as={'a'} href='https://noteforms.com/forms/pagebot-ursaz3' size='lg' className='rounded-3xl text-2xl font-medium text-[#9257FA] bg-slate-50 '
+        <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-2xl font-medium text-[#9257FA] bg-slate-50 '
             endContent={<SparkleIcon size={24} strokeWidth={2} color='#9257FA' />}
         >
             Get Started
@@ -42,7 +42,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
                 <Logo className='h-10 text-[#9257FA]' />
             </div>
             <p className='text-slate-50 text-2xl font-medium'>
-                Add GPT-4 <b>superpowers</b> to your website with a <b>single</b> line of code
+                Add GPT <b>superpowers</b> to your website with a <b>single</b> line of code
             </p>
         </div>
         {/* <div> */}
