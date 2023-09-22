@@ -51,7 +51,7 @@ pub async fn main(
         })?;
 
     if let Some(allowed_domains) = &user.allowed_domains {
-        if !allowed_domains.iter().any(|domain| host.ends_with(domain)) {
+        if !allowed_domains.contains(&host) {
             return Err(StatusCode::FORBIDDEN);
         }
     }
