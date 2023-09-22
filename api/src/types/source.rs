@@ -5,7 +5,7 @@ use crate::{
     embed_pool::{Embedding, EMBED_POOL},
 };
 use axum::http::HeaderValue;
-use docx::document::{ParagraphContent, RunContent};
+use docx_rust::document::{ParagraphContent, RunContent};
 use eyre::{Report, Result};
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
@@ -120,7 +120,7 @@ impl Source {
                 let content_bytes = resp.bytes().await?;
                 let buffer = std::io::Cursor::new(content_bytes);
 
-                let docx_file = docx::DocxFile::from_reader(buffer)
+                let docx_file = docx_rust::DocxFile::from_reader(buffer)
                     .map_err(|_| eyre::eyre!("Failed to read docx"))?;
 
                 let parsed = docx_file
@@ -134,7 +134,7 @@ impl Source {
                     .content
                     .into_iter()
                     .flat_map(|content| match content {
-                        docx::document::BodyContent::Paragraph(paragraph) => {
+                        docx_rust::document::BodyContent::Paragraph(paragraph) => {
                             let contents =
                                 paragraph
                                     .content
@@ -146,6 +146,7 @@ impl Source {
                                             .map(|content| match content {
                                                 RunContent::Text(text) => text.text.to_string(),
                                                 RunContent::Break(_) => "\n".to_string(),
+                                                _ => "".to_string(),
                                             })
                                             .collect::<Vec<String>>(),
 
@@ -156,6 +157,7 @@ impl Source {
                                             .map(|content| match content {
                                                 RunContent::Text(text) => text.text.to_string(),
                                                 RunContent::Break(_) => "\n".to_string(),
+                                                _ => "".to_string(),
                                             })
                                             .collect::<Vec<String>>(),
                                         _ => vec![],
