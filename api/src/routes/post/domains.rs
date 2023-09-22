@@ -13,7 +13,12 @@ pub async fn main(
     UserContext { mut user }: UserContext,
     Json(Request { domains }): Json<Request>,
 ) -> JsonResponse<Request> {
-    user.allowed_domains = Some(domains);
+    user.allowed_domains = if domains.is_empty() {
+        None
+    } else {
+        Some(domains)
+    };
+    
     _ = user.save().map_err(|e| {
         log::error!("Failed to save user: {}", e);
         StatusCode::INTERNAL_SERVER_ERROR
