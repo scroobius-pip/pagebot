@@ -26,6 +26,7 @@ pub struct UserOutput {
     pub id: String,
     pub subscribed: bool,
     pub usage: Vec<Usage>,
+    pub allowed_domains: Option<Vec<String>>,
 }
 
 impl UserInput {
@@ -83,6 +84,7 @@ impl From<User> for UserOutput {
             email: user.email,
             subscribed: user.subscribed,
             usage,
+            allowed_domains: user.allowed_domains,
         }
     }
 }
