@@ -21,6 +21,7 @@ use async_openai::{
     },
 };
 use axum::{
+    extract::Host,
     response::{sse::Event, Sse},
     Json,
 };
@@ -36,6 +37,7 @@ pub struct Request {
 }
 
 pub async fn main(
+    Host(host): Host,
     Json(Request { message, history }): Json<Request>,
 ) -> Result<Sse<impl Stream<Item = Result<Event>>>, StatusCode> {
     let user = User::by_id(message.user_id)
@@ -47,6 +49,12 @@ pub async fn main(
             log::error!("User not found: {} ", message.user_id);
             StatusCode::NOT_FOUND
         })?;
+
+    if let Some(allowed_domains) = &user.allowed_domains {
+        if !allowed_domains.iter().any(|domain| host.ends_with(domain)) {
+            return Err(StatusCode::FORBIDDEN);
+        }
+    }
 
     #[cfg(not(debug_assertions))]
     if !user.subscribed {
