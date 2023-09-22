@@ -93,7 +93,7 @@ impl Message {
             // get all neighbours of indexes (left and right, including self)
             .flat_map(|&index| {
                 let start_index = index.saturating_sub(NEIGHBOUR_COUNT);
-                let end_index = (index + NEIGHBOUR_COUNT + 1).min(contents.len());
+                let end_index = (index + NEIGHBOUR_COUNT + 1).min(contents.len() - 1);
                 &similar_content_index[start_index..end_index]
             })
             .unique();
