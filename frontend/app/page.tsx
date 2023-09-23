@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { You } from '@/components/you';
 import { Intro } from '@/components/intro';
 
@@ -9,7 +9,9 @@ import Documentation from '@/components/documentation';
 export const runtime = 'edge';
 
 export default function Home() {
+
   return <>
+
     <Intro />
     <You />
     <FeaturesSection />

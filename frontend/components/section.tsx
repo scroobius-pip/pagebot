@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 
 
-export const Section: React.FC<{ children: any, className?: string }> = ({ children, className }) => {
+export const Section: React.FC<{ children: any, className?: string, disabled?: boolean }> = ({ children, className, disabled }) => {
     const ref = useRef(null)
     const buildThresholdArray = () => Array.from(Array(100).keys(), i => i / 100)
     const prevRatio = useRef(0.0)
@@ -13,6 +13,7 @@ export const Section: React.FC<{ children: any, className?: string }> = ({ child
     const targetOpacity = 1;
 
     useEffect(() => {
+        if (disabled) return
         //@ts-ignore
         ref.current && (ref.current.style.transform = `scale(${startScale})`)
         const observer = new IntersectionObserver((entries) => {

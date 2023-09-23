@@ -60,15 +60,15 @@ export const Docs = () => {
 
 export const DocElement = ({ code, title, description }: Doc) => {
     return <Card
-        className='flex-auto'
+        className='flex-auto gap-12'
         bg='#FFFCF9'
     >
         <>
-            <div className='flex flex-col gap-2'>
-                <h4 className='text-3xl font-bold'>{title}</h4>
+            <div className='flex flex-col'>
+                <h4 className='text-3xl font-bold capitalize'>{title}</h4>
                 {/* <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p> */}
             </div>
-            <div className='flex flex-col gap-2'>
+            <div className='flex flex-col gap-6'>
                 <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA]'
                     classNames={{
                         pre: 'whitespace-normal	font-bold text-[#9257FA] '
@@ -76,8 +76,8 @@ export const DocElement = ({ code, title, description }: Doc) => {
                 >
                     {code}
                 </Snippet>
-                <div className='flex flex-row gap-1'>
-                    <InfoIcon size={24} />
+                <div className=''>
+                    <InfoIcon className='inline mr-1 ' />
                     <span className='font-medium'>{description}</span>
                 </div>
             </div>

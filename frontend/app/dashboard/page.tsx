@@ -6,19 +6,35 @@ import { DeleteIcon, Globe2Icon, LayoutDashboardIcon } from 'lucide-react';
 import { Tooltip } from '@nextui-org/tooltip';
 import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Docs, { DocElement } from '@/components/documentation';
-
+import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
+import createKindeClient, { KindeClient } from '@kinde-oss/kinde-auth-pkce-js';
 
 export default function Dashboard() {
     const [domains, setDomains] = useState<string[]>(['https://example.com', 'https://example2.com'])
     const deleteDomain = (domain: string) => {
         setDomains(domains.filter((d) => d !== domain))
     }
+
+    const [kinde, setKinde] = useState<KindeClient>();
+
+    useEffect(() => {
+        createKindeClient({
+            client_id: "c62ca0a0430d46fb9453f911d256a150",
+            domain: "https://pagebot.kinde.com",
+            redirect_uri: window.location.origin + "/dashboard",
+        }).then((kinde) => {
+            setKinde(kinde)
+        })
+    }, [])
+
     return <>
-        <Section className='flex flex-col gap-14 justify-'>
+        <Section disabled className='flex flex-col gap-14 justify-'>
             <div className='p-4 bg-[#FFFCF9]  rounded-full flex flex-col justify-between gap-2'>
-                <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={36} />} />
+                <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
+                {/* <p>{user?.email}</p> */}
+                <button onClick={() => kinde?.login({})}>Login</button>
             </div>
             <div className='flex flex-col gap-12'>
                 <div className='flex flex-col gap-2 bg-[#FFFCF9] p-6 -mx-10'>

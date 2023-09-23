@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@kinde-oss/kinde-auth-nextjs": "^1.8.19",
+    "@kinde-oss/kinde-auth-pkce-js": "^3.0.20",
+    "@kinde-oss/kinde-auth-react": "^3.0.19",
     "@nextui-org/button": "2.0.18",
     "@nextui-org/code": "2.0.16",
     "@nextui-org/divider": "^2.0.20",
