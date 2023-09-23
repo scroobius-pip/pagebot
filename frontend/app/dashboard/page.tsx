@@ -33,7 +33,7 @@ export default function Dashboard() {
         <Section disabled className='flex flex-col gap-14 justify-'>
             <div className='p-4 bg-[#FFFCF9]  rounded-full flex flex-col justify-between gap-2'>
                 <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
-                {/* <p>{user?.email}</p> */}
+                <p>{kinde?.getUser().email}</p>
                 <button onClick={() => kinde?.login({})}>Login</button>
             </div>
             <div className='flex flex-col gap-12'>
