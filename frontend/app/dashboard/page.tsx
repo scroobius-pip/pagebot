@@ -30,16 +30,23 @@ export default function Dashboard() {
             setKinde(kinde)
             const user = kinde.getUser()
             setUser(user)
-
         })
     }, [])
+
+    useEffect(() => {
+        kinde?.login({})
+    }, [kinde])
+
+    // useEffect(() => {
+
+
 
     return <>
         <Section disabled className='flex flex-col gap-14 justify-'>
             <div className='p-4 bg-[#FFFCF9]  rounded-full flex flex-col justify-between gap-2'>
                 <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
                 Email:<p>{user?.email}</p>
-                <button onClick={() => kinde?.login({})}>Login</button>
+                <button onClick={() => kinde?.logout()}>Logout</button>
             </div>
             <div className='flex flex-col gap-12'>
                 <div className='flex flex-col gap-2 bg-[#FFFCF9] p-6 -mx-10'>
