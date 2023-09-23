@@ -9,7 +9,7 @@ import { Input } from '@nextui-org/input'
 import React, { useEffect, useState } from 'react';
 import Docs, { DocElement } from '@/components/documentation';
 import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
-import createKindeClient, { KindeClient } from '@kinde-oss/kinde-auth-pkce-js';
+import createKindeClient, { KindeClient, KindeUser } from '@kinde-oss/kinde-auth-pkce-js';
 
 export default function Dashboard() {
     const [domains, setDomains] = useState<string[]>(['https://example.com', 'https://example2.com'])
@@ -18,6 +18,8 @@ export default function Dashboard() {
     }
 
     const [kinde, setKinde] = useState<KindeClient>();
+    const [user, setUser] = useState<KindeUser>();
+
 
     useEffect(() => {
         createKindeClient({
@@ -26,6 +28,9 @@ export default function Dashboard() {
             redirect_uri: window.location.origin + "/dashboard",
         }).then((kinde) => {
             setKinde(kinde)
+            const user = kinde.getUser()
+            setUser(user)
+
         })
     }, [])
 
@@ -33,7 +38,7 @@ export default function Dashboard() {
         <Section disabled className='flex flex-col gap-14 justify-'>
             <div className='p-4 bg-[#FFFCF9]  rounded-full flex flex-col justify-between gap-2'>
                 <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
-                <p>{kinde?.getUser().email}</p>
+                Email:<p>{user?.email}</p>
                 <button onClick={() => kinde?.login({})}>Login</button>
             </div>
             <div className='flex flex-col gap-12'>
