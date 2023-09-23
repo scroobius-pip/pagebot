@@ -23,7 +23,7 @@ class WebpageTextExtractor {
     private root: Node;
     private relevantTags: string[];
 
-    constructor(root: Node = document.body, relevantTags: string[] = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'TD', 'TH']) {
+    constructor(root: Node = document.body, relevantTags: string[] = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'TD', 'TH', 'PRE']) {
         this.root = root;
         this.relevantTags = relevantTags;
     }
