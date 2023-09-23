@@ -34,7 +34,7 @@ export default function Dashboard() {
     }, [])
 
     useEffect(() => {
-        kinde?.login({})
+        !user && kinde?.login({})
     }, [kinde])
 
     // useEffect(() => {
