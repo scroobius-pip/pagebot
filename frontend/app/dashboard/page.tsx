@@ -8,8 +8,8 @@ import { Button } from '@nextui-org/button';
 import { Input } from '@nextui-org/input'
 import React, { useEffect, useState } from 'react';
 import Docs, { DocElement } from '@/components/documentation';
-import { useKindeAuth } from '@kinde-oss/kinde-auth-react';
-import createKindeClient, { KindeClient, KindeUser } from '@kinde-oss/kinde-auth-pkce-js';
+//@ts-ignore
+// import createKindeClient, { KindeClient, KindeUser } from '@kinde-oss/kinde-auth-pkce-js/dist/kinde-auth-pkce-js.esm';
 
 export default function Dashboard() {
     const [domains, setDomains] = useState<string[]>(['https://example.com', 'https://example2.com'])
@@ -17,27 +17,6 @@ export default function Dashboard() {
         setDomains(domains.filter((d) => d !== domain))
     }
 
-    const [kinde, setKinde] = useState<KindeClient>();
-    const [user, setUser] = useState<KindeUser>();
-
-
-    useEffect(() => {
-        createKindeClient({
-            client_id: "c62ca0a0430d46fb9453f911d256a150",
-            domain: "https://pagebot.kinde.com",
-            redirect_uri: window.location.origin + "/dashboard",
-        }).then((kinde) => {
-            setKinde(kinde)
-            const user = kinde.getUser()
-            setUser(user)
-        })
-    }, [])
-
-    useEffect(() => {
-        !user && kinde?.login({})
-    }, [kinde])
-
-    // useEffect(() => {
 
 
 
@@ -45,8 +24,9 @@ export default function Dashboard() {
         <Section disabled className='flex flex-col gap-14 justify-'>
             <div className='p-4 bg-[#FFFCF9]  rounded-full flex flex-col justify-between gap-2'>
                 <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
-                Email:<p>{user?.email}</p>
-                <button onClick={() => kinde?.logout()}>Logout</button>
+                {/* Email:<p>{user?.email}</p> */}
+                {/* <button onClick={() => kinde?.logout()}>Logout</button> */}
+                {/* {token} */}
             </div>
             <div className='flex flex-col gap-12'>
                 <div className='flex flex-col gap-2 bg-[#FFFCF9] p-6 -mx-10'>

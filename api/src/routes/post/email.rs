@@ -38,7 +38,7 @@ pub async fn main(
             StatusCode::NOT_FOUND
         })?;
 
-    let notification = notification::Notification::new(user);
+    let notification = notification::Notification::new(user.email);
     notification
         .send(NotificationType::EmailForwarding(EmailForwarding {
             email,

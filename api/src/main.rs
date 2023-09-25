@@ -19,6 +19,7 @@ mod jwt;
 mod notification;
 mod routes;
 mod stats;
+mod token_map;
 mod types;
 use routes::build_router;
 

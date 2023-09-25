@@ -1,9 +1,9 @@
 use crate::{
     email_templates::*,
-    types::{history_item::HistoryItem, message::Message, user::User},
+    types::{history_item::HistoryItem, user::User},
 };
 use eyre::Result;
-use serde_json::{json, Value};
+use serde_json::json;
 
 #[derive(Clone)]
 pub struct Notification {
@@ -12,7 +12,7 @@ pub struct Notification {
 
 #[derive(Clone)]
 struct Context {
-    user: User,
+    email: String,
 }
 
 pub enum NotificationType {
@@ -20,6 +20,7 @@ pub enum NotificationType {
     EmailForwarding(EmailForwarding),
     SourceError(String),
     KnowledgeGap(String),
+    Token(String),
 }
 
 pub struct EmailForwarding {
@@ -30,9 +31,9 @@ pub struct EmailForwarding {
 }
 
 impl Notification {
-    pub fn new(user: User) -> Self {
+    pub fn new(email: String) -> Self {
         Self {
-            context: Context { user },
+            context: Context { email },
         }
     }
 
@@ -56,8 +57,8 @@ impl Notification {
             "to": [
                 {
                     "email_address": {
-                        "address": self.context.user.email,
-                        "name": self.context.user.email
+                        "address": self.context.email,
+                        "name": self.context.email
                     }
                 }
             ],
@@ -101,6 +102,15 @@ impl From<NotificationType> for EmailData {
             NotificationType::KnowledgeGap(query) => Self {
                 subject: "Knowledge Gap Detected - PageBot".to_string(),
                 html: render_knowledge_gap(&query),
+                from,
+                name: None,
+            },
+            NotificationType::Token(token) => Self {
+                subject: format!("PageBot Login Verification Code: {}", token),
+                html: format!(
+                    "<h3>Verify your email to log on to PageBot</h3> <h1 style=\"letter-spacing: 2px;\">{}</h1><p>This code will expire in 10 minutes.</p>",
+                    token
+                ),
                 from,
                 name: None,
             },

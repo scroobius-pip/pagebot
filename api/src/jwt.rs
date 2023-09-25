@@ -10,14 +10,15 @@ use axum::{
     http::request::Parts,
     RequestPartsExt,
 };
-use jsonwebtoken::{decode, DecodingKey, Validation};
+use jsonwebtoken::{decode, encode, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Claims {
+pub struct Claims {
     // sub: String,
+    iat: usize,
     pub email: String,
-    // exp: usize,
+    exp: usize,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -79,5 +80,35 @@ where
         };
 
         Ok(UserContext { user })
+    }
+}
+
+impl Claims {
+    pub fn new(email: String) -> Self {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap()
+            .as_secs() as usize;
+        let day = 60 * 60 * 24;
+
+        Self {
+            email,
+            iat: now,
+            exp: now + day,
+        }
+    }
+
+    pub fn generate_token(&self) -> Result<String, AuthError> {
+        let secret: &str = dotenv!("JWT_SECRET");
+
+        encode(
+            &jsonwebtoken::Header::default(),
+            &self,
+            &jsonwebtoken::EncodingKey::from_secret(secret.as_ref()),
+        )
+        .map_err(|e| {
+            log::error!("Error encoding token: {:?}", e);
+            AuthError::StateError
+        })
     }
 }

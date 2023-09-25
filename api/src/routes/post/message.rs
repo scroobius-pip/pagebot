@@ -1,7 +1,4 @@
-use std::{
-    fmt::{Display, Formatter},
-    sync::Arc,
-};
+use std::sync::Arc;
 
 use crate::{
     notification::{Notification, NotificationType},
@@ -61,7 +58,7 @@ pub async fn main(
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let notification = Arc::new(Notification::new(user));
+    let notification = Arc::new(Notification::new(user.email));
 
     let instant_now = std::time::Instant::now();
 

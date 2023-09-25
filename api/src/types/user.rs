@@ -6,7 +6,7 @@ use crate::db::DB;
 
 use super::usage::Usage;
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct User {
     pub created_at: u32,
     pub id: u64,
