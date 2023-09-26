@@ -44,9 +44,8 @@ export default function RootLayout({
         )}
       >
         {/* <Providers themeProps={{ attribute: "class", defaultTheme: "light", }}> */}
-        <div className="">
-
-          <main className='w-full '>
+        <div className="w-full flex flex-col justify-between">
+          <main className='w-full h-full'>
             {children}
           </main>
           <footer className="w-full flex   bg-[#1E1E1E] rounded-t-[5rem] p-20 ">
