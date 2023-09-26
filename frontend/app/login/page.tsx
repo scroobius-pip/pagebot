@@ -37,6 +37,7 @@ export default () => {
         }
         const key = `${sendSuccess}${sendTokenLoading}`
         setStep(map[key] || map['default'])
+
     }, [sendSuccess, sendTokenLoading])
 
 
@@ -89,10 +90,14 @@ export default () => {
 
 
     const steps = [
-        <div className='flex gap-2 flex-col'>
-            <Input onChange={({ target: { value } }) => {
+        <div className='flex gap-2 flex-col w-full'>
+            <Input onKeyDown={(e) => {
+                if (e.key === 'Enter' && isEmailValid) {
+                    sendToken()
+                }
+            }} onChange={({ target: { value } }) => {
                 setEmail(value)
-            }} value={email} variant='underlined' placeholder='Email' type='email' color='secondary' />
+            }} value={email} variant='flat' placeholder='Email' type='email' color='secondary' />
             <Button onClick={sendToken} isLoading={sendLoading} color='secondary' isDisabled={!isEmailValid || sendLoading} fullWidth >Send Token</Button>
         </div>,
         <TokenInput onComplete={(token) => {
@@ -102,13 +107,17 @@ export default () => {
     ]
 
     return <div className='w-full h-full  flex justify-center items-center bg-neutral-50'>
-        <div className='p-12 rounded-xl flex flex-col gap-4'>
-            <div className='flex flex-col gap-2'>
+        <div className='p-12 rounded-xl flex flex-col gap-24   w-full max-w-md items-center'>
+            <div className='flex flex-col gap-4 justify-center items-center '>
                 <div className='flex gap-2  items-center'>
-                    <Logo className='h-8' />
-                    <h1 className='font-semibold text-base'>Login</h1>
+                    <Logo className='h-12' />
+                    <h1 className='font-extrabold text-2xl '>Hi!</h1>
                 </div>
-                <p className='font-semibold'>Enter your email to receive a login token.</p>
+                {step === 0 && <h3 className='font-normal text-xl'>We'll send a token to your email.</h3>}
+                {step === 1 && <>
+                    <h3 className='font-normal text-xl text-center'>We've sent a token  to <b>{email}</b></h3>
+
+                </>}
             </div>
             {steps[step]}
         </div>
@@ -142,7 +151,10 @@ const TokenInput = (props: TokenInputProps) => {
     }, [tokenList])
 
     useEffect(() => {
-        ref.current?.addEventListener('input', (e) => {
+
+
+        ref.current?.addEventListener('keyup', (e) => {
+
             const preventedKeys = ['Tab', 'Meta', 'ArrowUp', 'ArrowDown']
             const previousKeys = ['Backspace', 'Delete', 'ArrowLeft']
             const deleteKeys = ['Delete', 'Backspace']
@@ -150,23 +162,31 @@ const TokenInput = (props: TokenInputProps) => {
 
             const input = e.target as HTMLInputElement
             const pos = input.getAttribute('data-pos')
+            const key = e.key !== 'Unidentified' ? e.key : (e as any).target.value
 
-
-            if (preventedKeys.includes(e.key) || !pos) {
+            //@ts-ignore
+            // console.log(e.data)
+            if (!key) {
+                return e.preventDefault()
+            }
+            if (preventedKeys.includes(key) || !pos) {
                 return e.preventDefault()
             }
 
-            if (previousKeys.includes(e.key)) {
-                deleteKeys.includes(e.key) && setTokenValue(pos, '');
+            if (previousKeys.includes(key)) {
+                deleteKeys.includes(key) && setTokenValue(pos, '');
+                input.value = ''
                 focusPrev()
             }
-            else if (nextKeys.includes(e.key)) {
+            else if (nextKeys.includes(key)) {
                 focusNext()
             }
-            else if (isAlphaCapsNumeric(e.key)) {
-                let value = toCaps(e.key)
-                input.value = value
+            else if (isAlphaCapsNumeric(key)) {
+
+                let value = toCaps(key)
+
                 setTokenValue(pos, value);
+                input.value = value
                 focusNext()
             } else {
                 e.preventDefault()
@@ -191,7 +211,11 @@ const TokenInput = (props: TokenInputProps) => {
             }
         })
     }, [])
-    return <div className='flex gap-2 flex-row ' ref={ref} >
-        {Array.from({ length: TOKEN_LENGTH }).map((_, i) => <Input size='lg' autoFocus={i === 0} data-pos={i} maxLength={1} className='w-6 text-xl' variant='underlined' />)}
-    </div>
+    return <>
+        <div className='flex gap-2 flex-row ' ref={ref} >
+            {Array.from({ length: TOKEN_LENGTH }).map((_, i) => <Input size='lg' autoFocus={i === 0} data-pos={i} maxLength={1} className='w-6 text-xl text-center' variant='underlined' />)}
+
+        </div>
+        {tokenList.join('')}
+    </>
 }
