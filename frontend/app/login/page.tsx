@@ -142,7 +142,7 @@ const TokenInput = (props: TokenInputProps) => {
     }, [tokenList])
 
     useEffect(() => {
-        ref.current?.addEventListener('keyup', (e) => {
+        ref.current?.addEventListener('input', (e) => {
             const preventedKeys = ['Tab', 'Meta', 'ArrowUp', 'ArrowDown']
             const previousKeys = ['Backspace', 'Delete', 'ArrowLeft']
             const deleteKeys = ['Delete', 'Backspace']
