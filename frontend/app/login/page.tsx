@@ -151,7 +151,12 @@ const TokenInput = (props: TokenInputProps) => {
     }, [tokenList])
 
     useEffect(() => {
-
+        ref.current?.addEventListener('paste', (e) => {
+            e.preventDefault()
+            const paste: string = (e.clipboardData || (window as any)?.clipboardData).getData('text')
+            const pasteArray = paste.toUpperCase().split('').slice(0, TOKEN_LENGTH)
+            setTokenList(pasteArray)
+        })
 
         ref.current?.addEventListener('keyup', (e) => {
 
@@ -213,9 +218,21 @@ const TokenInput = (props: TokenInputProps) => {
     }, [])
     return <>
         <div className='flex gap-2 flex-row ' ref={ref} >
-            {Array.from({ length: TOKEN_LENGTH }).map((_, i) => <Input size='lg' autoFocus={i === 0} data-pos={i} maxLength={1} className='w-6 text-xl text-center' variant='underlined' />)}
+            {
+                Array.from({ length: TOKEN_LENGTH })
+                    .map((_, i) => <Input value={
+                        tokenList[i]
+                    }
+                        key={i}
+                        size='lg'
+                        autoFocus={i === 0}
+                        data-pos={i}
+                        maxLength={1}
+                        className='w-6 text-xl text-center'
+                        variant='underlined' />)
+            }
 
         </div>
-        {tokenList.join('')}
+        {/* {tokenList.join('')} */}
     </>
 }
