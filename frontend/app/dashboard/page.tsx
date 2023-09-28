@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import { DocElement } from '@/components/documentation';
 import isJwtTokenExpired from 'jwt-check-expiry'
 import { Spinner } from '@nextui-org/spinner';
+import { Logo } from '@/components/icons';
 
 interface Me {
     id: string
@@ -85,16 +86,20 @@ export default function Dashboard() {
 
 
     return <>
-        <Section disabled className='flex flex-col gap-14 justify-'>
-            <div className='p-4 bg-[#FFFCF9]  rounded-full flex  justify-between gap-2'>
-                <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} />
+        <Section disabled className='flex flex-col gap-14 w-full'>
+            <div className='p-4 bg-[#FFFCF9]  rounded-full flex  justify-between gap-12 items-center'>
+                <a href='/' className=' p-2 rounded-full'>
+                    <Logo className='h-8' />
+                </a>
+                {/* <h1>Dashboard</h1> */}
+                {/* <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} /> */}
                 <Button variant='flat' className='rounded-full' onClick={() => {
                     localStorage.removeItem('jwt')
                     window.location.href = '/login'
                 }}>Logout</Button>
             </div>
-            <div className='flex flex-col gap-12'>
-                <div className='flex flex-col gap-2 bg-[#FFFCF9] p-6 -mx-10'>
+            <div className='flex flex-col gap-12 w-full max-w-6xl m-auto'>
+                <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
                     <h2 className='text-3xl font-extrabold'>Usage</h2>
                     <div className="flex flex-wrap flex-row gap-4">
                         <div className='p-8 shadow-sm rounded-3xl bg-[#9257FA] text-neutral-50    border-2 gap-4 flex flex-col'>
@@ -123,7 +128,7 @@ export default function Dashboard() {
                         <div className='flex gap-8 w-full mb-4'>
                             <div className='w-full'>
                                 <h2 className='text-3xl font-extrabold'>Allowed Domains</h2>
-                                <p className='text-lg font-d'>Domains that are permitted to access your PageBot instance.</p>
+                                <p className='text-lg font-d'>Domains that are permitted to access your PageBot instance. <b className='text-medium'>Defaults to Any</b></p>
                             </div>
                             <DomainInput onAdd={(domain) => {
 

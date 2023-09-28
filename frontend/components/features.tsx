@@ -35,23 +35,38 @@ const FeaturesSection = () => {
                 </div>
             </Card>
             <Card
-                className='flex-auto'
+                className='flex-auto w-full'
                 bg='#FFFCF9'
             >
-                <>
+
+                {/* <div className='flex flex-col gap-2'>
+                    <h4 className='text-3xl font-bold'>include data from your own api’s</h4>
+                    <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
+                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA]'
+                        classNames={{
+                            pre: 'whitespace-normal	font-bold overflow-scroll'
+                        }}
+                    >
+                        {`<meta name='pgbt:source' content='https://jsonplaceholder.typicode.com/users/1/todos' data-expires='0'  />`}
+
+                    </Snippet>
+                </div> */}
+                <div className='flex gap-6 flex-col w-full'>
                     <div className='flex flex-col gap-2'>
                         <h4 className='text-3xl font-bold'>include data from your own api’s</h4>
                         <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
                     </div>
-                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA]'
+                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA] max-w-full '
                         classNames={{
                             pre: 'whitespace-normal	font-bold '
                         }}
                     >
                         {`<meta name='pgbt:source' content='https://jsonplaceholder.typicode.com/users/1/todos' data-expires='0'  />`}
 
+
                     </Snippet>
-                </>
+                </div>
+
             </Card>
             <Card
                 className='flex-auto'
@@ -109,11 +124,11 @@ const FeaturesSection = () => {
             </Card>
 
 
-        </div>
+        </div >
 
         <CTA mini />
 
-    </Section>
+    </Section >
 }
 
 export default FeaturesSection

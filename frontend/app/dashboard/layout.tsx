@@ -5,7 +5,7 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
 
-    return <div className=' '>
+    return <div className='w-full'>
         {children}
     </div>
 }

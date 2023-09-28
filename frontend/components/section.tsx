@@ -52,14 +52,14 @@ export const Section: React.FC<{ children: any, className?: string, disabled?: b
     return <section
         ref={ref}
         style={{
-            minHeight: 'calc(100vh - 2.5rem * 2)',
+            minHeight: 'calc(100vh)',
             // margin: '2.5rem',
             padding: '2.5rem',
-            borderRadius: '4.5rem',
+            // borderRadius: '4.5rem',
             transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
         }
         }
-        className={`bg-[#F1F1F1] m-5 md:m-10 animated-section ${className}`}
+        className={`bg-[#F1F1F1]  animated-section ${className}`}
     >
         {children}
     </section >
