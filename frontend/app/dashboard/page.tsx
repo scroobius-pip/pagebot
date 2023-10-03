@@ -99,7 +99,7 @@ export default function Dashboard() {
                 }}>Logout</Button>
             </div>
             <div className='flex flex-col gap-12 w-full max-w-6xl m-auto'>
-                <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
+                {/* <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
                     <h2 className='text-3xl font-extrabold'>Usage</h2>
                     <div className="flex flex-wrap flex-row gap-4">
                         <div className='p-8 shadow-sm rounded-3xl bg-[#9257FA] text-neutral-50    border-2 gap-4 flex flex-col'>
@@ -121,13 +121,13 @@ export default function Dashboard() {
 
 
                     </div>
-                </div>
+                </div> */}
                 <div className='flex flex-col gap-24 max-w-3dxl'>
 
                     <div className='w-full'>
                         <div className='flex gap-8 w-full mb-4'>
                             <div className='w-full'>
-                                <h2 className='text-3xl font-extrabold'>Allowed Domains</h2>
+                                <h2 className='text-2xl font-medium'>Allowed Domains</h2>
                                 <p className='text-lg font-d'>Domains that are permitted to access your PageBot instance. <b className='text-medium'>Defaults to Any</b></p>
                             </div>
                             <DomainInput onAdd={(domain) => {
@@ -146,14 +146,14 @@ export default function Dashboard() {
                     <div className='w-full'>
                         <div className='flex gap-8 w-full'>
                             <div className='w-full'>
-                                <h2 className='text-3xl font-extrabold'>Billing</h2>
+                                <h2 className='text-2xl font-medium'>Billing</h2>
                                 <p className='text-lg font-d'>Manage your billing through the Stripe portal.</p>
                             </div>
                             <Button className='rounded-3xl' as='a' href='https://billing.stripe.com/p/login/bIY7vz4zxcXC5k4dQQ'>Stripe Portal</Button>
                         </div>
                     </div>
                     <div>
-                        <h2 className='text-3xl font-extrabold mb-4'>Integration Steps</h2>
+                        <h2 className='text-2xl font-medium mb-4'>Integration Steps</h2>
                         <div>
                             <div className='flex flex-row gap-4 flex-wrap'>
 
@@ -177,11 +177,10 @@ export default function Dashboard() {
                                 <DocElement
                                     code={<>
                                         {`<meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />`}
-                                        {`<meta name='pgbt:qa' data-question='Is this the real life?' data-answer='Is this just fantasy?' />`}
-                                        {`<meta name='pgbt:qa' data-question='But what about the children?' data-answer='What about the children?' /> */}`}
+
                                     </>}
                                     title='adding predefined questions and answers'
-                                    description='Predefined questions and answers aren’t charged as they are never sent to the server. you should use this to save costs and reduce waiting time.'
+                                    description='Predefined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.'
                                 />
                             </div>
                         </div>

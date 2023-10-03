@@ -32,12 +32,11 @@ impl EmbeddingModel {
             .unwrap_or(4);
 
         log::info!("Model Thread Count {}", thread_count);
-        let task_worker = |worker_index: usize| {
-            let model = SentenceEmbeddingsBuilder::remote(
-                SentenceEmbeddingsModelType::DistiluseBaseMultilingualCased,
-            )
-            .create_model()
-            .expect("Failed to create model");
+        let task_worker = |_worker_index: usize| {
+            let model =
+                SentenceEmbeddingsBuilder::remote(SentenceEmbeddingsModelType::AllMiniLmL6V2)
+                    .create_model()
+                    .expect("Failed to create model");
 
             loop {
                 while let Ok(EmbedTask(sender, sentences)) = self.queue_recv.recv() {

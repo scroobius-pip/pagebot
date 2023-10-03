@@ -44,23 +44,25 @@ const PgbtUI = () => {
 
     const Main = <div className={`pb_main ${pgbt.detachedMode ? 'detached' : ''}`}>
         <div className='pb_main-top'>
-            <a href='#' className="pb_heading">
-                <LogoText color={theme.primaryColor} />
-            </a>
-            {!pgbt.detachedMode && <div
-                className='pb_close-button'
-                onClick={() => {
-                    setHidden(true);
-                }}
-            >
-                <CloseButton />
-            </div>}
+            <div className="pb_main-topbar">
+                <a href='#' className="pb_heading">
+                    <LogoText color={theme.primaryColor} />
+                </a>
+                {!pgbt.detachedMode && <div
+                    className='pb_close-button'
+                    onClick={() => {
+                        setHidden(true);
+                    }}
+                >
+                    <CloseButton />
+                </div>}
+            </div>
+            <h1 style={{
+                color: theme.primaryColor
+            }}>
+                What would you like to know ?
+            </h1>
         </div>
-        <h1 style={{
-            color: theme.primaryColor
-        }}>
-            What would you like to know ?
-        </h1>
         <MainChat />
     </div>;
 
@@ -119,10 +121,10 @@ const MainChat = () => {
             beepGain.connect(beepContext.current.destination);
 
             beepOscillator.type = 'sine';
-            beepOscillator.frequency.value = 520.0;
+            beepOscillator.frequency.value = 190.0;
 
             beepGain.gain.exponentialRampToValueAtTime(
-                0.00001, beepContext.current.currentTime + 1
+                0.0001, beepContext.current.currentTime + 1
             );
 
             beepOscillator.start(0)
@@ -412,7 +414,13 @@ const Message = (message: Message) => {
 
         </div>
         {displayContent}
-
+        {
+            !html && message.type === 'bot' && <img style={{
+                // filter: 'brightness(100)',
+            }}
+                height={64} width={64}
+                src='https://s.thepagebot.com/pagebot_walk.gif' />
+        }
         {/* {message.type == 'bot' && <div className='pb_message-rating'>
 
             <button>
@@ -458,7 +466,6 @@ const ChatInput = (props: ChatInputProps) => {
                 setMessage(e.currentTarget.value);
             }} placeholder="Type your message here" />
         <button
-
             disabled={message.trim().length === 0 || props.disabled}
             onClick={submit}
         >
@@ -530,7 +537,6 @@ const StartChatButton = ({ onClick }: any) => {
 }
 
 const CloseButton = () => {
-    const theme = getTheme();
 
     return <svg
 
@@ -680,7 +686,8 @@ function EmailForm({ theme, titleText, descriptionText }: EmailFormProps) {
                 style={{
                     filter: 'brightness(100)',
                 }}
-                height={56} width={56} src='https://pub-7bbc6377635e4e588a0a4c5fdfb0df93.r2.dev/pagebot_error.gif' />
+                height={56} width={56}
+                src='https://pub-7bbc6377635e4e588a0a4c5fdfb0df93.r2.dev/pagebot_error.gif' />
 
             <div className='pb_form-description'>
                 <h3>

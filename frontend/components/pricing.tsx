@@ -13,7 +13,7 @@ const Pricing = () => {
         </div>
         <div className='flex flex-col gap-2'>
             <h4 className='text-3xl font-bold '>usage based billing</h4>
-            <p className='text-2xl max-w-prose font-boldd'>only pay for what you use; leave anytime. one month free initially</p>
+            <p className='text-2xl max-w-prose font-boldd `'>only pay for what you use; leave anytime. one month free</p>
 
         </div>
 

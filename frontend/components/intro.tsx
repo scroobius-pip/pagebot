@@ -14,7 +14,7 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
     return <Section disabled className='flex flex-col xl:flex-row gap-4 '>
-        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-6 flex-1 flex flex-col gap-16 items-start justify-end ' style={{ flex: 3 }}>
+        <div className='rounded-[2.5rem] bg-[#FFFCF9] p-12 flex-1 flex flex-col gap-16 items-start justify-end ' style={{ flex: 3 }}>
             <div className='flex gap-9 flex-col items-start'>
                 <LogoText className='h-12' />
                 <h1 className={`text-4xl md:text-4xl lg:text-6xl ${textGrey} font-medium`}>give your <span className={textBlack}>customers</span> <span className={textBlack}>conversations</span> that are:</h1>

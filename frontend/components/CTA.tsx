@@ -9,7 +9,8 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
     const CTAButton = <div className='p-2 flex-1 md:pl-6 bg-[#AA7CFB] rounded-r-full rounded-bl-full flex-row flex gap-8 w-full md:w-auto'>
         <div className='md:flex flex-col items-end hidden '>
             <p className='text-slate-50 font-medium'>
-                <b>1 month free</b> trial
+                50 messages free
+                <b> monthly</b>
             </p>
             <p className='text-slate-50 font-medium'>
                 cancel anytime

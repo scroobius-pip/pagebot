@@ -11,7 +11,7 @@ import { CTA } from './CTA'
 interface Doc {
     code: JSX.Element,
     title: string,
-    description: string,
+    description?: string,
 }
 
 
@@ -30,27 +30,24 @@ export const Docs = () => {
                 {`<script data-pgbt_id="<YOUR_ID>" src='https://s.thepagebot.com/pgbt.js' />`}
             </>}
                 title='installation'
-                description='put in the head tag of every page you want pagebot to appear in.'
+            // description='put in the head tag of every page you want pagebot to appear in.'
             />
             <DocElement
                 code={<>
-                    {`<meta name='pgbt:source' content='/' /> {*/ relative url to the current page */}`}
-                    {`<meta name='pgbt:source' content='https://example.com' /> {*/ absolute url */}`}
-                    {`<meta name='pgbt:source' content='https://example.com/api' /> {*/ api endpoint */}`}
+
                     {`<meta name='pgbt:source' content='https://example.com/api' data-expires='3600' /> {*/ cached for 1 hour */}`}
                 </>}
                 title='adding a source'
-                description='specify the source of the knowledge-base. this can be a url, an api endpoint or a relative url of the current page. you can also specify how many seconds the cache should last (default is 1 day).'
+            // description='specify the source of the knowledge-base. this can be a url, an api endpoint or a relative url of the current page. you can also specify how many seconds the cache should last (default is 1 day).'
 
             />
             <DocElement
                 code={<>
                     {`<meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />`}
-                    {`<meta name='pgbt:qa' data-question='Is this the real life?' data-answer='Is this just fantasy?' />`}
-                    {`<meta name='pgbt:qa' data-question='But what about the children?' data-answer='What about the children?' /> */}`}
+
                 </>}
                 title='adding predefined questions and answers'
-                description='predefined questions and answers aren’t charged as they are never sent to the server. you should use this to save costs and reduce waiting time.'
+            // description='predefined questions and answers aren't charged as they are never sent to the server. you should use this to save costs and reduce waiting time.'
             />
         </div>
         <CTA mini />
@@ -65,7 +62,7 @@ export const DocElement = ({ code, title, description }: Doc) => {
     >
         <>
             <div className='flex flex-col'>
-                <h4 className='text-3xl font-bold capitalize'>{title}</h4>
+                <h4 className='text-2xl font-bold capitalize'>{title}</h4>
                 {/* <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p> */}
             </div>
             <div className='flex flex-col gap-6'>
@@ -76,10 +73,10 @@ export const DocElement = ({ code, title, description }: Doc) => {
                 >
                     {code}
                 </Snippet>
-                <div className=''>
-                    <InfoIcon className='inline mr-1 ' />
+                {description && <div className=''>
+                    <InfoIcon className='inline mr-2 text-purple-600' />
                     <span className='font-medium'>{description}</span>
-                </div>
+                </div>}
             </div>
         </>
     </Card>

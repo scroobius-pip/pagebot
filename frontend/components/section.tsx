@@ -59,7 +59,7 @@ export const Section: React.FC<{ children: any, className?: string, disabled?: b
             transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
         }
         }
-        className={`bg-[#F1F1F1]  animated-section ${className}`}
+        className={`bg-[#F1F1F1]   animated-section ${className}`}
     >
         {children}
     </section >

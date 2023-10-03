@@ -15,10 +15,10 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
-// const HOST = 'https://api.thepagebot.com/'
+const HOST = 'https://api.thepagebot.com/'
 // const HOST = 'http://localhost:8000/'
 //@ts-ignore
-const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:8000/' : 'https://api.thepagebot.com/'
+// const HOST = process.env.NODE_ENV === 'development' ? 'http://loc alhost:8000/' : 'https://api.thepagebot.com/'
 class WebpageTextExtractor {
     private root: Node;
     private relevantTags: string[];
@@ -65,7 +65,7 @@ class WebpageTextExtractor {
             }
         }
 
-        if (childText.length > 3)
+        if (childText.length >= 3)
             data.references.push({ text: childText, element: node as Element });
 
         return data;
@@ -105,8 +105,11 @@ export class PageBot {
         this.detachedMode = detachedMode;
         this.id = id;
         this.data = extractedData;
-        this.sources = PageBot.getPageSources()
-            .concat([{ content: extractedData.text, url: window.location.href }])
+        this.sources = PageBot.getPageSources([
+            { url: '/' }
+        ]).concat([{
+            content: extractedData.text, url: window.location.href,
+        }])
         this.initialQuestions = this.getQuestions()
 
         globalThis['pgbt'] = this;
@@ -132,7 +135,7 @@ export class PageBot {
     }
 
 
-    private static getPageSources(): Array<Source> {
+    private static getPageSources(initialSources: Source[]): Array<Source> {
         const isUrl = (str: string) => {
             try {
                 new URL(str);
@@ -172,7 +175,7 @@ export class PageBot {
 
                 return acc;
 
-            }, []);
+            }, initialSources);
     }
 
     public async email(email: string, name: string, message: string): Promise<boolean> {
@@ -211,7 +214,7 @@ export class PageBot {
         if (answer) {
             for (const word of answer.split(" ")) {
                 yield word + " ";
-                await new Promise((resolve) => setTimeout(resolve, 100));
+                await new Promise((resolve) => setTimeout(resolve, 50));
             }
 
         } else {

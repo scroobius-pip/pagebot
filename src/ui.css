@@ -5,14 +5,14 @@
 
 :root {
     --background-color: rgb(233, 233, 233);
-    --container-padding: 30px;
+    --container-padding: 2em;
     /* --container-radius: 54px / 60px; */
     --container-radius: 40px;
     --container-gap: 64px;
-    --logo-size: 32px;
+    --logo-size: 2.5em;
     --question-background: #fff;
     --max-height: 500px;
-    --max-width: 350px;
+    --max-width: 768px;
 }
 
 .pb_parent-bottom {
@@ -25,7 +25,8 @@
     top: 0;
     left: 0; */
     z-index: 9999999;
-    /* max-width: var(--max-width); */
+    max-width: var(--max-width);
+    font-size: 16px;
 }
 
 
@@ -36,7 +37,7 @@
 
     .pb_parent-bottom.opened {
         inset: 0;
-        max-height: calc(100vh - var(--container-padding) * 2);
+        /* max-height: calc(100vh - var(--container-padding) * 2); */
     }
 }
 
@@ -66,9 +67,26 @@
     gap: var(--container-gap);
     opacity: 1;
     height: auto;
+    justify-content: space-around;
     min-height: 100%;
     width: auto;
     box-sizing: content-box;
+}
+
+.pb_main-top {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4em;
+    width: 100%;
+}
+
+.pb_main-topbar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
 }
 
 .pb_main.detached {
@@ -96,16 +114,16 @@
 }
 
 .pb_main-top {
-    display: flex;
+    /* display: flex;
     justify-content: space-between;
     align-items: center;
-    width: 100%;
+    width: 100%; */
 
 }
 
 .pb_container.pb_hidden {
     border-radius: 999px;
-    padding: calc(var(--container-padding) - 10px);
+    padding: calc(var(--container-padding) - .5em);
 }
 
 .pb_container.pb_hidden>.pb_main {
@@ -145,8 +163,8 @@
 }
 
 h1 {
-    font-size: 2em;
-    font-weight: 600;
+    font-size: 1.5em;
+    /* font-weight: 600; */
 }
 
 .pb_chat-container {
@@ -158,7 +176,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 1em;
     cursor: pointer;
     align-self: stretch;
 }
@@ -166,7 +184,7 @@ h1 {
 .pb_question {
     padding: 0.6em;
     display: flex;
-    gap: 10px;
+    gap: .5em;
     flex-direction: row;
     justify-content: start;
     align-items: center;
@@ -195,10 +213,11 @@ h1 {
     flex-direction: column;
     align-items: center;
     align-self: stretch;
-    gap: 12px;
+    gap: 1em;
     height: 100%;
     flex: 1;
     justify-content: flex-end;
+    max-height: 50vh;
 }
 
 .pb_chat-input-container {
@@ -214,8 +233,7 @@ h1 {
 }
 
 .pb_chat-input-container>button {
-
-    padding: 0.4em;
+    padding: 0.6em;
     background-color: #F5F5F5;
     border-radius: 999px;
 }
@@ -244,7 +262,7 @@ h1 {
     padding-left: 2em;
     background-color: inherit;
     resize: none;
-    font-size: 12px;
+    font-size: 1em;
     color: #1E1E1E;
 }
 
@@ -267,6 +285,7 @@ h1 {
 .pb_message {
     background-color: var(--question-background);
     padding: 1em;
+    max-width: 768px;
 
 }
 
@@ -301,7 +320,7 @@ h1 {
 }
 
 .pb_message-icon {
-    margin-bottom: 6px;
+    margin-bottom: .5em;
 }
 
 .pb_message-icon svg {
@@ -412,12 +431,13 @@ h1 {
     border: none;
     border-radius: 1em;
     padding: 1.5em;
-    background-color: rgba(237, 237, 237, 0.879);
+    /* background-color: rgba(237, 237, 237, 0.879); */
     resize: none;
-    min-height: 100px;
+    min-height: 5em;
     font-size: .8em;
     color: #1E1E1E;
-    transition: filter 0.4s ease-in-out;
+    filter: brightness(100%);
+    transition: all 0.2s ease-in-out;
 }
 
 .pb_form input {
@@ -427,19 +447,29 @@ h1 {
     border: none;
     border-radius: 1em;
     padding: 1.5em;
-    background-color: rgba(233, 233, 233, 0.8);
+    /* background-color: rgba(233, 233, 233, 0.8); */
     font-size: .8em;
     /* font-size: 12px; */
     color: #1E1E1E;
-    transition: filter 0.4s ease;
+    filter: brightness(100%);
+    transition: all 0.2s ease;
 }
 
 .pb_form input:focus,
 textarea:focus {
     filter: brightness(95%);
-    /* filter: drop-shadow(0px 0px 5px rgba(0, 0, 0, 0.25)); */
+    animation: inputhover 0.2s ease-in-out;
 }
 
+@keyframes inputhover {
+    0% {
+        filter: brightness(100%);
+    }
+
+    100% {
+        filter: brightness(95%);
+    }
+}
 
 
 .pb_form[data-disabled="true"] {

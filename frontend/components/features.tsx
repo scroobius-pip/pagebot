@@ -14,7 +14,7 @@ const FeaturesSection = () => {
         </div>
         <div className='flex flex-row gap-6 flex-wrap '>
             <Card
-                className='flex-auto'
+                className='flex-auto max-w-fit'
                 bg='#FFBB0C'
             >
                 <div className='flex gap-6 flex-col'>
@@ -27,33 +27,22 @@ const FeaturesSection = () => {
                             pre: 'whitespace-normal	font-bold '
                         }}
                     >
-                        {`<meta name=’pgbt:source’ content=’url.pdf’ data-expires='3600' />`}
-                        {`<meta name=’pgbt:source’ content=’url.html’ data-expires='3600' />`}
-                        {`<meta name=’pgbt:source’ content=’url.csv data-expires='3600' />`}
+                        {`<meta name='pgbt:source' content='url.pdf' data-expires='3600' />`}
+                        {`<meta name='pgbt:source' content='url.html' data-expires='3600' />`}
+                        {`<meta name='pgbt:source' content='url.csv' data-expires='3600' />`}
 
                     </Snippet>
                 </div>
             </Card>
             <Card
-                className='flex-auto w-full'
+                className='flex-auto  max-w-fit'
                 bg='#FFFCF9'
             >
 
-                {/* <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold'>include data from your own api’s</h4>
-                    <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
-                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA]'
-                        classNames={{
-                            pre: 'whitespace-normal	font-bold overflow-scroll'
-                        }}
-                    >
-                        {`<meta name='pgbt:source' content='https://jsonplaceholder.typicode.com/users/1/todos' data-expires='0'  />`}
 
-                    </Snippet>
-                </div> */}
                 <div className='flex gap-6 flex-col w-full'>
                     <div className='flex flex-col gap-2'>
-                        <h4 className='text-3xl font-bold'>include data from your own api’s</h4>
+                        <h4 className='text-3xl font-bold'>include data from your own api's</h4>
                         <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
                     </div>
                     <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA] max-w-full '
@@ -61,24 +50,24 @@ const FeaturesSection = () => {
                             pre: 'whitespace-normal	font-bold '
                         }}
                     >
-                        {`<meta name='pgbt:source' content='https://jsonplaceholder.typicode.com/users/1/todos' data-expires='0'  />`}
+                        {`<meta name="pgbt:source" content="https://jsonplaceholder.typicode.com/users/1/todos" data-expires="0"  />`}
 
 
                     </Snippet>
                 </div>
 
             </Card>
-            <Card
-                className='flex-auto'
+            {/* <Card
+                className='flex-auto max-w-fit'
                 bg='#9257FA'
             >
                 <div className='flex flex-col gap-2'>
                     <h4 className='text-3xl font-bold text-slate-50'>usage based billing</h4>
                     <p className='text-xl text-slate-50'>only pay for what you use, stop billing by simply removing the script tag from your code.</p>
                 </div>
-            </Card>
+            </Card> */}
             <Card
-                className='flex-auto'
+                className='flex-auto  max-w-fit'
                 bg='#FFFCF9'
             >
                 <div className='flex flex-col gap-2'>
@@ -87,7 +76,7 @@ const FeaturesSection = () => {
                 </div>
             </Card>
             <Card
-                className='flex-auto'
+                className='flex-auto max-w-fit'
                 bg='#FFFCF9'
             >
                 <div className='flex flex-col gap-2'>
@@ -96,7 +85,7 @@ const FeaturesSection = () => {
                 </div>
             </Card>
             <Card
-                className='flex-auto'
+                className='flex-auto max-w-fit'
                 bg='#FFFCF9'
             >
                 <div className='flex flex-col gap-2'>
@@ -105,7 +94,7 @@ const FeaturesSection = () => {
                 </div>
             </Card>
             <Card
-                className='flex-auto'
+                className='flex-auto max-w-fit'
                 bg='#FFFCF9'
             >
                 <div className='flex flex-col gap-2'>
@@ -113,15 +102,15 @@ const FeaturesSection = () => {
                     <p className='text-xl '>use pagebot as little or as much as you want</p>
                 </div>
             </Card>
-            <Card
-                //   className='flex-auto'
+            {/* <Card
+                className='flex-auto max-w-fit'
                 bg='#FFFCF9'
             >
                 <div className='flex flex-col gap-2'>
                     <h4 className='text-3xl font-bold '>customizable</h4>
-                    <p className='text-xl '>easily change pagebot’s appearance using css overrides</p>
+                    <p className='text-xl '>easily change pagebot's appearance using css overrides</p>
                 </div>
-            </Card>
+            </Card> */}
 
 
         </div >
