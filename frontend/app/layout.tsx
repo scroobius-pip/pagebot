@@ -5,7 +5,8 @@ import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
 import { Link } from "@nextui-org/link";
 import clsx from "clsx";
-import { LogoText } from '@/components/icons';
+import { Logo, LogoText } from '@/components/icons';
+import Navigation from '@/components/Navigation';
 
 export const metadata: Metadata = {
   title: {
@@ -48,24 +49,40 @@ export default function RootLayout({
           fontSans.className
         )}
       >
-        {/* <Providers themeProps={{ attribute: "class", defaultTheme: "light", }}> */}
-        <header></header>
+
+        <header>
+          <Navigation />
+        </header>
         <main className='flex-1 flex flex-col bg-bg`'>
           {children}
         </main>
-        <footer className=" bg-black  p-10  w-full flex text-white justify-around ">
-          <div className='flex gap-4 items-center '>
-            <LogoText className='h-8 ' />
-            <a className='font-medium' href='https://bronze-brush-9b0.notion.site/Privacy-Policy-a1179d5d327b4056b3b059c95ae846f8?pvs=4'>
-              Privacy
-            </a>
-            <a className='font-medium' href="https://bronze-brush-9b0.notion.site/Terms-Conditions-7f3bf549df494b778c324cacb8d36b86?pvs=4" target="_blank" rel="noreferrer">
-              Terms
-            </a>
+        <footer className=" bg-black p-10  w-full flex text-white justify-around ">
+          <div className='flex gap-4 justify-between  w-full max-w-[1400px] mx-auto flex-col md:flex-row'>
+            <div className='flex-col flex gap-2 h-full items-start justify-between'>
+              <Logo className='h-8 ' />
+              <p>© {new Date().getFullYear()} PageBot</p>
+            </div>
+            <div className='flex flex-col gap-2'>
+              <b>Social</b>
+              <a href='https://twitter.com/pagebotai' target='_blank' rel="noreferrer">
+                X
+              </a>
+              <a href='https://www.linkedin.com/company/pagebotai' target='_blank' rel="noreferrer">
+                LinkedIn
+              </a>
+            </div>
+            <div className='flex flex-col gap-2'>
+              <b>Legal</b>
+              <a className='f' href='https://bronze-brush-9b0.notion.site/Privacy-Policy-a1179d5d327b4056b3b059c95ae846f8?pvs=4'>
+                Privacy
+              </a>
+              <a className='f' href="https://bronze-brush-9b0.notion.site/Terms-Conditions-7f3bf549df494b778c324cacb8d36b86?pvs=4" target="_blank" rel="noreferrer">
+                Terms
+              </a>
+            </div>
           </div>
         </footer>
 
-        {/* </Providers> */}
       </body>
     </html>
   );

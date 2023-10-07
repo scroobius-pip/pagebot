@@ -53,7 +53,7 @@ const CTAButton = () => <div className='p-2 flex-1 md:pl-6 bg-black-1 rounded-r-
 </div>;
 
 const CTA = () => <div className='bg-black w-full  text-white'>
-  <div className='max-w-[1400px] w-full m-auto p-12 flex flex-col gap-24 items-start'>
+  <div className='max-w-[1400px] w-full m-auto py-12 p-4 flex flex-col gap-24 items-start'>
 
     <div >
       <div className='flex flex-col md:flex-row gap-6 items-center justify-center self-start '>

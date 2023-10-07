@@ -5,7 +5,7 @@ import { Logo } from './icons'
 import { Accordion, AccordionItem } from '@nextui-org/react'
 
 const FeaturesSection = () => {
-    return <div className='w-full bg-black text-white'>
+    return <div id='features' className='w-full bg-black text-white overflow-x-hidden'>
         <section className='max-w-[1400px] w-full m-auto p-12 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
                 <h2 className='text-3xl font-medium'>Why PageBot ?</h2>
@@ -28,11 +28,11 @@ const FeaturesSection = () => {
                 </p>
             </div>
 
-            <div className='grid grid-cols-12 grid-flow-col bg-bladck-1'>
+            <div className='grid grid-cols-6 md:grid-cols-12  h-screen'>
                 <Accordion variant='light'
-
+                    fullWidth
                     showDivider={false}
-                    className='-mx-8   duration-150 rounded-b-2xl col-span-8'
+                    className='-mx-8  duration-150 rounded-b-2xl col-span-6 w-fdull'
                     itemClasses={{
                         base: 'bg-black rounded-xdl',
                         title: ' text-white font-semibold capitalize text-xl duration-150 transition',
@@ -42,8 +42,9 @@ const FeaturesSection = () => {
                     }}
                 >
                     {features.map((feature, i) => <AccordionItem
+
                         indicator={<ArrowRight color='#FFFFFF' />}
-                        className='bg-black'
+                        className='bg-black w-full'
                         key={i}
                         aria-label={feature.title}
                         title={feature.title}
@@ -51,8 +52,16 @@ const FeaturesSection = () => {
                         {feature.description.map((desc, i) => <p key={i}>{desc}</p>)}
                     </AccordionItem>)}
                 </Accordion>
-                <div className='w-full bg-white-1 col-span-4 h-[50vh] mx-12'>
-                    f
+                <div className='rounded-2xl  bg-purple pl-24 pt-24 h-full w-screen   col-span-6  hidden md:flex justify-start items-start '>
+                    <div
+                        style={{
+                            backgroundImage: 'url(/hero.png)',
+                            backgroundSize: 'contain',
+                            backgroundRepeat: 'no-repeat',
+                            backgroundPosition: 'start'
+                        }}
+                        className='w-full h-4/5'
+                    />
                 </div>
 
             </div>
@@ -74,7 +83,8 @@ const features: Features[] = [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
             "Including existing api's; for example in situations where the bot needs the current logged-in user’s information."
-        ]
+        ],
+        image: '/hero'
     },
     {
         title: "Pre-defined Q&A",
