@@ -23,14 +23,13 @@ export default function Home() {
     <Pricing />
     <div className='px-2 py-12 bg-white w-full  flex gap-2 justify-around '>
       {/*@ts-ignore */}
-      <Button href='/dashboard' as={Link} color='' fullWidth className='w-full py-8' endContent={
+      <Button href='/login' as={Link} color='' fullWidth className='w-full py-8' endContent={
         <ArrowRight size={32} />
       }>
         <h2 className=''>Get Started For Free</h2>
 
       </Button>
     </div>
-    {/* <Documentation /> */}
   </div>
 
 }

@@ -1,6 +1,5 @@
 import { FileTextIcon, InfoIcon, PercentCircleIcon } from 'lucide-react'
 import { SectionIconTitle } from './SectionIconTitle'
-// import { textBlack } from './primitives'
 import { Section } from './section'
 import { Card } from './Card'
 import { Snippet } from '@nextui-org/snippet'

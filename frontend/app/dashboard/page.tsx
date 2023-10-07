@@ -1,6 +1,5 @@
 "use client"
 import { SectionIconTitle } from '@/components/SectionIconTitle';
-import { textBlack } from '@/components/primitives';
 import { Section } from '@/components/section';
 import { DeleteIcon, Globe2Icon, LayoutDashboardIcon } from 'lucide-react';
 import { Tooltip } from '@nextui-org/tooltip';
