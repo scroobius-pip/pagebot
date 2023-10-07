@@ -1,123 +1,116 @@
-import { Snippet } from '@nextui-org/snippet'
-import { GoalIcon } from 'lucide-react'
-import { CTA } from './CTA'
-import { Card } from './Card'
-import { SectionIconTitle } from './SectionIconTitle'
-import { textBlack } from './primitives'
-import { Section } from './section'
+"use client"
+
+import { ArrowRight } from 'lucide-react'
+import { Logo } from './icons'
+import { Accordion, AccordionItem } from '@nextui-org/react'
 
 const FeaturesSection = () => {
-    return <Section className='flex flex-col gap-14 justify-between'>
-        <div className='p-4 bg-[#FFFCF9] rounded-full flex flex-col justify-between gap-2'>
-            <SectionIconTitle text='Features' color={textBlack} icon={<GoalIcon size={36} />} />
+    return <div className='w-full bg-black text-white'>
+        <section className='max-w-[1400px] w-full m-auto p-12 flex gap-12 flex-col '>
+            <div className='flex flex-col gap-14 justify-between '>
+                <h2 className='text-3xl font-medium'>Why PageBot ?</h2>
+            </div>
+            <div className='flex flex-col md:flex-row gap-6 items-center self-start '>
+                <div className='bg-white p-2 rounded-2xl self-start'>
+                    <Logo className='h-6 text-black' />
+                </div>
+                <p className='text-slate-50 text-2xl font-medium  leading-relaxed'>
+                    PageBot is the most flexible AI chat-bot you’ll ever use.
+                </p>
 
-        </div>
-        <div className='flex flex-row gap-6 flex-wrap '>
-            <Card
-                className='flex-auto max-w-fit'
-                bg='#FFBB0C'
-            >
-                <div className='flex gap-6 flex-col'>
-                    <div className='flex flex-col gap-2'>
-                        <h4 className='text-3xl font-bold'>supports most data sources</h4>
-                        <p className='text-xl'>PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD</p>
-                    </div>
-                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#fad16a] text-[#] '
-                        classNames={{
-                            pre: 'whitespace-normal	font-bold '
-                        }}
+            </div>
+            <div className='flex flex-col md:flex-row gap-6  text-lg max-w-prose font-medium'>
+                <p>
+                    Add data-sources to your chat-bot dynamically via meta tags
+                </p>
+                <p>
+                    Only pay for what you use; no monthly upfront costs
+                </p>
+            </div>
+
+            <div className='grid grid-cols-12 grid-flow-col bg-bladck-1'>
+                <Accordion variant='light'
+
+                    showDivider={false}
+                    className='-mx-8   duration-150 rounded-b-2xl col-span-8'
+                    itemClasses={{
+                        base: 'bg-black rounded-xdl',
+                        title: ' text-white font-semibold capitalize text-xl duration-150 transition',
+                        trigger: 'bg-black px-6 rounded-2xl data-[open=true]:rounded-b-none data-[open=true]:bg-black-1 data-[hover=true]:bg-black-1 duration-150 transition',
+                        indicator: '',
+                        content: 'px-6 pb-6 bg-black-1 text-white font-medium text-md rounded-b-2xl'
+                    }}
+                >
+                    {features.map((feature, i) => <AccordionItem
+                        indicator={<ArrowRight color='#FFFFFF' />}
+                        className='bg-black'
+                        key={i}
+                        aria-label={feature.title}
+                        title={feature.title}
                     >
-                        {`<meta name='pgbt:source' content='url.pdf' data-expires='3600' />`}
-                        {`<meta name='pgbt:source' content='url.html' data-expires='3600' />`}
-                        {`<meta name='pgbt:source' content='url.csv' data-expires='3600' />`}
-
-                    </Snippet>
-                </div>
-            </Card>
-            <Card
-                className='flex-auto  max-w-fit'
-                bg='#FFFCF9'
-            >
-
-
-                <div className='flex gap-6 flex-col w-full'>
-                    <div className='flex flex-col gap-2'>
-                        <h4 className='text-3xl font-bold'>include data from your own api's</h4>
-                        <p className='text-xl'>e.g for situations where the bot needs information about the user in the database.</p>
-                    </div>
-                    <Snippet hideSymbol size='lg' variant='solid' className='bg-[#EAEAEA] max-w-full '
-                        classNames={{
-                            pre: 'whitespace-normal	font-bold '
-                        }}
-                    >
-                        {`<meta name="pgbt:source" content="https://jsonplaceholder.typicode.com/users/1/todos" data-expires="0"  />`}
-
-
-                    </Snippet>
+                        {feature.description.map((desc, i) => <p key={i}>{desc}</p>)}
+                    </AccordionItem>)}
+                </Accordion>
+                <div className='w-full bg-white-1 col-span-4 h-[50vh] mx-12'>
+                    f
                 </div>
 
-            </Card>
-            {/* <Card
-                className='flex-auto max-w-fit'
-                bg='#9257FA'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold text-slate-50'>usage based billing</h4>
-                    <p className='text-xl text-slate-50'>only pay for what you use, stop billing by simply removing the script tag from your code.</p>
-                </div>
-            </Card> */}
-            <Card
-                className='flex-auto  max-w-fit'
-                bg='#FFFCF9'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold '>automatic human handoff</h4>
-                    <p className='text-xl '>Pagebot detects when to hand off the conversation to you and forwards it via email.</p>
-                </div>
-            </Card>
-            <Card
-                className='flex-auto max-w-fit'
-                bg='#FFFCF9'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold '>multilingual</h4>
-                    <p className='text-xl '>Pagebot supports languages in Arabic, English, Spanish, Turkish, French, Italian and Dutch.</p>
-                </div>
-            </Card>
-            <Card
-                className='flex-auto max-w-fit'
-                bg='#FFFCF9'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold '>tiny footprint</h4>
-                    <p className='text-xl '>unlike other chatbots, pagebot keeps your webpage fast in <b>{`<50kb`}</b> of Javascript.</p>
-                </div>
-            </Card>
-            <Card
-                className='flex-auto max-w-fit'
-                bg='#FFFCF9'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold '>unlimited messages & page sources</h4>
-                    <p className='text-xl '>use pagebot as little or as much as you want</p>
-                </div>
-            </Card>
-            {/* <Card
-                className='flex-auto max-w-fit'
-                bg='#FFFCF9'
-            >
-                <div className='flex flex-col gap-2'>
-                    <h4 className='text-3xl font-bold '>customizable</h4>
-                    <p className='text-xl '>easily change pagebot's appearance using css overrides</p>
-                </div>
-            </Card> */}
+            </div>
+        </section>
 
-
-        </div >
-
-        <CTA mini />
-
-    </Section >
+    </div>
 }
+
+interface Features {
+    title: string
+    description: string[]
+    image?: string
+}
+
+const features: Features[] = [
+    {
+        title: "Supports most data-sources; including your own API’s",
+        description: [
+            "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
+            "+",
+            "Including existing api's; for example in situations where the bot needs the current logged-in user’s information."
+        ]
+    },
+    {
+        title: "Pre-defined Q&A",
+        description: ["Add pre-defined questions and answers that your customers immediately see when they open the chat-bot.", "These aren't charged as they are not sent to the server."]
+    },
+    {
+        title: 'Automatic Human Handoff',
+        description: ["Pagebot detects when to hand off the conversation to you and forwards it via email."]
+    },
+    {
+        title: 'Tiny Footprint',
+        description: ["Pagebot is only ~50kb gzipped; keeping your website fast."]
+    },
+    {
+        title: 'Customizable; via CSS Overrides',
+        description: ["Customize the look and feel of the chat-bot to match your brand."]
+    },
+    {
+        title: 'Usage-based Billing',
+        description: ["Only pay for what you use; no monthly upfront costs."]
+    },
+    {
+        title: 'No Pre-Training Required',
+        description: ["Unlike other chat-bots, Pagebot doesn't require you to upload your data for training via a dashboard.", "It uses the data-sources you specify via meta tags to answer questions.", "This means PageBot is ready to go as soon as you add it to your website."]
+    },
+    {
+        title: 'Supports 90+ Languages; Automatically',
+        description: ["Pagebot automatically detects the languages of your data-sources and visitors."]
+    },
+    {
+        title: 'Extremely fast response times; 1.5s on average',
+        description: ["PageBot's servers are written in Rust; a language that known for its speed and reliability."]
+    }
+
+]
+
+
 
 export default FeaturesSection

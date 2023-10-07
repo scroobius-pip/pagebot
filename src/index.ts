@@ -105,9 +105,7 @@ export class PageBot {
         this.detachedMode = detachedMode;
         this.id = id;
         this.data = extractedData;
-        this.sources = PageBot.getPageSources([
-            { url: '/' }
-        ]).concat([{
+        this.sources = PageBot.getPageSources().concat([{
             content: extractedData.text, url: window.location.href,
         }])
         this.initialQuestions = this.getQuestions()
@@ -135,7 +133,7 @@ export class PageBot {
     }
 
 
-    private static getPageSources(initialSources: Source[]): Array<Source> {
+    private static getPageSources(): Array<Source> {
         const isUrl = (str: string) => {
             try {
                 new URL(str);
@@ -154,6 +152,10 @@ export class PageBot {
             const absoluteUrl = new URL(relativeUrl, document.baseURI);
             return absoluteUrl.href;
         }
+
+        const indexSource = { url: getAbsoluteUrl('/') };
+
+        const initialSources = indexSource.url.includes('localhost') ? [] : [indexSource];
 
         return Array.from(document.querySelectorAll('meta[name="pgbt:source"]:not([content=""])'))
             .reduce((acc: Array<Source>, el: HTMLMetaElement) => {

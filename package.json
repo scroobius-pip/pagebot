@@ -30,7 +30,8 @@
     "@swc/helpers": "^0.5.1",
     "lucide-react": "^0.276.0",
     "preact": "^10.17.1",
-    "tiny-markdown-parser": "^1.0.1"
+    "tiny-markdown-parser": "^1.0.1",
+    "use-editable": "^2.3.3"
   },
   "devDependencies": {
     "@parcel/transformer-inline-string": "^2.9.3",

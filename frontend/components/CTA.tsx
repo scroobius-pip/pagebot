@@ -38,7 +38,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
     }
 
     return <div className='rounded-[2rem]  bg-[#9257FA]  border-solid border-[#E2CFF9] border-[6px] p-10 gap-8 flex flex-col items-end'>
-        <div className='flex flex-col md:flex-row gap-6 align-middle justify-center self-start '>
+        <div className='flex flex-col md:flex-row gap-6 items-center justify-center self-start '>
             <div className='bg-slate-50 p-2 rounded-3xl self-start'>
                 <Logo className='h-10 text-[#9257FA]' />
             </div>

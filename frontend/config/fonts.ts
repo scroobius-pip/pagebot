@@ -1,4 +1,4 @@
-import { IBM_Plex_Mono as FontMono, IBM_Plex_Sans as FontSans } from "next/font/google"
+import { Poppins as FontMono, Poppins  as FontSans } from "next/font/google"
 
 export const fontSans = FontSans({
   // subsets: ["latin"],

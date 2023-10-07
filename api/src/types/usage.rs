@@ -1,7 +1,7 @@
 use std::str::FromStr;
 
 use crate::{db::DB, STRIPE_CLIENT};
-use chrono::{DateTime, Datelike, TimeZone, Timelike, Utc};
+use chrono::{DateTime, Datelike, Timelike, Utc};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
 use stripe::{CreateUsageRecord, SubscriptionItemId, UsageRecord, UsageRecordAction};
@@ -13,6 +13,7 @@ pub struct Usage {
     pub created_at: u64,
     pub items: Vec<UsageItem>,
     pub id: u64, //month timestamp + user id
+    pub count: u32,
 }
 
 // #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -48,6 +49,7 @@ impl Usage {
             created_at: chrono::Utc::now().timestamp() as u64,
             items: vec![],
             id: Self::id(get_current_month_timestamp(chrono::Utc::now()), user_id),
+            count: 0,
         }
     }
 
@@ -69,6 +71,7 @@ impl Usage {
 
     pub fn add_item(mut self, item: UsageItem) -> Result<Usage> {
         self.items.push(item);
+        self.count += 1;
         self.compact_items();
         self.save()
     }
