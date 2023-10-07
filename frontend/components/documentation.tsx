@@ -1,6 +1,6 @@
 import { FileTextIcon, InfoIcon, PercentCircleIcon } from 'lucide-react'
 import { SectionIconTitle } from './SectionIconTitle'
-import { textBlack } from './primitives'
+// import { textBlack } from './primitives'
 import { Section } from './section'
 import { Card } from './Card'
 import { Snippet } from '@nextui-org/snippet'
@@ -18,7 +18,7 @@ interface Doc {
 export const Docs = () => {
     return <Section className='flex flex-col gap-14 justify-between'>
         <div className='p-4 bg-[#FFFCF9] rounded-full flex flex-col justify-between gap-2'>
-            <SectionIconTitle text='Documentation' color={textBlack} icon={<FileTextIcon size={36} />} />
+            {/* <SectionIconTitle text='Documentation' color={textBlack} icon={<FileTextIcon size={36} />} /> */}
         </div>
         <div className='flex flex-col gap-2'>
             <h4 className='text-3xl font-bold '>minimal documentation</h4>
