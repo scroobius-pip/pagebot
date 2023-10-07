@@ -15,7 +15,8 @@ module.exports = {
       'white-1': '#F5F5F5',
       'black': '#1E1E1E',
       'black-1': '#2F3639',
-      'purple': '#5C07ED'
+      'purple': '#5C07ED',
+      'transparent': 'transparent',
     },
     // extend: {
     //   colors: {

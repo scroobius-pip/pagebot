@@ -50,9 +50,7 @@ export default function RootLayout({
         )}
       >
 
-        <header>
-          <Navigation />
-        </header>
+
         <main className='flex-1 flex flex-col bg-bg`'>
           {children}
         </main>

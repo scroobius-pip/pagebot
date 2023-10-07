@@ -87,8 +87,6 @@ export default () => {
         setSendTokenLoading(false)
     }
 
-
-
     const steps = [
         <div className='flex gap-2 flex-col w-full'>
             <Input onKeyDown={(e) => {
@@ -97,8 +95,16 @@ export default () => {
                 }
             }} onChange={({ target: { value } }) => {
                 setEmail(value)
-            }} value={email} variant='flat' placeholder='Email' type='email' color='secondary' />
-            <Button onClick={sendToken} isLoading={sendLoading} color='secondary' isDisabled={!isEmailValid || sendLoading} fullWidth >Send Token</Button>
+            }} value={email} variant='flat' placeholder='Email' type='email'
+                // classNames={{
+                //     input: 'text-black bg-black',
+                //     base: 'text-black',
+                //     innerWrapper: 'text-black bg-black',
+                // }}
+                className='text-black' color='secondary' />
+            <Button onClick={sendToken} isLoading={sendLoading}
+                className='bg-purple'
+                color='secondary' isDisabled={!isEmailValid || sendLoading} fullWidth >Send Token</Button>
         </div>,
         <TokenInput onComplete={(token) => {
             getJWT(token)
@@ -106,20 +112,27 @@ export default () => {
         <Spinner size='md' color='secondary' />
     ]
 
-    return <div className='w-full h-full  flex justify-center items-center bg-neutral-50'>
-        <div className='p-12 rounded-xl flex flex-col gap-24   w-full max-w-md items-center'>
-            <div className='flex flex-col gap-4 justify-center items-center '>
-                <div className='flex gap-2  items-center'>
-                    <Logo className='h-12' />
-                    <h1 className='font-extrabold text-2xl '>Hi!</h1>
-                </div>
-                {step === 0 && <h3 className='font-normal text-xl'>We'll send a token to your email.</h3>}
-                {step === 1 && <>
-                    <h3 className='font-normal text-xl text-center'>We've sent a token  to <b>{email}</b></h3>
+    return <div className='w-full   flex-1 grid grid-cols-6'>
+        <div className='col-span-full md:col-span-3 flex justify-center items-center bg-bg '>
+            <div className='p-12 rounded-xl flex flex-col gap-24   w-full max-w-md items-center'>
+                <div className='flex flex-col gap-4 justify-center items-center '>
+                    <div className='flex gap-2  items-end'>
+                        <Logo className='h-12' />
+                        <h1 className='font-medium text-2xl '>Hi!</h1>
+                    </div>
+                    {step === 0 && <h3 className='font-normal text-lg'>We'll send a token to your email.</h3>}
+                    {step === 1 && <>
+                        <h3 className='font-normal text-xl text-center'>We've sent a token  to <b>{email}</b></h3>
 
-                </>}
+                    </>}
+                </div>
+                {steps[step]}
+                <p className='text-center text-sm mt-4'>By signing up, you agree to our <a className='font-medium' href='https://bronze-brush-9b0.notion.site/Terms-Conditions-7f3bf549df494b778c324cacb8d36b86?pvs=4' target='_blank' rel="noreferrer">Terms of Service</a> and <a className='font-medium' href='https://bronze-brush-9b0.notion.site/Privacy-Policy-a1179d5d327b4056b3b059c95ae846f8?pvs=4' target='_blank' rel="noreferrer">Privacy Policy</a>.</p>
+
             </div>
-            {steps[step]}
+        </div>
+        <div className='col-span-3 bg-purple md:flex justify-center items-center hidden'>
+
         </div>
     </div>
 }

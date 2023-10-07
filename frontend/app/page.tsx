@@ -10,12 +10,15 @@ import { Logo } from '@/components/icons';
 import { Button } from '@nextui-org/button';
 import { ArrowRight, HeartHandshakeIcon, SparkleIcon } from 'lucide-react';
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 export const runtime = 'edge';
 
 export default function Home() {
 
   return <div className=''>
-
+    <header>
+      <Navigation />
+    </header>
     <Intro />
     <CTA />
     <You />
