@@ -6,7 +6,7 @@ import { Accordion, AccordionItem } from '@nextui-org/react'
 
 const FeaturesSection = () => {
     return <div id='features' className='w-full bg-black text-white overflow-x-hidden'>
-        <section className='max-w-[1400px] w-full m-auto p-12 flex gap-12 flex-col '>
+        <section className='max-w-[1400px] w-full m-auto p-12 pb-0 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
                 <h2 className='text-3xl font-medium'>Why PageBot ?</h2>
             </div>
@@ -19,7 +19,7 @@ const FeaturesSection = () => {
                 </p>
 
             </div>
-            <div className='flex flex-col md:flex-row gap-6  text-lg max-w-prose font-medium'>
+            <div className='flex flex-col md:flex-row gap-6  text-lg max-w-prose font-normal mb-12'>
                 <p>
                     Add data-sources to your chat-bot dynamically via meta tags
                 </p>
@@ -52,7 +52,7 @@ const FeaturesSection = () => {
                         {feature.description.map((desc, i) => <p key={i}>{desc}</p>)}
                     </AccordionItem>)}
                 </Accordion>
-                <div className='rounded-2xl  bg-purple pl-24 pt-24 h-full w-screen   col-span-6  hidden md:flex justify-start items-start '>
+                <div className='rounded-2xl  bg-purple rounded-bl-none pl-24 pt-24 h-full w-screen   col-span-6  hidden md:flex justify-start items-start '>
                     <div
                         style={{
                             backgroundImage: 'url(/hero.png)',
