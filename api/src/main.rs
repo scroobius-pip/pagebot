@@ -27,7 +27,7 @@ use routes::build_router;
 
 use env_logger::Env;
 use stats::{read_stats, write_stats};
-use stripe::Client;
+// use stripe::Client;
 use tower::ServiceBuilder;
 use tower_http::cors::{Any, CorsLayer};
 
@@ -86,8 +86,8 @@ fn setup_logs() {
 }
 
 lazy_static! {
-    pub static ref STRIPE_CLIENT: Client = Client::new(dotenv!("STRIPE_SECRET_KEY"))
-        .with_strategy(stripe::RequestStrategy::ExponentialBackoff(5));
+    // pub static ref STRIPE_CLIENT: Client = Client::new(dotenv!("STRIPE_SECRET_KEY"))
+    //     .with_strategy(stripe::RequestStrategy::ExponentialBackoff(5));
     // pub static ref LS_CLIENT: LemonSqueezy =
     //     LemonSqueezy::new(dotenv!("LS_SECRET_KEY").to_string());
 }
