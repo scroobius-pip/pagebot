@@ -124,8 +124,8 @@ impl From<EvaluatedMessage> for UsageItem {
     fn from(message: EvaluatedMessage) -> Self {
         let source_word_count = message
             .merged_sources
-            .split_whitespace()
-            .collect::<Vec<&str>>()
+            // .split_whitespace()
+            // .collect::<Vec<&str>>()
             .len();
 
         Self {

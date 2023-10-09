@@ -45,13 +45,15 @@ export default function RootLayout({
       </head>
       <body
         className={clsx(
-          "min-h-screen bg-bg font-sans antialiased flex flex-col",
+          "min-h-screen bg-bg font-sans antialiased flex flex-col ",
           fontSans.className
         )}
       >
+        <header>
+          <Navigation />
+        </header>
 
-
-        <main className='flex-1 flex flex-col bg-bg`'>
+        <main className='flex-1 flex flex-col `'>
           {children}
         </main>
         <footer className=" bg-black p-10  w-full flex text-white justify-around ">

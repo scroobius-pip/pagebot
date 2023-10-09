@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     notification::{Notification, NotificationType},
+    stats::MESSAGE_COUNT,
     types::{
         history_item::HistoryItem,
         message::{EvaluatedMessage, Message},
@@ -118,7 +119,10 @@ pub async fn main(
 
     };
 
-    tokio::spawn(async move { UsageItem::from(evaluated_message).submit().await.save() });
+    tokio::spawn(async move {
+        MESSAGE_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        UsageItem::from(evaluated_message).submit().await.save()
+    });
 
     Ok(Sse::new(stream))
 }

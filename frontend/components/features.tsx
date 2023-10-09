@@ -5,7 +5,7 @@ import { Logo } from './icons'
 import { Accordion, AccordionItem } from '@nextui-org/react'
 
 const FeaturesSection = () => {
-    return <div id='features' className='w-full bg-black text-white overflow-x-hidden'>
+    return <div id='features' className='w-full bg-black text-white overflow-x-hidden py-36 pb-0'>
         <section className='max-w-[1400px] w-full m-auto p-12 pb-0 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
                 <h2 className='text-3xl font-medium'>Why PageBot ?</h2>
@@ -82,7 +82,7 @@ const features: Features[] = [
         description: [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
-            "Including existing api's; for example in situations where the bot needs the current logged-in user’s information."
+            "Including existing APIs; for example in situations where the bot needs the current logged-in user’s information."
         ],
         image: '/hero'
     },

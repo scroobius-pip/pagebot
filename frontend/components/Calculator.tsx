@@ -23,7 +23,7 @@ export const Calculator = () => {
         setSourceCount(parsedValue);
     })
 
-    const cost = (4 * 0.0005 + ((0.00004 * sourceCount) + 0.05) * messageCount).toFixed(2);
+    const cost = (4 * 0.0005 + ((0.00005 * sourceCount) + 0.05) * messageCount).toFixed(2);
 
 
     return <div className='flex flex-col gap-3'>
@@ -36,7 +36,7 @@ export const Calculator = () => {
         </p>
         <p className='text-3xl font-semibold'>
             {/* <b>4 weeks</b> * $0.0005/source + ((0.00004 * <b className='text-[#9257FA]'>{sourceCount}</b>) + 0.05) * <b className='text-[#FF6565]'>{messageCount}</b>) = */}
-            ~${cost}/month
+            ~${messageCount <= 50 ? 0 : cost}/month
         </p>
     </div>;
 

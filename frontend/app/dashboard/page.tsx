@@ -10,12 +10,18 @@ import { DocElement } from '@/components/documentation';
 import isJwtTokenExpired from 'jwt-check-expiry'
 import { Spinner } from '@nextui-org/spinner';
 import { Logo } from '@/components/icons';
-
+// declare LemonSqueezy: any
+declare global {
+    var LemonSqueezy: any
+    var createLemonSqueezy: any
+}
+// https://pagebot.lemonsqueezy.com/checkout/buy/2fcdb9bd-9409-441b-a7b7-f3581e6e9eb9?checkout[email]=sim04ful@gmail.com
 interface Me {
     id: string
     usage: any[]
     allowed_domains: string[] | null
     subscribed: boolean
+    email: string
 }
 
 export default function Dashboard() {
@@ -29,6 +35,7 @@ export default function Dashboard() {
 
 
     const getMe = async () => {
+        setMe(null)
         const endpoint = 'https://api.thepagebot.com/me'
         const res = await fetch(endpoint, {
             method: 'GET',
@@ -77,31 +84,23 @@ export default function Dashboard() {
     }, [me])
 
     useEffect(() => {
+        // createLemonSqueezy()
         const jwt = localStorage.getItem('jwt');
         (jwt && !isJwtTokenExpired(jwt) && getMe()) || (window.location.href = '/login')
     }, [])
 
 
-
+    const checkoutLink = `https://pagebot.lemonsqueezy.com/checkout/buy/2fcdb9bd-9409-441b-a7b7-f3581e6e9eb9?checkout[email]=${me?.email}`
 
     return <>
         <Section disabled className='flex flex-col gap-14 w-full'>
-            <div className='p-4 bg-[#FFFCF9]  rounded-full flex  justify-between gap-12 items-center'>
-                <a href='/' className=' p-2 rounded-full'>
-                    <Logo className='h-8' />
-                </a>
-                {/* <h1>Dashboard</h1> */}
-                {/* <SectionIconTitle text='Dashboard' color={textBlack} icon={<LayoutDashboardIcon size={24} />} /> */}
-                <Button variant='flat' className='rounded-full' onClick={() => {
-                    localStorage.removeItem('jwt')
-                    window.location.href = '/login'
-                }}>Logout</Button>
-            </div>
+
             <div className='flex flex-col gap-12 w-full max-w-6xl m-auto'>
-                {/* <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
+
+                <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
                     <h2 className='text-3xl font-extrabold'>Usage</h2>
                     <div className="flex flex-wrap flex-row gap-4">
-                        <div className='p-8 shadow-sm rounded-3xl bg-[#9257FA] text-neutral-50    border-2 gap-4 flex flex-col'>
+                        <div className='p-8 shadow-sm rounded-3xl bg-purple text-white    border-2 gap-4 flex flex-col'>
                             <div>
                                 <Tooltip content="Customer messages that were answered by PageBot.">
                                     <p className='text-lg font-medium '>Total Messages <span className='ml-6 text-sm opacity-90'>Last 30 Days</span></p>
@@ -109,7 +108,7 @@ export default function Dashboard() {
                             </div>
                             {me ? <h3 className='text-6xl font-bold'>20.1k</h3> : <Spinner size='md' color='white' />}
                         </div>
-                        <div className='p-8 shadow-sm rounded-3xl bg-neutral-50 border-2 gap-4 flex flex-col'>
+                        <div className='p-8 shadow-sm rounded-3xl bg-white gap-4 flex flex-col'>
                             <div>
                                 <Tooltip content="How many times PageBot had to retrieve a source.">
                                     <p className='text-lg font-medium'>Source Retrieval Count <span className='ml-6 text-sm opacity-70'>Last 30 Days</span></p>
@@ -120,11 +119,33 @@ export default function Dashboard() {
 
 
                     </div>
-                </div> */}
-                <div className='flex flex-col gap-24 max-w-3dxl'>
+                </div>
+                <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-12 self-start border-2 border-white'>
+                    <p className='font-medium'>
+                        Subscribe to remove 50 Message Limit
+                    </p>
+                    <Button
+                        className='rounded-3xl max-w-xs lemonsqueezy-button bg-white text-black '
+                        // as='a' href={checkoutLink}
+                        onClick={() => {
+                            createLemonSqueezy()
+                            LemonSqueezy.Setup({
+                                eventHandler: (data: any) => {
+                                    if (data.event) {
+                                        getMe()
+                                    }
+
+                                }
+                            })
+                            LemonSqueezy.Url.Open(checkoutLink)
+                        }}
+                    >Subscribe</Button>
+
+                </div>
+                <div className='flex flex-col gap-24'>
 
                     <div className='w-full'>
-                        <div className='flex gap-8 w-full mb-4'>
+                        <div className='flex gap-8 w-full mb-4 flex-col'>
                             <div className='w-full'>
                                 <h2 className='text-2xl font-medium'>Allowed Domains</h2>
                                 <p className='text-lg font-d'>Domains that are permitted to access your PageBot instance. <b className='text-medium'>Defaults to Any</b></p>
@@ -143,7 +164,7 @@ export default function Dashboard() {
                         {me ? <DomainList domains={domains} onDelete={deleteDomain} /> : <Spinner size='md' color='current' />}
                     </div>
                     <div className='w-full'>
-                        <div className='flex gap-8 w-full'>
+                        <div className='flex gap-8 w-full flex-col'>
                             <div className='w-full'>
                                 <h2 className='text-2xl font-medium'>Billing</h2>
                                 <p className='text-lg font-d'>Manage your billing through the Stripe portal.</p>
@@ -151,6 +172,7 @@ export default function Dashboard() {
                             <Button className='rounded-3xl' as='a' href='https://billing.stripe.com/p/login/bIY7vz4zxcXC5k4dQQ'>Stripe Portal</Button>
                         </div>
                     </div>
+
                     <div>
                         <h2 className='text-2xl font-medium mb-4'>Integration Steps</h2>
                         <div>

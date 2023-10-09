@@ -33,7 +33,7 @@ pub async fn main(Json(event): Json<Event>) -> GenericResponse<()> {
                     })?
                     .id
                     .to_string();
-                user.stripe_subscription_id = Some(subscription_item_id);
+                // user.stripe_subscription_id = Some(subscription_item_id);
                 user.subscribed = true;
                 _ = user.save();
             };
@@ -53,7 +53,7 @@ pub async fn main(Json(event): Json<Event>) -> GenericResponse<()> {
                 })?;
 
             if let Ok(Some(mut user)) = User::by_email(&email) {
-                user.stripe_subscription_id = None;
+                // user.stripe_subscription_id = None;
                 user.subscribed = false;
                 _ = user.save();
             };

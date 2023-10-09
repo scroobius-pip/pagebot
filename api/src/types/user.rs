@@ -12,7 +12,7 @@ pub struct User {
     pub id: u64,
     pub email: String,
     pub subscribed: bool,
-    pub stripe_subscription_id: Option<String>,
+    pub ls_subscription_id: Option<u64>,
     pub allowed_domains: Option<Vec<String>>,
 }
 
@@ -66,7 +66,7 @@ impl From<UserInput> for User {
             id: Self::id(input.email.as_ref()),
             email: input.email.to_string(),
             subscribed: false,
-            stripe_subscription_id: None,
+            ls_subscription_id: None,
             allowed_domains: None,
         }
     }

@@ -4,7 +4,7 @@ import { Calculator } from './Calculator'
 import { CTA } from './CTA'
 
 const Pricing = () => {
-    return <section id='pricing' className='max-w-[1400px] w-full m-auto p-12 '>
+    return <section id='pricing' className='max-w-[1400px] w-full m-auto p-12 py-36 '>
         <div className='flex flex-col gap-24 '>
             <div className='flex gap-24 flex-col md:flex-row'>
                 <div className='flex flex-col justify-between col-span-6 gap-12'>
@@ -54,7 +54,7 @@ const items = [
     {
         title: 'source word count',
         description: 'The word count of the source, e.g if you specify a PDF with 500 words, it would cost 500*$0.00004=$0.02',
-        price: '~$0.00004/word'
+        price: '~$0.00005/word'
     },
     {
         title: 'message count',

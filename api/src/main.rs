@@ -16,11 +16,13 @@ mod db;
 mod email_templates;
 mod embed_pool;
 mod jwt;
+mod lemonsqueezy;
 mod notification;
 mod routes;
 mod stats;
 mod token_map;
 mod types;
+
 use routes::build_router;
 
 use env_logger::Env;
@@ -86,4 +88,6 @@ fn setup_logs() {
 lazy_static! {
     pub static ref STRIPE_CLIENT: Client = Client::new(dotenv!("STRIPE_SECRET_KEY"))
         .with_strategy(stripe::RequestStrategy::ExponentialBackoff(5));
+    // pub static ref LS_CLIENT: LemonSqueezy =
+    //     LemonSqueezy::new(dotenv!("LS_SECRET_KEY").to_string());
 }

@@ -1,10 +1,10 @@
-use std::str::FromStr;
-
-use crate::{db::DB, STRIPE_CLIENT};
+use crate::{
+    db::DB,
+    lemonsqueezy::{UsageRecord, UsageRecordAction},
+};
 use chrono::{DateTime, Datelike, Timelike, Utc};
 use eyre::Result;
 use serde::{Deserialize, Serialize};
-use stripe::{CreateUsageRecord, SubscriptionItemId, UsageRecord, UsageRecordAction};
 
 use super::user::User;
 // use crate::routes::get::
@@ -41,7 +41,7 @@ pub struct UsageItem {
     pub user_id: u64,
 }
 
-const USAGE_ITEM_THRESHOLD: usize = 100;
+const USAGE_ITEM_THRESHOLD: usize = 50;
 
 impl Usage {
     pub fn new(user_id: u64) -> Self {
@@ -105,24 +105,20 @@ impl Usage {
 
 impl UsageItem {
     pub async fn submit(mut self) -> Self {
-        let stripe_units: u32 = (&self).into();
+        let units: u32 = (&self).into();
 
         if let Ok(Some(User {
-            stripe_subscription_id: Some(stripe_subscription_id),
+            ls_subscription_id: Some(subscription_id),
             ..
         })) = User::by_id(self.user_id)
         {
-            let subscription_item_id =
-                &SubscriptionItemId::from_str(stripe_subscription_id.as_str())
-                    .expect("Invalid subscription item id");
-
-            let usage_record = CreateUsageRecord {
-                quantity: stripe_units as u64,
-                timestamp: None,
-                action: Some(UsageRecordAction::Increment),
+            let usage_record = UsageRecord {
+                quantity: units as u64,
+                subscription_item_id: subscription_id,
+                action: UsageRecordAction::Increment,
             };
 
-            match UsageRecord::create(&STRIPE_CLIENT, subscription_item_id, usage_record).await {
+            match usage_record.create().await {
                 Ok(_) => {
                     self.submitted = true;
                 }
@@ -175,17 +171,3 @@ fn get_current_month_timestamp(date: DateTime<Utc>) -> u32 {
 const MESSAGE_UNIT: u32 = 1000;
 const SOURCE_RETRIEVAL_UNIT: u32 = 100;
 const SOURCE_WORD_UNIT: u32 = 1;
-
-// const MESSAGE_UNIT: u32 = dotenv!("MESSAGE_UNIT").parse::<u32>().unwrap();
-
-// fn get_all_months_timestamps() -> Option<Vec<u32>> {
-//     let start_date_timestamp: u32 = 1691956273;
-//     let start_date = Utc.timestamp_opt(start_date_timestamp as i64, 0);
-//     let current_date_timestamp = get_current_month_timestamp(Utc::now());
-//     let mut timestamps: Vec<u32> = vec![];
-
-//     if let chrono::LocalResult::Single(start_date) = start_date {
-//         let mut current_date = start_date;
-//         while current_date
-//     }
-// }
