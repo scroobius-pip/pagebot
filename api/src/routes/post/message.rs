@@ -38,7 +38,7 @@ pub async fn main(
     Host(host): Host,
     Json(Request { message, history }): Json<Request>,
 ) -> Result<Sse<impl Stream<Item = Result<Event>>>, StatusCode> {
-    let user = User::by_id(message.user_id)
+    let mut user = User::by_id(message.user_id)
         .map_err(|e| {
             log::error!("Failed to get user: {}", e);
             StatusCode::INTERNAL_SERVER_ERROR
@@ -59,7 +59,7 @@ pub async fn main(
         return Err(StatusCode::FORBIDDEN);
     }
 
-    let notification = Arc::new(Notification::new(user.email));
+    let notification = Arc::new(Notification::new(user.email.clone()));
 
     let instant_now = std::time::Instant::now();
 
@@ -135,11 +135,16 @@ pub async fn main(
         match usage {
             Ok(usage) => {
                 if !(usage.message_count <= FREE_MESSAGE_COUNT) {
-                    usage_item.submit().await.save(usage);
+                    usage_item.submit().await.save(&usage);
                 } else {
-                    usage_item.save(usage);
+                    usage_item.save(&usage);
                     if !user.subscribed {
                         notification.send(NotificationType::LimitReached);
+
+                        if usage.message_count > 200 {
+                            user.subscribed = false;
+                            user.save().expect("Failed to save user");
+                        }
                     }
                 }
             }

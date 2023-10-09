@@ -133,7 +133,7 @@ impl UsageItem {
         self
     }
 
-    pub fn save(self, usage: Usage) -> Result<Usage> {
+    pub fn save(self, usage: &Usage) -> Result<Usage> {
         usage.add_item(self)
     }
 }
