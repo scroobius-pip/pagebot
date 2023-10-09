@@ -71,9 +71,9 @@ impl Usage {
     }
 
     pub fn add_item(mut self, item: UsageItem) -> Result<Usage> {
-        self.items.push(item);
+        self.source_retrieval_count += item.source_retrieval_count as u32;
         self.message_count += 1;
-        self.source_retrieval_count += item.source_retrieval_count
+        self.items.push(item);
         self.compact_items();
         self.save()
     }
@@ -133,7 +133,7 @@ impl UsageItem {
         self
     }
 
-    pub fn save(self, usage: &Usage) -> Result<Usage> {
+    pub fn save(self, usage: Usage) -> Result<Usage> {
         usage.add_item(self)
     }
 }
@@ -158,9 +158,10 @@ impl From<Usage> for UsageOutput {
         let Usage {
             items,
             message_count,
-            source_retrieval_count,..
+            source_retrieval_count,
+            ..
         } = usage;
-      
+
         Self {
             message_count,
             source_retrieval_count,
