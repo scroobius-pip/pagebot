@@ -15,7 +15,6 @@ declare global {
     var LemonSqueezy: any
     var createLemonSqueezy: any
 }
-// https://pagebot.lemonsqueezy.com/checkout/buy/2fcdb9bd-9409-441b-a7b7-f3581e6e9eb9?checkout[email]=sim04ful@gmail.com
 interface Me {
     id: string
     usage: any[]
@@ -120,7 +119,7 @@ export default function Dashboard() {
 
                     </div>
                 </div>
-                <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-12 self-start border-2 border-white'>
+                {!me?.subscribed && <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-12 self-start border-2 border-white'>
                     <p className='font-medium'>
                         Subscribe to remove 50 Message Limit
                     </p>
@@ -141,7 +140,7 @@ export default function Dashboard() {
                         }}
                     >Subscribe</Button>
 
-                </div>
+                </div>}
                 <div className='flex flex-col gap-24'>
 
                     <div className='w-full'>
