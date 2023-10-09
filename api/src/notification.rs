@@ -19,6 +19,7 @@ pub enum NotificationType {
     Admin(String),
     EmailForwarding(EmailForwarding),
     SourceError(String),
+    LimitReached,
     KnowledgeGap(String),
     Token(String),
 }
@@ -110,6 +111,14 @@ impl From<NotificationType> for EmailData {
                 html: format!(
                     "<h3>Verify your email to log on to PageBot</h3> <h1 style=\"letter-spacing: 2px;\">{}</h1><p>This code will expire in 10 minutes.</p>",
                     token
+                ),
+                from,
+                name: None,
+            },
+            NotificationType::LimitReached => Self {
+                subject: "PageBot Limit Reached".to_string(),
+                html: format!(
+                    "<h3>PageBot Limit Reached</h3> <p>You have reached your limit of free messages for the month. Please log in and add a payment method to continue using PageBot.</p><p><a href=\"https://thepagebot.com/dashboard\">https://thepagebot.com/dashboard</a></p>",
                 ),
                 from,
                 name: None,

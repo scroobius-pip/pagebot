@@ -6,7 +6,7 @@ use crate::{
     types::{
         history_item::HistoryItem,
         message::{EvaluatedMessage, Message},
-        usage::UsageItem,
+        usage::{Usage, UsageItem},
         user::User,
     },
 };
@@ -76,6 +76,7 @@ pub async fn main(
         })?;
 
     let query = evaluated_message.query.clone();
+    let gen_notification = notification.clone();
     let stream = async_stream::stream! {
         // // #[cfg(not(debug_assertions))]
         // {
@@ -103,7 +104,8 @@ pub async fn main(
                 }
 
                 if content.contains("NOT_FOUND") {
-                    let notification_result = notification
+                    let notification_result = gen_notification
+                        .clone()
                         .send(NotificationType::KnowledgeGap(query))
                         .await;
                     if let Err(e) = notification_result {
@@ -121,7 +123,30 @@ pub async fn main(
 
     tokio::spawn(async move {
         MESSAGE_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
-        UsageItem::from(evaluated_message).submit().await.save()
+
+        const FREE_MESSAGE_COUNT: u32 = dotenv!("FREE_MESSAGE_COUNT")
+            .parse::<u32>()
+            .expect("Failed to parse FREE_MESSAGE_COUNT");
+
+        let usage_item = UsageItem::from(evaluated_message);
+        let usage = Usage::by_id(usage_item.usage_id)
+            .map(|usage| usage.unwrap_or_else(|| Usage::new(usage_item.usage_id)));
+
+        match usage {
+            Ok(usage) => {
+                if !(usage.message_count <= FREE_MESSAGE_COUNT) {
+                    usage_item.submit().await.save(usage);
+                } else {
+                    usage_item.save(usage);
+                    if !user.subscribed {
+                        notification.send(NotificationType::LimitReached);
+                    }
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to get usage: {}", e);
+            }
+        }
     });
 
     Ok(Sse::new(stream))

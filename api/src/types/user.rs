@@ -4,7 +4,7 @@ use serde_email::Email;
 
 use crate::db::DB;
 
-use super::usage::Usage;
+use super::usage::{Usage, UsageOutput};
 
 #[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct User {
@@ -25,7 +25,8 @@ pub struct UserOutput {
     pub email: String,
     pub id: String,
     pub subscribed: bool,
-    pub usage: Vec<Usage>,
+    // pub usage: Vec<Usage>,
+    pub usage: UsageOutput,
     pub allowed_domains: Option<Vec<String>>,
 }
 
@@ -74,10 +75,10 @@ impl From<UserInput> for User {
 
 impl From<User> for UserOutput {
     fn from(user: User) -> Self {
-        let usage = match Usage::by_id(Usage::current_id(user.id)) {
-            Ok(Some(usage)) => vec![usage],
-            _ => vec![],
-        };
+        let usage = Usage::by_id(Usage::current_id(user.id))
+            .unwrap_or_default()
+            .unwrap_or_default()
+            .into();
 
         Self {
             id: user.id.to_string(),

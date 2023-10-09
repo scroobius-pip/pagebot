@@ -8,21 +8,21 @@ use serde::{Deserialize, Serialize};
 
 use super::user::User;
 // use crate::routes::get::
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Usage {
     pub created_at: u64,
     pub items: Vec<UsageItem>,
     pub id: u64, //month timestamp + user id
-    pub count: u32,
+    pub message_count: u32,
+    pub source_retrieval_count: u32,
 }
 
-// #[derive(Debug, Deserialize, Serialize, Clone)]
-// pub enum UsageStatus {
-//     Active,
-//     Failed,
-//     Paid,
-// }
-
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct UsageOutput {
+    //monthly usage
+    message_count: u32,
+    source_retrieval_count: u32,
+}
 /// UsageItem is reported to stripe for billing
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct UsageItem {
@@ -41,7 +41,7 @@ pub struct UsageItem {
     pub user_id: u64,
 }
 
-const USAGE_ITEM_THRESHOLD: usize = 50;
+const USAGE_ITEM_THRESHOLD: usize = 100;
 
 impl Usage {
     pub fn new(user_id: u64) -> Self {
@@ -49,7 +49,8 @@ impl Usage {
             created_at: chrono::Utc::now().timestamp() as u64,
             items: vec![],
             id: Self::id(get_current_month_timestamp(chrono::Utc::now()), user_id),
-            count: 0,
+            message_count: 0,
+            source_retrieval_count: 0,
         }
     }
 
@@ -71,7 +72,8 @@ impl Usage {
 
     pub fn add_item(mut self, item: UsageItem) -> Result<Usage> {
         self.items.push(item);
-        self.count += 1;
+        self.message_count += 1;
+        self.source_retrieval_count += item.source_retrieval_count
         self.compact_items();
         self.save()
     }
@@ -131,11 +133,8 @@ impl UsageItem {
         self
     }
 
-    pub fn save(self) -> Result<()> {
-        let usage = Usage::by_id(self.usage_id)
-            .map(|usage| usage.unwrap_or_else(|| Usage::new(self.usage_id)))?;
-        usage.add_item(self)?;
-        Ok(())
+    pub fn save(self, usage: Usage) -> Result<Usage> {
+        usage.add_item(self)
     }
 }
 
@@ -151,6 +150,21 @@ impl From<&UsageItem> for u32 {
         *message_count as u32 * MESSAGE_UNIT
             + *source_retrieval_count as u32 * SOURCE_RETRIEVAL_UNIT
             + source_word_count * SOURCE_WORD_UNIT
+    }
+}
+
+impl From<Usage> for UsageOutput {
+    fn from(usage: Usage) -> Self {
+        let Usage {
+            items,
+            message_count,
+            source_retrieval_count,..
+        } = usage;
+      
+        Self {
+            message_count,
+            source_retrieval_count,
+        }
     }
 }
 
