@@ -54,10 +54,10 @@ pub async fn main(
         }
     }
 
-    #[cfg(not(debug_assertions))]
-    if !user.subscribed {
-        return Err(StatusCode::FORBIDDEN);
-    }
+    // #[cfg(not(debug_assertions))]
+    // if !user.subscribed {
+    //     return Err(StatusCode::FORBIDDEN);
+    // }
 
     let notification = Arc::new(Notification::new(user.email.clone()));
 
