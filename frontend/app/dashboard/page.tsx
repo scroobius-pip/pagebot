@@ -17,10 +17,13 @@ declare global {
 }
 interface Me {
     id: string
-    usage: any[]
     allowed_domains: string[] | null
     subscribed: boolean
     email: string
+    usage: {
+        message_count: number
+        source_retrieval_count: number
+    }
 }
 
 export default function Dashboard() {
@@ -35,7 +38,7 @@ export default function Dashboard() {
 
     const getMe = async () => {
         setMe(null)
-        const endpoint = 'https://api.thepagebot.com/me'
+        const endpoint = 'https://8e3e-102-215-57-125.ngrok-free.app/me'
         const res = await fetch(endpoint, {
             method: 'GET',
             headers: {
@@ -105,7 +108,7 @@ export default function Dashboard() {
                                     <p className='text-lg font-medium '>Total Messages <span className='ml-6 text-sm opacity-90'>Last 30 Days</span></p>
                                 </Tooltip>
                             </div>
-                            {me ? <h3 className='text-6xl font-bold'>20.1k</h3> : <Spinner size='md' color='white' />}
+                            {me ? <h3 className='text-6xl font-bold'>{me.usage.message_count}</h3> : <Spinner size='md' color='white' />}
                         </div>
                         <div className='p-8 shadow-sm rounded-3xl bg-white gap-4 flex flex-col'>
                             <div>
@@ -113,7 +116,7 @@ export default function Dashboard() {
                                     <p className='text-lg font-medium'>Source Retrieval Count <span className='ml-6 text-sm opacity-70'>Last 30 Days</span></p>
                                 </Tooltip>
                             </div>
-                            {me ? <h3 className='text-6xl font-bold'>2.1k</h3> : <Spinner size='md' color='current' />}
+                            {me ? <h3 className='text-6xl font-bold'>{me.usage.source_retrieval_count}</h3> : <Spinner size='md' color='current' />}
                         </div>
 
 

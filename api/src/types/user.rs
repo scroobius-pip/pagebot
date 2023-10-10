@@ -27,6 +27,7 @@ pub struct UserOutput {
     pub subscribed: bool,
     // pub usage: Vec<Usage>,
     pub usage: UsageOutput,
+    pub subscription_id: Option<u64>,
     pub allowed_domains: Option<Vec<String>>,
 }
 
@@ -84,6 +85,7 @@ impl From<User> for UserOutput {
             id: user.id.to_string(),
             email: user.email,
             subscribed: user.subscribed,
+            subscription_id: user.ls_subscription_id,
             usage,
             allowed_domains: user.allowed_domains,
         }

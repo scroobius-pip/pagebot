@@ -125,7 +125,7 @@ impl UsageItem {
                     self.submitted = true;
                 }
                 Err(e) => {
-                    log::error!("Failed to submit usage item to stripe: {}", e);
+                    log::error!("Failed to submit usage item to lemonsqueezy: {}", e);
                 }
             }
         }

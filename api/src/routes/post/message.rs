@@ -124,7 +124,11 @@ pub async fn main(
     tokio::spawn(async move {
         MESSAGE_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
 
+        #[cfg(not(debug_assertions))]
         const FREE_MESSAGE_COUNT: u32 = 50;
+
+        #[cfg(debug_assertions)]
+        const FREE_MESSAGE_COUNT: u32 = 1;
 
         let usage_item = UsageItem::from(evaluated_message);
         let usage = Usage::by_id(usage_item.usage_id)
@@ -132,18 +136,13 @@ pub async fn main(
 
         match usage {
             Ok(usage) => {
-                if usage.message_count > FREE_MESSAGE_COUNT {
-                    _ = usage_item.submit().await.save(usage);
+                if usage.message_count <= FREE_MESSAGE_COUNT {
+                    _ = usage_item.save(usage);
                 } else {
                     if !user.subscribed {
                         _ = notification.send(NotificationType::LimitReached).await;
-
-                        if usage.message_count > 200 {
-                            user.subscribed = false;
-                            user.save().expect("Failed to save user");
-                        }
                     }
-                    _ = usage_item.save(usage);
+                    _ = usage_item.submit().await.save(usage);
                 }
             }
             Err(e) => {

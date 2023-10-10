@@ -20,7 +20,10 @@ pub async fn main(Json(event): Json<EventData>) -> GenericResponse<()> {
                     SubscriptionAttributes {
                         user_email,
                         status,
-                        first_subscription_item: SubscriptionItem { subscription_id },
+                        first_subscription_item:
+                            SubscriptionItem {
+                                id: subscription_id,
+                            },
                         ..
                     },
             },

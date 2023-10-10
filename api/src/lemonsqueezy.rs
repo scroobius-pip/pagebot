@@ -45,7 +45,7 @@ pub struct SubscriptionAttributes {
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct SubscriptionItem {
-    pub subscription_id: u64,
+    pub id: u64,
 }
 
 #[derive(Debug, Clone, Deserialize)]
