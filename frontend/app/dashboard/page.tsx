@@ -26,6 +26,8 @@ interface Me {
     }
 }
 
+const HOST = 'https://api.thepagebot.com'
+
 export default function Dashboard() {
     const [domains, setDomains] = useState<string[]>([])
     const deleteDomain = (domain: string) => {
@@ -38,7 +40,7 @@ export default function Dashboard() {
 
     const getMe = async () => {
         setMe(null)
-        const endpoint = 'https://8e3e-102-215-57-125.ngrok-free.app/me'
+        const endpoint = HOST + '/me'
         const res = await fetch(endpoint, {
             method: 'GET',
             headers: {
@@ -51,7 +53,7 @@ export default function Dashboard() {
     }
 
     const updateDomains = async (domains: string[]) => {
-        const endpoint = 'https://api.thepagebot.com/domains'
+        const endpoint = HOST + '/domains'
         const res = await fetch(endpoint, {
             method: 'POST',
             body: JSON.stringify({
