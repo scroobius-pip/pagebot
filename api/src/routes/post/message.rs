@@ -37,12 +37,27 @@ pub struct Request {
 
 #[derive(Debug, Clone, Serialize)]
 #[serde(rename_all = "snake_case")]
-pub enum Response<'a> {
-    Chunk(&'a String),
+pub enum Response {
+    Chunk(String),
     Perf(Perf), //ms
     NotFound,
     Email,
     Error,
+    None,
+}
+
+impl From<&String> for Response {
+    fn from(s: &String) -> Self {
+        if s.contains("_N") {
+            Response::NotFound
+        } else if s.contains("_E") {
+            Response::Email
+        } else if s.is_empty() {
+            Response::None
+        } else {
+            Response::Chunk(s.clone())
+        }
+    }
 }
 
 pub async fn main(
@@ -120,24 +135,17 @@ pub async fn main(
                     send_elapsed = false;
                 }
 
-                if content.contains("_N") {
+                let response: Response = content.into();
+                yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
+
+                if matches!(response, Response::NotFound) {
                     let notification_result = gen_notification
                         .clone()
-                        .send(NotificationType::KnowledgeGap(query))
+                        .send(NotificationType::KnowledgeGap(query.clone()))
                         .await;
                     if let Err(e) = notification_result {
                         log::error!("Failed to send notification: {}", e);
                     }
-                    // yield Ok(Event::default().data("NOT_FOUND"));
-                    let response = Response::NotFound;
-                    yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
-                    break;
-                }
-
-                // yield Ok(Event::default().data(content));
-                if !content.is_empty(){
-                    let response = Response::Chunk(content);
-                    yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
                 }
             }
         }

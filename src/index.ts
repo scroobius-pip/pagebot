@@ -15,6 +15,39 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
+type RawMessage =
+    //     {
+    //     chunk: string,
+    // } | {
+
+    //     perf: string
+    // }
+    string | "not_found" | "error" | "email"
+
+export type ParsedMessage = {
+    type: 'chunk',
+    value: string,
+} | {
+    type: 'perf',
+    value: {
+        retrieval_time: string,
+        embedding_time: string,
+        search_time: string,
+        total_time: string,
+        first_chunk_time: string,
+        token_count: number,
+        cached: boolean
+    }
+} | {
+    type: 'not_found',
+} | {
+    type: 'error',
+} | {
+    type: 'email',
+}
+
+
+
 const HOST = 'https://api.thepagebot.com/'
 // const HOST = 'http://localhost:8000/'
 //@ts-ignore
@@ -105,9 +138,7 @@ export class PageBot {
         this.detachedMode = detachedMode;
         this.id = id;
         this.data = extractedData;
-        this.sources = PageBot.getPageSources().concat([{
-            content: extractedData.text, url: window.location.href,
-        }])
+        this.sources = this.getPageSources();
         this.initialQuestions = this.getQuestions()
 
         globalThis['pgbt'] = this;
@@ -133,7 +164,7 @@ export class PageBot {
     }
 
 
-    private static getPageSources(): Array<Source> {
+    private getPageSources(): Array<Source> {
         const isUrl = (str: string) => {
             try {
                 new URL(str);
@@ -177,7 +208,10 @@ export class PageBot {
 
                 return acc;
 
-            }, initialSources);
+            }, initialSources)
+            .concat([{
+                content: this.data.text, url: window.location.href,
+            }])
     }
 
     public async email(email: string, name: string, message: string): Promise<boolean> {
@@ -208,24 +242,70 @@ export class PageBot {
     }
 
 
+    private static decodeMessage(message: RawMessage): ParsedMessage {
 
-    public async *query(queryText: string): AsyncGenerator<string> {
+        try {
+            if (message === "not_found") {
+                return {
+                    type: 'not_found',
+                }
+            } else if (message === "error") {
+                return {
+                    type: 'error',
+                }
+            } else if (message === "email") {
+                return {
+                    type: 'email',
+                }
+            }
+
+            const messageData = JSON.parse(message);
+            if (messageData.chunk) {
+                return {
+                    type: 'chunk',
+                    value: messageData.chunk,
+                }
+            } else if (messageData.perf) {
+                return {
+                    type: 'perf',
+                    value: messageData.perf,
+                }
+            }
+        }
+        catch (error) {
+            console.error(error);
+            console.error('Error parsing message:', message);
+            return {
+                type: 'error',
+            }
+
+        }
+
+    }
+
+
+    public async *query(queryText: string): AsyncGenerator<ParsedMessage> {
         const normalizedQueryText = normalizeText(queryText);
         const [_, answer] = this.initialQuestions.find(([question, _]) => normalizeText(question) === normalizedQueryText) ?? [null, null]
 
         if (answer) {
             for (const word of answer.split(" ")) {
-                yield word + " ";
+                // yield word + " ";
+                yield {
+                    type: 'chunk',
+                    value: word + " ",
+                }
                 await new Promise((resolve) => setTimeout(resolve, 50));
             }
 
         } else {
+            const sources = this.getPageSources();
 
             const body = JSON.stringify({
                 message: {
                     user_id: this.id,
                     query: queryText,
-                    sources: this.sources,
+                    sources,
                     page_url: window.location.href,
                 },
                 history: this.history
@@ -250,8 +330,13 @@ export class PageBot {
 
                     //message is prepended with data:<message>
                     const message = textDecoder.decode(value)
-                    const decodedMessage = message.replaceAll('data:', '');
-                    yield decodedMessage;
+                    const messageData = message.replaceAll('data:', '')
+                        .split('\n');
+
+                    // yield PageBot.decodeMessage(messageData as RawMessage)
+                    for (const message of messageData) {
+                        yield PageBot.decodeMessage(message as RawMessage)
+                    }
                 }
 
             } else {
@@ -275,7 +360,6 @@ export class PageBot {
                     return [question, answer] as [string, string];
                 });
 
-            console.log('Questions found:', sources.length);
             return sources
 
         } catch (e) {

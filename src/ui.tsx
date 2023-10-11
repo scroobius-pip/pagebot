@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'preact/hooks';
-import { PageBot } from '.';
+import { PageBot, ParsedMessage } from '.';
 // import * as classes from './ui.module.css'
 import { parse } from 'tiny-markdown-parser';
 import { useEditable } from 'use-editable';
@@ -83,6 +83,11 @@ const PgbtUI = () => {
 export interface Message {
     text: string;
     type: 'user' | 'bot';
+    firstChunkTime?: number;
+    needsForm?: {
+        titleText: string;
+        descriptionText: string;
+    }
 }
 
 interface MessageState {
@@ -241,21 +246,51 @@ const MainChat = (props: {
 
     }
 
-    const updateMessage = (id: string, message: string) => {
+    const updateMessage = (id: string, parsedMessage: ParsedMessage) => {
 
-        setMessages(messages => (
-            {
+
+        setMessages(messages => {
+            const message = getMessageUpdate(messages[id].message, parsedMessage);
+            return {
                 ...messages,
                 [id]: {
-                    ...messages[id],
-                    message: {
-                        ...messages[id].message,
-                        text: messages[id].message.text + message,
-                    }
+                    createdAt: messages[id].createdAt,
+                    message
                 }
             }
-        ))
+        })
 
+    }
+
+    const getMessageUpdate = (prevMessage: Message, parsedMessage: ParsedMessage): Message => {
+        let message = Object.assign({}, prevMessage);
+
+        switch (parsedMessage.type) {
+            case "chunk":
+                console.log(parsedMessage.value);
+                message.text += parsedMessage.value;
+                break;
+            case 'perf':
+                message.firstChunkTime = parseInt(parsedMessage.value.first_chunk_time)
+                break;
+            case 'not_found':
+                message.needsForm = {
+                    titleText: 'PageBot can\'t find an answer to your question.',
+                    descriptionText: 'Please leave a message and we\'ll get back to you.'
+                }
+                break;
+            case 'email':
+                message.needsForm = {
+                    titleText: 'PageBot needs your email.',
+                    descriptionText: 'Please enter your email and we\'ll get back to you, soon.'
+                }
+                break;
+            default:
+                break;
+
+        }
+
+        return message;
     }
 
     const createMessage = (message: Message): MessageStateItem => {
@@ -368,28 +403,21 @@ const MessageBox = (props: MessageBoxProps) => {
 const Message = (message: Message) => {
 
     const theme = getTheme();
-    // const []
     let messageText = message.text;
-    const parsedMilliseconds = messageText.match(/MS_(\d+)/);
-    const milliseconds = parsedMilliseconds ? parseFloat(parsedMilliseconds[1]) : null;
-    // const milliseconds = message.type === 'bot' && message.text ? messageText.match(/MS_(\d+\.\d{2})/)[1] : null;
-    if (milliseconds) {
-        messageText = messageText.replace(/MS_\d+/, '');
-    }
     let cleanText = messageText.replace(/\n\n/g, '');
     const html = parse(cleanText);
 
-    const [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
-        [true, 'PageBot can\'t find an answer to your question.',
-            'Please leave a message and we\'ll get back to you.'
-        ] : html.includes('EMAIL') ?
-            [true, 'PageBot needs your email.',
-                'Please enter your email and we\'ll get back to you, soon.']
-            : [false, '', ''];
+    // const [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
+    //     [true, 'PageBot can\'t find an answer to your question.',
+    //         'Please leave a message and we\'ll get back to you.'
+    //     ] : html.includes('EMAIL') ?
+    //         [true, 'PageBot needs your email.',
+    //             'Please enter your email and we\'ll get back to you, soon.']
+    //         : [false, '', ''];
 
-    const displayContent = needsForm ?
+    const displayContent = message.needsForm ?
         // EmailForm(theme, titleText, descriptionText)
-        <EmailForm theme={theme} titleText={titleText} descriptionText={descriptionText} />
+        <EmailForm theme={theme} titleText={message.needsForm.titleText} descriptionText={message.needsForm.descriptionText} />
         : <div
             className='pb_message-text'
             dangerouslySetInnerHTML={{ __html: html }}
@@ -430,8 +458,8 @@ const Message = (message: Message) => {
             </button>
         </div>
         } */}
-        {message.type === 'bot' && milliseconds && <span className='pb_stats'>
-            <span><span style={{ color: theme.primaryColor }}>PageBot</span> Responded in <b>{(milliseconds / 1000).toFixed(2)}s</b></span>
+        {message.type === 'bot' && message?.firstChunkTime && <span className='pb_stats'>
+            <span><span style={{ color: theme.primaryColor }}>PageBot</span> Responded in <b>{(message.firstChunkTime / 1000).toFixed(2)}s</b></span>
         </span>}
     </div >
 }
