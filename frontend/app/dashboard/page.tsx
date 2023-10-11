@@ -167,7 +167,7 @@ export default function Dashboard() {
                         </div>
                         {me ? <DomainList domains={domains} onDelete={deleteDomain} /> : <Spinner size='md' color='current' />}
                     </div>
-                    <div className='w-full'>
+                    {/* <div className='w-full'>
                         <div className='flex gap-8 w-full flex-col'>
                             <div className='w-full'>
                                 <h2 className='text-2xl font-medium'>Billing</h2>
@@ -175,7 +175,7 @@ export default function Dashboard() {
                             </div>
                             <Button className='rounded-3xl' as='a' href='https://billing.stripe.com/p/login/bIY7vz4zxcXC5k4dQQ'>Stripe Portal</Button>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div>
                         <h2 className='text-2xl font-medium mb-4'>Integration Steps</h2>
