@@ -6,6 +6,7 @@ use crate::{
 };
 
 use super::{
+    perf::Perf,
     source::{Chunks, Source, SourceInput},
     usage::{Usage, UsageItem},
 };
@@ -26,7 +27,7 @@ pub struct Message {
     pub page_url: SerdeUrl,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone)]
 pub struct EvaluatedMessage {
     pub user_id: u64,
     pub merged_sources: String,
@@ -34,72 +35,84 @@ pub struct EvaluatedMessage {
     pub token_count: usize,
     pub query: String,
     pub page_url: String,
+    pub perf: Perf,
 }
+// retrieval_time: String,
+// embedding_time: String,
+// search_time: String,
+// total_time: String,
+// token_count: usize,
+// cached: bool,
 const NEIGHBOUR_COUNT: usize = 2;
 impl Message {
     pub async fn evaluate(self, notification: Arc<Notification>) -> Result<EvaluatedMessage> {
-        let pending_sources = self.sources.into_iter().map(Source::new);
+        let mut cached = true;
+        let instant_now = std::time::Instant::now();
 
+        let pending_sources = self.sources.into_iter().map(Source::new);
+        let sources = join_all(pending_sources).await;
+
+        let retrieval_time = instant_now.elapsed().as_millis();
         let query_embedding = Chunks::query(self.query.clone()).await?;
 
-        let ((contents, embeddings), retrieval_count, token_count) =
-            join_all(pending_sources).await.into_iter().fold(
-                ((vec![], vec![]), 0, 0),
-                |((mut contents, mut embeddings), retrieval_count, token_count), source| {
-                    match source {
-                        Ok((mut source, retrieved)) => {
-                            let token_count = token_count + count_tokens(&source.content());
+        let ((contents, embeddings), retrieval_count, token_count) = sources.into_iter().fold(
+            ((vec![], vec![]), 0, 0),
+            |((mut contents, mut embeddings), retrieval_count, token_count), source| match source {
+                Ok((mut source, retrieved)) => {
+                    let token_count = token_count + count_tokens(&source.content());
 
-                            contents.append(&mut source.chunks.value.0);
-                            embeddings.append(&mut source.chunks.value.1);
+                    contents.append(&mut source.chunks.value.0);
+                    embeddings.append(&mut source.chunks.value.1);
 
-                            (
-                                (contents, embeddings),
-                                retrieval_count + retrieved as u16,
-                                token_count,
-                            )
+                    if retrieved {
+                        cached = false;
+                    }
+
+                    (
+                        (contents, embeddings),
+                        retrieval_count + retrieved as u16,
+                        token_count,
+                    )
+                }
+
+                Err(e) => {
+                    match e {
+                        SourceError::ContentEmpty(url) => {
+                            let _notification = notification.clone();
+                            tokio::spawn(async move {
+                                _ = _notification.send(NotificationType::SourceError(url)).await;
+                            });
                         }
-
-                        Err(e) => {
-                            match e {
-                                SourceError::ContentEmpty(url) => {
-                                    let _notification = notification.clone();
-                                    tokio::spawn(async move {
-                                        _ = _notification
-                                            .send(NotificationType::SourceError(url))
-                                            .await;
-                                    });
-                                }
-                                SourceError::Default(e) => {
-                                    log::error!("Failed to get source: {}", e);
-                                }
-                            }
-                            ((contents, embeddings), retrieval_count, token_count)
+                        SourceError::Default(e) => {
+                            log::error!("Failed to get source: {}", e);
                         }
                     }
-                },
-            );
+                    ((contents, embeddings), retrieval_count, token_count)
+                }
+            },
+        );
+        let embedding_time = instant_now.elapsed().as_millis() - retrieval_time;
 
         let mut token_count = token_count + count_tokens(&self.query);
 
         //5% error margin
         token_count = token_count + (token_count / 20);
 
-        log::info!("embeddings count: {}", embeddings.len());
+        let embeddings_count = embeddings.len();
 
         let similar_content_index = top_similar_indexes(embeddings, &query_embedding);
         let similar_content_index_with_neighbours_index = similar_content_index
             .iter()
             // get all neighbours of indexes (left and right, including self)
             .flat_map(|&index| {
-                let start_index = index.saturating_sub(NEIGHBOUR_COUNT);
-                let end_index = (index + NEIGHBOUR_COUNT + 1).min(contents.len() - 1);
-                &similar_content_index[start_index..end_index]
+                let left = index.saturating_sub(NEIGHBOUR_COUNT);
+                let right = index + NEIGHBOUR_COUNT;
+                left..=right.min(embeddings_count - 1)
             })
             .unique();
 
         let merged_similar_content = similar_content_index_with_neighbours_index
-            .map(|i| &contents[*i])
+            .map(|i| &contents[i])
             .fold(
                 String::with_capacity(contents.len() * contents[0].len()),
                 |mut acc, content| {
@@ -109,7 +122,17 @@ impl Message {
                 },
             );
 
+        let search_time = instant_now.elapsed().as_millis() - embedding_time - retrieval_time;
+
         Ok(EvaluatedMessage {
+            perf: Perf {
+                cached,
+                token_count,
+                retrieval_time: retrieval_time.to_string(),
+                embedding_time: embedding_time.to_string(),
+                search_time: search_time.to_string(),
+                ..Default::default()
+            },
             user_id: self.user_id,
             merged_sources: merged_similar_content,
             retrieval_count,

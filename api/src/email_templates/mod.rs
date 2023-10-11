@@ -2,6 +2,7 @@ use crate::types::history_item::HistoryItem;
 
 const DAILY_STATS: &str = include_str!("daily_stats.html");
 const SOURCE_ERROR: &str = include_str!("source_error.html");
+const KNOWLEDGE_GAP: &str = include_str!("knowledge_gap.html");
 const FORWARDING: &str = include_str!("forwarding.html");
 const FORWARDING_MESSAGE: &str = include_str!("forwarding_message.html");
 // pub struct Forwarding(pub String);
@@ -38,7 +39,7 @@ pub fn render_source_error(url: &str) -> String {
 }
 
 pub fn render_knowledge_gap(query: &str) -> String {
-    let mut knowledge_gap_template = SOURCE_ERROR.to_string();
+    let mut knowledge_gap_template = KNOWLEDGE_GAP.to_string();
     knowledge_gap_template = knowledge_gap_template.replace("{{QUERY}}", query);
     knowledge_gap_template
 }
