@@ -239,6 +239,12 @@ export class PageBot {
 
         try {
 
+            if (!message) {
+                return {
+                    type: 'chunk',
+                    value: '',
+                }
+            }
             const messageData = JSON.parse(message);
 
             if (messageData.chunk) {
@@ -334,8 +340,8 @@ export class PageBot {
 
 
                     for (const message of messageData) {
-                        const decodedMessage = PageBot.decodeMessage(message as RawMessage);
-                        console.log('decodedMessage', decodedMessage);
+                        const decodedMessage = PageBot.decodeMessage(message);
+                        // console.log('decodedMessage', decodedMessage);
                         yield decodedMessage;
                     }
                 }
@@ -389,12 +395,12 @@ const initializePageBot = () => {
     const timeStart = performance.now();
     const extractedData = new WebpageTextExtractor().extract();
     const timeEnd = performance.now();
-    console.log(`Extracted data in ${timeEnd - timeStart}ms`);
+    console.log(`PGBT: Extracted data in ${timeEnd - timeStart}ms`);
 
     const currentLength = extractedData.text.length;
 
-    console.log(`Document length: ${currentLength}`);
-    console.log(`Document created in ${performance.now() - timeCreate}ms`);
+    console.log(`PGBT: Document length: ${currentLength}`);
+    console.log(`PGBT: Document created in ${performance.now() - timeCreate}ms`);
 
 
     const currentScript = document.querySelectorAll('script[data-pgbt_id]')[0];

@@ -52,7 +52,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
                 pre: 'whitespace-normal	font-bold overflow-x-auto '
             }}
         >
-            {`<script data-pgbt_id="<YOUR_ID>" src='https://s.thepagebot.com/pgbt.js' />`}
+            {`<script data-pgbt_id="<YOUR_ID>" src='https://x.thepagebot.com' />`}
         </Snippet>
 
         {CTAButton}

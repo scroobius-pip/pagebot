@@ -67,7 +67,7 @@ const CTA = () => <div className='bg-black w-full  text-white'>
       </div>
 
       <div className='p-4 bg-black-1 rounded-2xl mt-6'>
-        {`<script data-pgbt_id="<YOUR_ID>" src='https://s.thepagebot.com/pgbt.js' />`}
+        {`<script data-pgbt_id="<YOUR_ID>" src='https://x.thepagebot.com' />`}
       </div>
     </div>
 

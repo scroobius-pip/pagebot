@@ -262,16 +262,15 @@ const MainChat = (props: {
 
     }
 
-    const getMessageUpdate = (prevMessage: Message, parsedMessage: ParsedMessage): Message => {
-        let message = Object.assign({}, prevMessage);
+    const getMessageUpdate = (message: Message, parsedMessage: ParsedMessage): Message => {
+        // let message = Object.assign({}, prevMessage);
 
         switch (parsedMessage.type) {
             case "chunk":
-                console.log(parsedMessage.value);
                 message.text += parsedMessage.value;
                 break;
             case 'perf':
-                message.firstChunkTime = parseInt(parsedMessage.value.first_chunk_time)
+                message.firstChunkTime = parseInt(parsedMessage.value.total_time)
                 break;
             case 'not_found':
                 message.needsForm = {
@@ -407,16 +406,10 @@ const Message = (message: Message) => {
     let cleanText = messageText.replace(/\n\n/g, '');
     const html = parse(cleanText);
 
-    // const [needsForm, titleText, descriptionText] = html.includes('NOT_FOUND') ?
-    //     [true, 'PageBot can\'t find an answer to your question.',
-    //         'Please leave a message and we\'ll get back to you.'
-    //     ] : html.includes('EMAIL') ?
-    //         [true, 'PageBot needs your email.',
-    //             'Please enter your email and we\'ll get back to you, soon.']
-    //         : [false, '', ''];
+
 
     const displayContent = message.needsForm ?
-        // EmailForm(theme, titleText, descriptionText)
+
         <EmailForm theme={theme} titleText={message.needsForm.titleText} descriptionText={message.needsForm.descriptionText} />
         : <div
             className='pb_message-text'

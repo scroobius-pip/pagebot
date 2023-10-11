@@ -1,6 +1,6 @@
 {
   "name": "pgbt",
-  "version": "1.0.4",
+  "version": "1.2.0",
   "description": "",
   "scripts": {
     "start": "parcel src/index.html",
