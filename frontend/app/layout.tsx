@@ -34,7 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head >
 
-        <script async data-pgbt_id="1059050779408717183" src='x.thepagebot.com' />
+        <script async data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
         {/* <meta name="pgbt:source" content="url.pdf" data-expires='3600' />
         <meta name='pgbt:source' content='url.pdf' data-expires='3600' />
         <meta name='pgbt:source' content='url.html' data-expires='3600' />

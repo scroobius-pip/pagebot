@@ -26,7 +26,7 @@ export const Docs = () => {
         <div className='flex flex-row gap-4 flex-wrap'>
 
             <DocElement code={<>
-                {`<script data-pgbt_id="<YOUR_ID>" src='x.thepagebot.com' />`}
+                {`<script data-pgbt_id="<YOUR_ID>" src='https://x.thepagebot.com' />`}
             </>}
                 title='installation'
             // description='put in the head tag of every page you want pagebot to appear in.'
