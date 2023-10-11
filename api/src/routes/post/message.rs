@@ -40,20 +40,21 @@ pub struct Request {
 pub enum Response {
     Chunk(String),
     Perf(Perf), //ms
-    NotFound,
-    Email,
-    Error,
-    None,
+    // we want serde to serialize the below as an key value valid json string.
+    NotFound(&'static str),
+    Email(&'static str),
+    Error(&'static str),
+    None(&'static str),
 }
 
 impl From<&String> for Response {
     fn from(s: &String) -> Self {
         if s.contains("_N") {
-            Response::NotFound
+            Response::NotFound("")
         } else if s.contains("_E") {
-            Response::Email
+            Response::Email("")
         } else if s.is_empty() {
-            Response::None
+            Response::None("")
         } else {
             Response::Chunk(s.clone())
         }
@@ -138,7 +139,7 @@ pub async fn main(
                 let response: Response = content.into();
                 yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
 
-                if matches!(response, Response::NotFound) {
+                if matches!(response, Response::NotFound(_)) {
                     let notification_result = gen_notification
                         .clone()
                         .send(NotificationType::KnowledgeGap(query.clone()))

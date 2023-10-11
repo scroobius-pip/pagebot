@@ -15,14 +15,7 @@ interface Source {
     expires?: number, //duration in seconds e.g. 60 * 60 * 24 * 7 = 1 week
 }
 
-type RawMessage =
-    //     {
-    //     chunk: string,
-    // } | {
 
-    //     perf: string
-    // }
-    string | "not_found" | "error" | "email"
 
 export type ParsedMessage = {
     type: 'chunk',
@@ -242,24 +235,12 @@ export class PageBot {
     }
 
 
-    private static decodeMessage(message: RawMessage): ParsedMessage {
+    private static decodeMessage(message: string): ParsedMessage {
 
         try {
-            if (message === "not_found") {
-                return {
-                    type: 'not_found',
-                }
-            } else if (message === "error") {
-                return {
-                    type: 'error',
-                }
-            } else if (message === "email") {
-                return {
-                    type: 'email',
-                }
-            }
 
             const messageData = JSON.parse(message);
+
             if (messageData.chunk) {
                 return {
                     type: 'chunk',
@@ -270,11 +251,29 @@ export class PageBot {
                     type: 'perf',
                     value: messageData.perf,
                 }
+            } else if (messageData.not_found) {
+                return {
+                    type: 'not_found',
+                }
+            } else if (messageData.error) {
+                return {
+                    type: 'error',
+                }
+            } else if (messageData.email) {
+                return {
+                    type: 'email',
+                }
+            } else if (messageData.none) {
+                return {
+                    type: 'chunk',
+                    value: '',
+                }
             }
+
+            throw new Error('Invalid message format');
         }
         catch (error) {
-            console.error(error);
-            console.error('Error parsing message:', message);
+            console.error(error, message)
             return {
                 type: 'error',
             }
@@ -333,9 +332,11 @@ export class PageBot {
                     const messageData = message.replaceAll('data:', '')
                         .split('\n');
 
-                    // yield PageBot.decodeMessage(messageData as RawMessage)
+
                     for (const message of messageData) {
-                        yield PageBot.decodeMessage(message as RawMessage)
+                        const decodedMessage = PageBot.decodeMessage(message as RawMessage);
+                        console.log('decodedMessage', decodedMessage);
+                        yield decodedMessage;
                     }
                 }
 
