@@ -58,7 +58,7 @@ const PgbtUI = () => {
             </div>
         </div>
         <MainChat onMessageStart={() => {
-            // alert('message started');
+
             setMessageStarted(true);
         }} />
     </div>;

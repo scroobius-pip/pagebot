@@ -45,9 +45,17 @@
         max-width: 100vw;
     }
 
+    .pb_main-chat {
+        max-height: calc(var(--container-height) * 0.95) !important;
+    }
+
     .pb_parent-bottom.opened {
         inset: 0;
         /* max-height: calc(100vh - var(--container-padding) * 2); */
+    }
+
+    .pb_parent-bottom.opened .pb_trigger {
+        display: none;
     }
 }
 
@@ -167,7 +175,7 @@
     padding: 1em;
     border-radius: 999px;
     background-color: var(--background-color);
-    /* display: block; */
+
     box-sizing: content-box;
     opacity: 1;
 }
@@ -270,7 +278,7 @@ h2 {
     width: 100%;
     height: 100%;
     display: flex;
-    /* container height should be taken into account */
+
     max-height: calc(var(--container-height) * 0.8);
     overflow-y: scroll;
     scrollbar-width: none;
