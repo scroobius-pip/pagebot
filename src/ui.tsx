@@ -67,14 +67,14 @@ const PgbtUI = () => {
         pgbt.detachedMode ? Main :
             <div ref={ref} className={`pb_parent-bottom ${hidden ? '' : 'opened'} `}>
                 <div className={`pb_container ${hidden ? 'pb_hidden' : ''}`}>
-                    <div className='pb_logo'
-                        onClick={() => {
-                            setHidden(false);
-                        }}
-                    >
-                        <Logo />
-                    </div>
                     {Main}
+                </div>
+                <div className='pb_trigger'
+                    onClick={() => {
+                        setHidden(hidden => !hidden);
+                    }}
+                >
+                    <Logo />
                 </div>
             </div>
     );
@@ -263,7 +263,6 @@ const MainChat = (props: {
     }
 
     const getMessageUpdate = (message: Message, parsedMessage: ParsedMessage): Message => {
-        // let message = Object.assign({}, prevMessage);
 
         switch (parsedMessage.type) {
             case "chunk":
@@ -326,7 +325,25 @@ const MainChat = (props: {
     return <div className='pb_main-chat' ref={ref}>
         {
             messageList.length ? <MessageBox
+                onContactUs={() => {
 
+
+                    const botMessage = createMessage({
+                        text: '',
+                        type: 'bot'
+                    });
+
+                    setMessages({
+                        ...messages,
+                        [botMessage.id]: botMessage,
+                    });
+
+                    updateMessage(botMessage.id, {
+                        type: 'email',
+                    });
+
+
+                }}
                 messages={messageList} /> :
 
                 <ChatIntro
@@ -388,6 +405,7 @@ const MainChat = (props: {
 
 interface MessageBoxProps {
     messages: Message[];
+    onContactUs: () => void;
 
 }
 
@@ -395,6 +413,10 @@ const MessageBox = (props: MessageBoxProps) => {
 
     return <div className="pb_message-box" id="pb_message-box">
         {props.messages.map(Message)}
+        <button
+            onClick={props.onContactUs}
+            className='pb_contact-button'
+        >Contact us</button>
     </div>
 }
 
@@ -438,7 +460,7 @@ const Message = (message: Message) => {
         </div>
         {displayContent}
         {
-            !html && message.type === 'bot' && <img style={{
+            !html && message.type === 'bot' && !message.needsForm && <img style={{
                 // filter: 'brightness(100)',
             }}
                 height={64} width={64}
