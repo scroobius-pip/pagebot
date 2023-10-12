@@ -7,7 +7,7 @@
     --background-color: rgb(233, 233, 233);
     --container-padding: 2em;
     --container-height: calc(100vh / 1.5);
-    --container-width: max(calc(100vw / 6), 325px);
+    --container-width: max(calc(100vw / 8), 325px);
 
     --container-radius: 40px;
     --container-gap: 24px;
@@ -168,6 +168,7 @@
     border-radius: 999px;
     background-color: var(--background-color);
     /* display: block; */
+    box-sizing: content-box;
     opacity: 1;
 }
 
