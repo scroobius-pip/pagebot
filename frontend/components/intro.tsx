@@ -59,8 +59,8 @@ export const Intro = () => {
                 your website's content and <span className='font-meddium'>knowledgebase</span>
             </p>
         </div>
-
-        <div id='pgbt-root' className='rounded-2xl bg-white  max-w-4xl  #pl-24 #pt-24 p-24  flex items-end justify-center h-[70vh] w-screen  '>
+                
+        <div id='pgbt-root' className='rounded-2xl bg-white  max-w-4xl  #pl-24 #pt-24 p-24  flex items-end justify-center h-[70vh] w-full  '>
 
 
         </div>
