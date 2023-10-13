@@ -4,18 +4,26 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,700;1,400&family=Montserrat+Alternates:ital,wght@0,900;1,900&display=swap');
 
 :root {
-    --background-color: rgb(233, 233, 233);
-    --container-padding: 2em;
-    --container-height: calc(100vh / 1.5);
-    --container-width: max(calc(100vw / 8), 325px);
+    --pb_background-color: rgb(233, 233, 233);
+    --pb_container-padding: 2em;
+    --pb_container-height: calc(100vh / 1.5);
+    --pb_container-width: max(calc(100vw / 8), 325px);
 
-    --container-radius: 40px;
-    --container-gap: 24px;
-    --container-background: rgba(233, 233, 233, 0.8);
-    --logo-size: 2.5em;
-    --question_container-background: #fff;
-    --question-background: #F5F5F5;
+    --pb_container-radius: 40px;
+    --pb_container-gap: 24px;
+    --pb_container-background: rgba(233, 233, 233, 0.8);
+    --pb_logo-size: 2.5em;
+    --pb_question_container-background: #fff;
+    --pb_question-background: var(--pb_secondary-color);
 
+    --pb_primary-color: #5C07ED;
+    --pb_secondary-color: #F5F5F5;
+    --pb_text-color: #1a202c;
+    --pb_border-color: #e2e8f0;
+    --pb_bot-message-color: var(--pb_text-color);
+    --pb_bot-message-background: #fff;
+    --pb_user-message-color: var(--pb_secondary-color);
+    --pb_user-message-background: var(--pb_primary-color);
 
 
 }
@@ -36,8 +44,8 @@
 
 @media only screen and (max-width: 768px) {
     :root {
-        --container-height: calc(100vh - var(--container-padding) * 2);
-        --container-width: calc(100vw - var(--container-padding) * 2);
+        --pb_container-height: calc(100vh - var(--pb_container-padding) * 2);
+        --pb_container-width: calc(100vw - var(--pb_container-padding) * 2);
     }
 
     .pb_parent-bottom {
@@ -46,7 +54,7 @@
     }
 
     .pb_main-chat {
-        max-height: calc(var(--container-height) * 0.95) !important;
+        max-height: calc(var(--pb_container-height) * 0.95) !important;
     }
 
     .pb_parent-bottom.opened {
@@ -64,18 +72,18 @@
 }
 
 .pb_container {
-    background: var(--container-background);
-    padding: var(--container-padding);
+    background: var(--pb_container-background);
+    padding: var(--pb_container-padding);
 
     backdrop-filter: blur(20px);
 
-    border-radius: var(--container-radius);
+    border-radius: var(--pb_container-radius);
     box-sizing: content-box;
 
     height: 100%;
-    max-height: var(--container-height);
+    max-height: var(--pb_container-height);
 
-    width: var(--container-width);
+    width: var(--pb_container-width);
 
 }
 
@@ -98,7 +106,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--container-gap);
+    gap: var(--pb_container-gap);
     opacity: 1;
     /* height: auto; */
     justify-content: space-between;
@@ -123,6 +131,11 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    color: var(--pb_primary-color);
+}
+
+.pb_main-intro {
+    color: var(--pb_primary-color);
 }
 
 .pb_main.detached {
@@ -174,10 +187,11 @@
     height: 2.5em;
     padding: 1em;
     border-radius: 999px;
-    background-color: var(--background-color);
+    background-color: var(--pb_background-color);
 
     box-sizing: content-box;
     opacity: 1;
+    color: var(--pb_primary-color);
 }
 
 .pb_hidden>.pb_logo:hover {
@@ -189,12 +203,13 @@
     width: 0;
     height: 0;
     opacity: 0;
+    color: var(--pb_primary-color);
 }
 
 
 
 .pb_heading svg {
-    height: var(--logo-size);
+    height: var(--pb_logo-size);
 }
 
 h1 {
@@ -220,10 +235,10 @@ h2 {
     cursor: pointer;
     align-self: stretch;
     padding: 1em;
-    background-color: var(--question_container-background);
+    background-color: var(--pb_question_container-background);
     border-radius: 1em;
     visibility: hidden;
-    max-height: calc(var(--container-height) * 0.4);
+    max-height: calc(var(--pb_container-height) * 0.4);
     overflow-y: scroll;
     scrollbar-width: none;
 }
@@ -251,7 +266,7 @@ h2 {
 }
 
 .pb_question:hover {
-    background-color: var(--question-background);
+    background-color: var(--pb_question-background);
 }
 
 .pb_question-icon {
@@ -279,7 +294,7 @@ h2 {
     height: 100%;
     display: flex;
 
-    max-height: calc(var(--container-height) * 0.8);
+    max-height: calc(var(--pb_container-height) * 0.8);
     overflow-y: scroll;
     scrollbar-width: none;
 }
@@ -296,7 +311,7 @@ h2 {
 } */
 
 .pb_chat-input-container {
-    background-color: var(--question_container-background);
+    background-color: var(--pb_question_container-background);
     border-radius: 1em;
     justify-content: space-between;
     align-items: flex-end;
@@ -306,12 +321,15 @@ h2 {
     flex-direction: column;
     display: flex;
     box-shadow: 0 0 20px #938e8e26;
+    transition: all 0.2s ease;
 }
 
 .pb_chat-input-container>button {
     padding: 0.6em;
-    background-color: #F5F5F5;
+    background-color: var(--pb_primary-color);
     border-radius: 1em;
+    transition: all 0.4s ease;
+    color: var(--pb_secondary-color);
 }
 
 .pb_chat-input-container>button svg {
@@ -320,18 +338,16 @@ h2 {
 
 }
 
-.pb_chat-input-container>button {
-    color: #1E1E1E;
-}
 
 .pb_chat-input-container>button:disabled {
     color: #A0AEC0;
+    background-color: #F5F5F5;
 }
 
 .pb_chat-input-textarea {
     width: 100%;
     outline: none;
-    background-color: var(--question-background);
+    background-color: var(--pb_question-background);
     border: none;
     border-radius: .8em;
     padding: 1em;
@@ -341,10 +357,11 @@ h2 {
     font-size: 1em;
     color: #1E1E1E;
     transition: all 0.2s ease;
+    background-color: var(--pb_question-background);
 }
 
 .pb_chat-input-textarea:focus {
-    background-color: var(--question-background);
+    background-color: var(--pb_question-background);
 }
 
 .pb_contact-button {
@@ -365,7 +382,7 @@ h2 {
 }
 
 .pb_contact-button:hover {
-    background-color: #9257FA;
+    background-color: var(--pb_primary-color);
     color: #fff;
 }
 
@@ -386,21 +403,32 @@ h2 {
 }
 
 .pb_message {
-    background-color: var(--question_container-background);
+    /* background-color: var(--pb_question_container-background); */
     padding: 1em;
     max-width: 768px;
-
 }
 
-.pb_message-text * {
+.pb_message.user {
+    background-color: var(--pb_user-message-background);
+    color: var(--pb_user-message-color);
+}
+
+.pb_message.bot {
+    background-color: var(--pb_bot-message-background);
+    color: var(--pb_bot-message-color);
+}
+
+
+
+/* .pb_message-text * {
     color: #1E1E1E;
-}
+} */
 
 .pb_message.bot {
     border-radius: 0 24px 24px 24px;
     align-self: stretch;
     /* width: 100%; */
-    color: #1E1E1E;
+    /* color: #1E1E1E; */
 }
 
 .pb_message.bot+.pb_message.bot {
@@ -419,7 +447,7 @@ h2 {
     font-size: 0.9em;
     font-weight: 400;
     padding: 0em .5em 1em 0em;
-    color: #1E1E1E;
+    /* color: #1E1E1E; */
 }
 
 .pb_message-icon {
@@ -431,10 +459,10 @@ h2 {
     height: 1.2em;
 }
 
-.user * {
+/* .user * {
     color: #fff;
     opacity: 0.9;
-}
+} */
 
 .user>.pb_message-icon {
     opacity: 0.8;
@@ -445,7 +473,8 @@ h2 {
 .bot>.pb_message-icon {
     padding: 0.4em;
     border-radius: .4em;
-    background-color: #F5F5F5;
+    background-color: #5c07ed1c;
+    color: var(--pb_primary-color);
     width: min-content;
 }
 
@@ -491,6 +520,7 @@ h2 {
     gap: 1em;
     padding: 1em;
     border-radius: 1em;
+    background-color: var(--pb_primary-color);
 
 }
 
@@ -537,7 +567,7 @@ h2 {
     min-height: 5em;
     font-size: .8em;
     color: #1E1E1E;
-
+    background-color: var(--pb_question-background);
     transition: all 0.2s ease-in-out;
 }
 
@@ -553,12 +583,13 @@ h2 {
     color: #1E1E1E;
 
     transition: all 0.2s ease;
+    background-color: var(--pb_question-background);
 }
 
 .pb_form input:focus,
 textarea:focus,
 textarea:hover {
-    background-color: var(--question-background);
+    background-color: var(--pb_question-background);
 }
 
 
@@ -575,9 +606,10 @@ textarea:hover {
     padding: 1em;
     font-size: .8em;
     /* font-size: 12px; */
-    color: #fff;
+    color: var(--pb_secondary-color);
+    background-color: var(--pb_primary-color);
     cursor: pointer;
-    transition: filter 0.4s ease;
+    transition: all 0.4s ease;
 }
 
 .pb_form>button:hover {
@@ -585,8 +617,8 @@ textarea:hover {
 }
 
 .pb_form>button:disabled {
-
-    filter: contrast(0.1);
+    background-color: #A0AEC0;
+    opacity: 0.5;
     cursor: not-allowed;
 }
 

@@ -1,7 +1,11 @@
+"use client"
 import { Section } from './section'
 import { Card } from './Card'
 import { Calculator } from './Calculator'
 import { CTA } from './CTA'
+import { Button } from '@nextui-org/react'
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
 const Pricing = () => {
     return <section id='pricing' className='max-w-[1400px] w-full m-auto p-12 py-36 '>
@@ -25,6 +29,29 @@ const Pricing = () => {
                         </div>
 
                     </div>)}
+                    <div
+                        className='col-span-12 px-4 py-6 rounded-2xl bg-purple text-white  capitalize'>
+                        <div className="flex flex-col gap-2 justify-between">
+                            <div className='flex flex-col gap-4'>
+                                <h4 className="text-2xl capitalize font-medium">
+                                    Free Plan
+                                </h4>
+                                <p className='text-base'>
+                                    50 messages free monthly.
+                                </p>
+                                <p className='font-semibold'>
+                                    no credit card required
+                                </p>
+                            </div>
+                            {/* <p className="text-xl font-semibold">{item.price}</p> */}
+                        </div>
+                        <Button href='/login' as={Link} fullWidth className='w-full py-8 bg-white mt-12' endContent={
+                            <ArrowRight size={32} />
+                        }>
+                            <h2 className='text-xl'>Get Started For Free</h2>
+
+                        </Button>
+                    </div>
                 </div>
             </div>
             <div className='flex flex-col gap-12'>
@@ -49,13 +76,13 @@ const items = [
     {
         title: 'source retrieval',
         description: 'Your knowledge-base retrieved by pagebot, e.g a PDF, a web-page, API calls to your backend.',
-        price: '~$0.0005/source'
+        price: 'Unlimited Free'
     },
-    {
-        title: 'source word count',
-        description: 'The word count of the source, e.g if you specify a PDF with 500 words, it would cost 500*$0.00004=$0.02',
-        price: '~$0.00005/word'
-    },
+    // {
+    //     title: 'source word count',
+    //     description: 'The word count of the source, e.g if you specify a PDF with 500 words, it would cost 500*$0.00004=$0.02',
+    //     price: '~$0.00005/word'
+    // },
     {
         title: 'message count',
         description: 'The number of your customers messages PageBot replies to.',

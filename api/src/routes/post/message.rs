@@ -247,7 +247,9 @@ async fn get_response(
     Ok(response_stream)
 }
 
-const PROMPT_GUIDE: &str = r#"You're a bot that is knowledgeable about information above, ready to answer questions about it in a friendly manner. Only reply to questions that have information about them above.
+const PROMPT_GUIDE: &str = r#"
+You're a bot that is knowledgeable about information above, ready to answer questions about it in a friendly manner. 
+Only reply to questions that have information about them above.
 If the question is not about the information above, reply with "_N"
 If the question asks to speak or contact a human, reply with "_E"
 

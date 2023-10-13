@@ -11,21 +11,21 @@ interface Theme {
     borderColor: string;
 }
 
-const defaultTheme: Theme = {
-    primaryColor: '#9257FA',
-    textColor: '#1a202c',
-    backgroundColor: '#fff',
-    borderColor: '#e2e8f0',
-}
+// const defaultTheme: Theme = {
+//     primaryColor: '#9257FA',
+//     textColor: '#1a202c',
+//     backgroundColor: '#fff',
+//     borderColor: '#e2e8f0',
+// }
 
-const getTheme = (): Theme => {
-    const theme = globalThis['pgbt']?.theme;
-    return theme ? theme : defaultTheme;
-}
+// const getTheme = (): Theme => {
+//     const theme = globalThis['pgbt']?.theme;
+//     return theme ? theme : defaultTheme;
+// }
 
 const PgbtUI = () => {
     const ref = useRef<HTMLDivElement>(null);
-    const theme = getTheme();
+    // const theme = getTheme();
     const [hidden, setHidden] = useState<boolean>(true);
     const [messageStarted, setMessageStarted] = useState<boolean>(false);
     const pgbt: PageBot = globalThis['pgbt']
@@ -36,7 +36,9 @@ const PgbtUI = () => {
         <div className='pb_main-top'>
             <div className="pb_main-topbar">
                 <a href='https://thepagebot.com' target='_blank' className="pb_heading">
-                    <Logo color={theme.primaryColor} />
+                    <Logo
+                    // color={theme.primaryColor}
+                    />
                 </a>
                 {!pgbt.detachedMode && <div
                     className='pb_close-button'
@@ -47,11 +49,13 @@ const PgbtUI = () => {
                     <CloseButton />
                 </div>}
             </div>
-            <div style={{
-                color: theme.primaryColor,
-                display: messageStarted ? 'none' : 'block',
-            }}>
-                <h1 >
+            <div
+                className='pb_main-intro'
+                style={{
+                    // color: theme.primaryColor,
+                    display: messageStarted ? 'none' : 'block',
+                }}>
+                <h1>
                     Hey there 👋
                 </h1>
                 <h2>How can we help you?</h2>
@@ -423,7 +427,7 @@ const MessageBox = (props: MessageBoxProps) => {
 
 const Message = (message: Message) => {
 
-    const theme = getTheme();
+    // const theme = getTheme();
     let messageText = message.text;
     let cleanText = messageText.replace(/\n\n/g, '');
     const html = parse(cleanText);
@@ -432,7 +436,9 @@ const Message = (message: Message) => {
 
     const displayContent = message.needsForm ?
 
-        <EmailForm theme={theme} titleText={message.needsForm.titleText} descriptionText={message.needsForm.descriptionText} />
+        <EmailForm
+            // theme={theme}
+            titleText={message.needsForm.titleText} descriptionText={message.needsForm.descriptionText} />
         : <div
             className='pb_message-text'
             dangerouslySetInnerHTML={{ __html: html }}
@@ -440,7 +446,7 @@ const Message = (message: Message) => {
 
     return <div
         style={{
-            backgroundColor: message.type === 'user' ? theme.primaryColor : undefined,
+            // backgroundColor: message.type === 'user' ? theme.primaryColor : undefined,
         }}
 
         className={`pb_message ${message.type}`}
@@ -474,7 +480,10 @@ const Message = (message: Message) => {
         </div>
         } */}
         {message.type === 'bot' && message?.firstChunkTime && <span className='pb_stats'>
-            <span><span style={{ color: theme.primaryColor }}>PageBot</span> Responded in <b>{(message.firstChunkTime / 1000).toFixed(2)}s</b></span>
+            <span><span style={{
+                // color: theme.primaryColor
+            }}
+            >PageBot</span> Responded in <b>{(message.firstChunkTime / 1000).toFixed(2)}s</b></span>
         </span>}
     </div >
 }
@@ -484,7 +493,7 @@ interface ChatInputProps {
 }
 
 const ChatInput = (props: ChatInputProps) => {
-    const theme = getTheme();
+    // const theme = getTheme();
     const [message, setMessage] = useState<string>('');
 
     const submit = () => {
@@ -502,7 +511,7 @@ const ChatInput = (props: ChatInputProps) => {
     return <div
         style={{
             // backgroundColor: theme.backgroundColor,
-            borderColor: theme.borderColor,
+            // borderColor: theme.borderColor,
         }}
         className="pb_chat-input-container">
         <div
@@ -532,7 +541,7 @@ interface ChatIntroProps {
 }
 
 const ChatIntro = (props: ChatIntroProps) => {
-    const theme = getTheme();
+    // const theme = getTheme();
     const qa = (globalThis['pgbt'] as PageBot).initialQuestions;
 
 
@@ -547,10 +556,10 @@ const ChatIntro = (props: ChatIntroProps) => {
                             onClick={() => {
                                 props.questionSelected(q);
                             }}
-                            style={{
-                                color: theme.textColor,
-                            }
-                            }
+                            // // style={{
+                            // //     color: theme.textColor,
+                            // // }
+                            // }
                             className="pb_question"
                         >
 
@@ -572,12 +581,12 @@ const ChatIntro = (props: ChatIntroProps) => {
 }
 
 const StartChatButton = ({ onClick }: any) => {
-    const theme = getTheme();
+    // const theme = getTheme();
     return <button
         onClick={onClick}
         style={{
-            backgroundColor: theme.primaryColor,
-            borderColor: theme.borderColor,
+            // backgroundColor: theme.primaryColor,
+            // borderColor: theme.borderColor,
         }}
         className="pb_button">
         Start Chat
@@ -605,7 +614,7 @@ const CloseButton = () => {
 }
 
 const ChatIcon = () => {
-    const theme = getTheme();
+
     return <svg
         width="24" height="24" viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -619,7 +628,7 @@ const RightIcon = () => {
 }
 
 const SendIcon = () => {
-    return <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 3 3 9-3 9 19-9Z" /><path d="M6 12h16" /></svg>
+    return <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="m3 3 3 9-3 9 19-9Z" /><path d="M6 12h16" /></svg>
 }
 
 const LogoText = ({ color }: any) => {
@@ -635,7 +644,7 @@ const ThumbsIcon = () => {
 
 const Logo = ({ color }: any) => {
 
-    return <svg width="100%" height="100%" viewBox="0 0 121 117" fill={color} xmlns="http://www.w3.org/2000/svg">
+    return <svg className='pb_flogo' width="100%" height="100%" fill='currentColor' viewBox="0 0 121 117" xmlns="http://www.w3.org/2000/svg">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M113.703 54.9129C118.592 57.4889 121.168 62.9564 120.011 68.3712C118.907 73.7861 114.334 77.7816 108.866 78.2021C105.817 85.6673 102.137 92.4491 98.1943 98.1794C97.984 98.4948 97.7211 98.7051 97.4057 98.8628C96.144 99.3885 94.9349 99.9142 93.3577 100.545C93.3227 100.545 93.3051 100.545 93.3051 100.545L90.6766 114.266C90.3611 115.896 88.9943 117 87.3645 117H80.2148C78.6902 117 77.4285 116.054 76.9554 114.634L72.9074 101.544C72.8723 101.544 72.8197 101.544 72.7496 101.544C68.7542 101.649 65.0216 102.385 60.1325 102.28C55.2433 102.385 51.5633 101.649 47.5153 101.544C47.4802 101.544 47.4452 101.544 47.4101 101.544L43.3095 114.634C42.889 116.054 41.6273 117 40.1027 117H32.9529C31.3232 117 29.9564 115.896 29.6409 114.266L27.0124 100.545C27.0124 100.545 26.9948 100.545 26.9598 100.545C25.3826 99.9142 24.1209 99.3885 22.9118 98.8628C22.5438 98.7051 22.2809 98.4948 22.0706 98.1794C18.1803 92.4491 14.5003 85.6673 11.4512 78.2021C5.93115 77.7816 1.40999 73.7861 0.253412 68.3712C-0.850591 62.9564 1.72542 57.4889 6.562 54.9129C10.3997 35.7243 30.6924 20.9516 60.1325 20.2682V20.6362V20.4785V6.17902C60.1325 3.60301 61.657 1.39499 64.0753 0.448702C66.4936 -0.497587 69.0696 0.0807101 70.8571 1.92072L102.085 34.9883C108.183 40.5609 112.231 47.3952 113.703 54.9129ZM82.9485 86.0879C87.1017 85.1942 91.3074 83.7747 94.8297 81.2513C100.245 76.7827 101.191 72.577 101.349 66.5312C101.401 63.3769 101.349 60.4855 100.875 57.3838C99.8766 50.7597 96.9851 43.978 89.9406 41.1917C89.6251 41.0866 89.4148 40.9288 89.0994 40.8237C85.6822 39.562 83.7897 40.1403 80.1622 40.298C67.8079 41.402 52.5096 41.402 40.1552 40.298C36.5278 40.1403 34.6352 39.562 31.2181 40.8237C30.9026 40.9288 30.6924 41.0866 30.3244 41.1917C23.3323 43.978 20.4409 50.7597 19.442 57.3838C18.9689 60.4855 18.8638 63.3769 18.9689 66.5312C19.1266 72.577 20.0729 76.7827 25.4352 81.2513C28.9575 83.7747 33.1632 85.1942 37.369 86.0879C49.145 88.5062 71.1199 88.5062 82.9485 86.0879ZM85.6822 63.9027C85.6822 69.633 81.792 74.3118 77.0079 74.3118C72.1713 74.3118 68.281 69.633 68.281 63.9027C68.281 58.2249 72.1713 53.546 77.0079 53.546C81.792 53.546 85.6822 58.2249 85.6822 63.9027ZM51.9839 63.9027C51.9839 69.633 48.0936 74.3118 43.3095 74.3118C38.473 74.3118 34.5827 69.633 34.5827 63.9027C34.5827 58.2249 38.473 53.546 43.3095 53.546C48.0936 53.546 51.9839 58.2249 51.9839 63.9027Z" fill={color} />
     </svg>
     // let logo = import('./logo_animated.svg');
@@ -655,12 +664,12 @@ const darkenHex = (hex: string, amount: number) => {
 export default <PgbtUI />;
 // theme: Theme, titleText: string, descriptionText: string
 interface EmailFormProps {
-    theme: Theme,
+    // theme: Theme,
     titleText: string,
     descriptionText: string,
 }
 
-function EmailForm({ theme, titleText, descriptionText }: EmailFormProps) {
+function EmailForm({ titleText, descriptionText }: EmailFormProps) {
     const [formState, setFormState] = useState<{
         email: string,
         name: string,
@@ -726,8 +735,8 @@ function EmailForm({ theme, titleText, descriptionText }: EmailFormProps) {
         className='pb_form'>
         <div
             style={{
-                backgroundColor: theme.primaryColor,
-                borderColor: theme.borderColor,
+                // backgroundColor: theme.primaryColor,
+                // borderColor: theme.borderColor,
             }}
             className="pb_form-header">
 
@@ -764,8 +773,8 @@ function EmailForm({ theme, titleText, descriptionText }: EmailFormProps) {
             onClick={handleSubmit}
             disabled={!validateForm() || formState.submitted}
             style={{
-                backgroundColor: theme.primaryColor,
-                borderColor: theme.borderColor,
+                // backgroundColor: theme.primaryColor,
+                // borderColor: theme.borderColor,
             }}
         >
             {formState.submitted ? formState.loading ? 'Loading' : 'Sent' : 'Send'}

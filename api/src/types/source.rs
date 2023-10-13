@@ -341,19 +341,12 @@ impl Chunks {
             .map(|chunk| chunk.join(" "))
             .collect::<Vec<_>>();
 
-        let instant_now = std::time::Instant::now();
         let _chunked_sentences = chunked_sentences.clone();
 
         let embeddings = EMBED_POOL
             .encode(_chunked_sentences)
             .await
             .map_err(|_| eyre::eyre!("Failed to receive embeddings"))?;
-
-        log::info!(
-            "Embeddings took {:?} for {}",
-            instant_now.elapsed(),
-            content.len()
-        );
 
         Ok(Self {
             url: url.to_string(),

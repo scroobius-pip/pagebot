@@ -9,7 +9,7 @@ export const Card: React.FC<{ icon?: JSX.Element; children: JSX.Element; bg: str
             borderWidth: '.4em',
             borderColor: props.bc
         }}
-        className={'flex  flex-col gap-4 items-start py-12 px-8 rounded-2xl duration-300 dhover:shadow-md cursor-pointer ' + props.className}>
+        className={'flex  flex-col gap-4 items-start py-16 px-12 rounded-2xl duration-300 dhover:shadow-md cursor-pointer ' + props.className}>
         {props.icon}
         {props.children}
     </div>;

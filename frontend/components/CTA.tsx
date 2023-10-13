@@ -47,7 +47,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
             </p>
         </div>
         {/* <div> */}
-        <Snippet hideSymbol size='lg' variant='solid' className='bg-slate-50 text-[#9257FA] self-start w-h hidden md:flex rounded-full'
+        <Snippet hideSymbol size='lg' variant='solid' className='bg-slate-50  self-start w-h hidden md:flex rounded-full'
             classNames={{
                 pre: 'whitespace-normal	font-bold overflow-x-auto '
             }}

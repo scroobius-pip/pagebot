@@ -14,7 +14,7 @@ const Navigation = () => {
         (jwt && !isJwtTokenExpired(jwt) && setLoggedIn(true))
     }, [])
 
-    return <Navbar className='bg-bg py-2 flex-col' maxWidth='xl'  >
+    return <Navbar className='bg-white py-2 flex-col ' maxWidth='xl'   >
         <NavbarBrand>
             <Link href='/' className='text-black'>
                 <LogoText className='h-8' />

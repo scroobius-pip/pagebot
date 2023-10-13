@@ -23,20 +23,16 @@ export const Calculator = () => {
         setSourceCount(parsedValue);
     })
 
-    const cost = (4 * 0.0005 + ((0.00005 * sourceCount) + 0.05) * (messageCount - 50));
+    const cost = (messageCount - 50) * 0.05
 
 
-    return <div className='flex flex-col gap-12'>
-        <p className='text-2xl font-medium'>A source containing
-            <span ref={sourceRef} className='text-purple p-1 mx-1 rounded-full font-semibold'>{sourceCount}</span>
-            words, updated weekly
-            for
+    return <div className='flex flex-col gap-8'>
+        <p className='text-4xl font-medium'>
             <span ref={messageRef} className='text-purple font-semibold ring-[#FF6565] transition-all duration-100 p-1 mx-1 rounded-full'>{messageCount}</span>
             messages monthly would cost:
         </p>
         <p className='text-5xl font-semibold'>
-            {/* <b>4 weeks</b> * $0.0005/source + ((0.00004 * <b className='text-[#9257FA]'>{sourceCount}</b>) + 0.05) * <b className='text-[#FF6565]'>{messageCount}</b>) = */}
-            {messageCount <= 50 ? '$0' : `~${formatCurrency(cost)}/month`}
+            {messageCount <= 50 ? '$0/mo' : `~${formatCurrency(cost)}/mo`}
             <br />
             <span className='text-sm font-medium p-2 px-4 rounded-full text-white bg-purple'>50 Messages Free Monthly</span>
         </p>
