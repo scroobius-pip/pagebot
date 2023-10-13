@@ -34,7 +34,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head >
 
-        <script async data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
+        <script async data-pgbt_id="1059050779408717183" src='https://unpkg.com/pgbt@1.4.4' />
         {/* <meta name="pgbt:source" content="url.pdf" data-expires='3600' />
         <meta name='pgbt:source' content='url.pdf' data-expires='3600' />
         <meta name='pgbt:source' content='url.html' data-expires='3600' />
@@ -44,9 +44,16 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in Arabic, English, Spanish, Turkish, French, Italian, and Dutch. It has a tiny footprint, keeping your webpage fast with less than 50kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides. If you'd like to try it out, there is a one-month free trial available with the option to cancel anytime." />
         <style>
-          
+          {`
+          .pb_main.detached {
+            background-color: #F5F5F5;
+            border-radius: 1em;
+            padding: 2em;
+            
+          }
+          `}
         </style>
-    
+
       </head>
       <body
         className={clsx(

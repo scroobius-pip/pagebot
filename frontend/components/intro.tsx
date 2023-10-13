@@ -2,6 +2,7 @@ import { Section } from '@/components/section';
 import { LogoText, IconText } from '@/components/icons'
 import { CTA } from './CTA';
 import { Progress } from '@nextui-org/progress'
+import { Spinner } from '@nextui-org/react';
 
 const TitleIconText = IconText(({ text }) => {
     const textStyle = text === 'engaging' ? 'font-bold' : text === 'instant' ? 'font-medium italic' : 'font-medium'
@@ -59,10 +60,22 @@ export const Intro = () => {
                 your website's content and <span className='font-meddium'>knowledgebase</span>
             </p>
         </div>
-                
-        <div id='pgbt-root' className='rounded-2xl bg-white  max-w-4xl  #pl-24 #pt-24 p-24  flex items-end justify-center h-[70vh] w-full  '>
 
+        <div id='pgbt-root' className='rounded-2xl bg-purple  max-w-4xl  #pl-24 #pt-24 p-24 pt-36  flex items-end justify-center h-[70vh] w-full  '>
 
+            {/* <Spinner size='lg' color='white' /> */}
+            <div className='p-2 roudnded-xl bg-white bg-bdlack-1 rounded-3xl m-auto '>
+                <img
+                    className='animate-pulse'
+                    style={{
+                        // filter: 'brightness(100)',
+                        // filter: 'invert(1)'
+
+                    }}
+                    height={128} width={128}
+                    src='https://s.thepagebot.com/pagebot_walk.gif'
+                />
+            </div>
         </div>
     </div>
 
