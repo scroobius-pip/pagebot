@@ -14,11 +14,11 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
 
-    return <div className='flex-col md:flex-row flex   items-center gap-24 max-w-[1400px] w-full m-auto p-12 min-h-[85vh]' >
-        <div className='flex flex-col items-start gap-24 '>
-            <h1 className='font-medium text-5xl md:text-5xl text-cendter md:text-left'>Give your customers conversations that are:</h1>
+    return <div className='flex-col xs:flex-row flex   items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-36' >
+        <div className='flex flex-col items-center gap-24 '>
+            <h1 className='font-semibold text-5xl tdext-6xl text-center md:_text-left'>Give your customers conversations that are:</h1>
 
-            <div className='flex gap-8 flex-wrap justify-centder md:justify-start '>
+            <div className='flex gap-8 flex-wrap justify-center  '>
                 <TitleIconText
                     color='#FF6565'
                     icon={
@@ -55,23 +55,19 @@ export const Intro = () => {
                     text='instant'
                 />
             </div>
-            <p className='text-xl font-medium text-black text-cendter md:text-left leading-relaxed'>
+            <p className='text-xl font-medium text-black text-center leading-relaxed'>
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase</span>
             </p>
         </div>
 
-        <div id='pgbt-root' className='rounded-2xl bg-purple  max-w-4xl  #pl-24 #pt-24 p-24 pt-36  flex items-end justify-center h-[70vh] w-full  '>
+        <div id='pgbt-root' className='rounded-2xl bg-purple  max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
 
             {/* <Spinner size='lg' color='white' /> */}
             <div className='p-2 roudnded-xl bg-white bg-bdlack-1 rounded-3xl m-auto '>
                 <img
                     className='animate-pulse'
-                    style={{
-                        // filter: 'brightness(100)',
-                        // filter: 'invert(1)'
 
-                    }}
                     height={128} width={128}
                     src='https://s.thepagebot.com/pagebot_walk.gif'
                 />

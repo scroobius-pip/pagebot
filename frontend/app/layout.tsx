@@ -67,7 +67,7 @@ export default function RootLayout({
         <main className='flex-1 flex flex-col `'>
           {children}
         </main>
-        <footer className=" bg-black p-10  w-full flex text-white justify-around  max-w-md">
+        <footer className=" bg-black p-10  w-full flex text-white justify-around  ">
           <div className='flex gap-4 justify-between  w-full max-w-[1400px] mx-auto flex-col md:flex-row'>
             <div className='flex-col flex gap-2 h-full items-start justify-between'>
               <Logo className='h-8 ' />
