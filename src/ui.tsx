@@ -55,10 +55,12 @@ const PgbtUI = () => {
                     // color: theme.primaryColor,
                     display: messageStarted ? 'none' : 'block',
                 }}>
-                <h1>
-                    Hey there 👋
+                <h1 className='pb_main-intro-title'>
+                    {/* Hey there 👋 */}
                 </h1>
-                <h2>How can we help you?</h2>
+                <h2 className='pb_main-intro-subtitle'>
+                    {/* How can we help you? */}
+                </h2>
             </div>
         </div>
         <MainChat onMessageStart={() => {
@@ -70,10 +72,10 @@ const PgbtUI = () => {
     return (
         pgbt.detachedMode ? Main :
             <div ref={ref} className={`pb_parent-bottom ${hidden ? '' : 'opened'} `}>
-                <div className={`pb_container ${hidden ? 'pb_hidden' : ''}`}>
+                <div className={`pb_container animate-entrance ${hidden ? 'pb_hidden ' : ''}`}>
                     {Main}
                 </div>
-                <div className='pb_trigger'
+                <div className='pb_trigger animate-entrance'
                     onClick={() => {
                         setHidden(hidden => !hidden);
                     }}

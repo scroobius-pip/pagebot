@@ -27,7 +27,8 @@
     --pb_user-message-color: var(--pb_secondary-color);
     --pb_user-message-background: var(--pb_primary-color);
     --pb_font-family: 'Poppins', sans-serif;
-
+    --pb_intro-title: 'Hey there! 👋';
+    --pb_intro-subtitle: 'How can I help you?';
 }
 
 .pb_parent-bottom {
@@ -72,6 +73,8 @@
 .pb_parent-bottom.opened {
     /* width: var(--max-width); */
 }
+
+
 
 .pb_container {
     background: var(--pb_container-background);
@@ -140,6 +143,14 @@
     color: var(--pb_primary-color);
 }
 
+.pb_main-intro-title::before {
+    content: var(--pb_intro-title);
+}
+
+.pb_main-intro-subtitle::before {
+    content: var(--pb_intro-subtitle);
+}
+
 .pb_main.detached {
     height: 100%;
     width: 100%;
@@ -179,6 +190,7 @@
 
 .pb_container.pb_hidden {
     padding: 0;
+    display: none;
 }
 
 
@@ -195,6 +207,11 @@
     opacity: 1;
     color: var(--pb_primary-color);
 }
+
+.pb_trigger:active {
+    transform: scale(0.9);
+}
+
 
 .pb_hidden>.pb_logo:hover {
     opacity: 0.8;
@@ -642,4 +659,33 @@ textarea:hover {
     /* aspect-ratio: 1 / 1; */
     height: 48;
     width: 48;
+}
+
+.animate-entrance {
+    animation-duration: 0.5s;
+    animation-name: animate-entrance;
+    /* animation-delay: 0.5s; */
+    animation-timing-function: cubic-bezier();
+    animation-fill-mode: backwards;
+    position: relative;
+}
+
+
+.animate-exit {
+    animation: animate-exit 0.5s reverse;
+    animation-fill-mode: forwards;
+}
+
+
+@keyframes animate-entrance {
+    0% {
+        opacity: 0;
+        top: 24px;
+    }
+
+
+    100% {
+        opacity: 1;
+        top: 0px;
+    }
 }

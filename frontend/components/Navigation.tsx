@@ -36,8 +36,8 @@ const Navigation = () => {
                     <Link className='text- font-medium opacity-60 transition hover:opacity-100 hidden sm:flex' href='/login'>Login</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
-                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#000' className='' />}
+                    <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
+                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='' />}
                     >
                         Get Started For Free
                     </Button>

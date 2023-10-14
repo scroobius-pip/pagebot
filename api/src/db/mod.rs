@@ -115,11 +115,21 @@ impl _DB {
     pub fn source_cache_save(&self, source_cache: Source) -> Result<Source> {
         let mut wtxn = self.create_wtxn()?;
         self.source_cache_db
-            .put(&mut wtxn, source_cache.url.as_str().trim(), &source_cache)
+            .put(&mut wtxn, source_cache.uri.as_str().trim(), &source_cache)
             .map_err(|e| eyre::eyre!("Failed to save source_cache: {:?}", e))?;
 
         wtxn.commit()
             .map(|_| source_cache)
+            .map_err(|e| eyre::eyre!("Failed to commit source_cache: {:?}", e))
+    }
+
+    pub fn source_cache_delete(&self, source_cache_id: &str) -> Result<()> {
+        let mut wtxn = self.create_wtxn()?;
+        self.source_cache_db
+            .delete(&mut wtxn, source_cache_id)
+            .map_err(|e| eyre::eyre!("Failed to delete source_cache: {:?}", e))?;
+
+        wtxn.commit()
             .map_err(|e| eyre::eyre!("Failed to commit source_cache: {:?}", e))
     }
 

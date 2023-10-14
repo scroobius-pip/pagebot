@@ -26,11 +26,11 @@ export const Calculator = () => {
     const cost = (messageCount - 50) * 0.05
 
 
-    return <div className='flex flex-col gap-8'>
-        <p className='text-4xl font-medium'><span ref={messageRef} className='text-purple font-semibold ring-[#FF6565] transition-all duration-100 p-1 mx-1 rounded-full'>{messageCount}</span>
+    return <div className='flex flex-col gap-4 bg-white p-8 rounded-2xl'>
+        <p className='text-2xl font-medium'><span ref={messageRef} className='text-purple font-semibold ring-[#FF6565] transition-all duration-100 p-1 rounded-full'>{messageCount}</span>
             messages monthly would cost:
         </p>
-        <p className='text-5xl font-semibold'>
+        <p className='text-3xl font-semibold'>
             {messageCount <= 50 ? '$0/mo' : `~${formatCurrency(cost)}/mo`}
             <br />
             <span className='text-sm font-medium p-2 px-4 rounded-full text-white bg-purple'>50 Messages Free Monthly</span>

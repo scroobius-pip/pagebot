@@ -2,9 +2,17 @@
 
 import { ArrowRight } from 'lucide-react'
 import { Logo } from './icons'
-import { Accordion, AccordionItem } from '@nextui-org/react'
+import { Accordion, AccordionItem, Snippet } from '@nextui-org/react'
+import { useEffect, useRef, useState } from 'react'
 
 const FeaturesSection = () => {
+    const [selectedPreview, setSelectedPreview] = useState<number>(0)
+    const selectedPreviewRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+
+    }, [])
+
     return <div id='features' className='w-full bg-black text-white overflow-x-hidden py-36 pb-0'>
         <section className='max-w-[1400px] w-full m-auto p-12 pb-0 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
@@ -40,6 +48,12 @@ const FeaturesSection = () => {
                         indicator: '',
                         content: 'px-6 pb-6 bg-black-1 text-white font-medium text-md rounded-b-2xl'
                     }}
+                    onSelectionChange={(selection) => {
+
+                        const currentKey = parseInt((selection as any).currentKey)
+
+                        setSelectedPreview(currentKey)
+                    }}
                 >
                     {features.map((feature, i) => <AccordionItem
 
@@ -53,15 +67,18 @@ const FeaturesSection = () => {
                     </AccordionItem>)}
                 </Accordion>
                 <div className='rounded-2xl  bg-purple rounded-bl-none pl-24 pt-24 h-full w-screen   col-span-6  hidden md:flex justify-start items-start '>
-                    <div
-                        style={{
-                            backgroundImage: 'url(/hero.png)',
-                            backgroundSize: 'contain',
-                            backgroundRepeat: 'no-repeat',
-                            backgroundPosition: 'start'
-                        }}
-                        className='w-full h-4/5'
-                    />
+
+                    {
+                        features.map(({ image }, index) => {
+                            return <div className="animate-entrance max-w-2xl flex flex-col gap-6"
+                                style={{
+                                    display: index === selectedPreview ? 'flex' : 'none'
+                                }}
+                            >
+                                {image}
+                            </div>
+                        })
+                    }
                 </div>
 
             </div>
@@ -73,7 +90,7 @@ const FeaturesSection = () => {
 interface Features {
     title: string
     description: string[]
-    image?: string
+    image?: JSX.Element
 }
 
 const features: Features[] = [
@@ -82,17 +99,55 @@ const features: Features[] = [
         description: [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
-            "Including existing APIs; for example in situations where the bot needs the current logged-in user’s information."
+            "Including existing REST APIs; for example in situations where the bot needs the current logged-in user’s information."
         ],
-        image: '/hero'
+        image: <>
+            <Snippet hideSymbol size='lg' variant='solid' className='bg-black text-white  self-start w-h hidden md:flex rounded-2xl p-8'
+                classNames={{
+                    pre: 'whitespace-normal	font-bold overflow-x-auto '
+                }}
+            >
+                {`<meta name='pgbt:source' content='https://dummyjson.com/users/1' />`}
+                {/* {`<meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />`}
+                {`<meta name='pgbt:source' content='/pricing' />`} */}
+
+            </Snippet>
+            <img src='/api.png' className='' />
+        </>
     },
     {
         title: "Pre-defined Q&A",
-        description: ["Add pre-defined questions and answers that your customers immediately see when they open the chat-bot.", "These aren't charged as they are not sent to the server."]
+        description: ["Add pre-defined questions and answers that your customers immediately see when they open the chat-bot.", "These aren't charged as they are not sent to the server."],
+        image: <>
+            <Snippet hideSymbol size='lg' variant='solid' className='bg-black text-white-1  self-start w-h hidden md:flex rounded-2xl p-8'
+                classNames={{
+                    pre: 'whitespace-normal	font-bold overflow-x-auto '
+                }}
+            >
+
+                {`<meta name='pgbt:qa' data-question="How many continents are there?" data-answer="7" />`}
+
+            </Snippet>
+            <img src='/qa.png' className='' />
+        </>
     },
     {
         title: 'Automatic Human Handoff',
-        description: ["Pagebot detects when to hand off the conversation to you and forwards it via email."]
+        description: ["Pagebot detects when to hand off the conversation to you and forwards it via email."],
+        image: <>
+            <img src='/handoff.png' className='' />
+        </>
+    },
+    {
+        title: 'Knowledge Gap Detection',
+        description: [],
+        image: <>
+            knowledge
+        </>
+    },
+    {
+        title: 'Supports 130+ Languages; Automatically',
+        description: ["Pagebot automatically detects and understands the languages of your datasources and visitor's messages"]
     },
     {
         title: 'Tiny Footprint',
@@ -110,10 +165,7 @@ const features: Features[] = [
         title: 'No Pre-Training Required',
         description: ["Unlike other chat-bots, Pagebot doesn't require you to upload your data for training via a dashboard.", "It uses the data-sources you specify via meta tags to answer questions.", "This means PageBot is ready to go as soon as you add it to your website."]
     },
-    {
-        title: 'Supports 90+ Languages; Automatically',
-        description: ["Pagebot automatically detects the languages of your data-sources and visitors."]
-    },
+
     {
         title: 'Extremely fast response times; 1.5s on average',
         description: ["PageBot's servers are written in Rust; a language that known for its speed and reliability."]

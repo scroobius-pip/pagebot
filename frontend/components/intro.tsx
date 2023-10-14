@@ -6,7 +6,7 @@ import { Spinner } from '@nextui-org/react';
 
 const TitleIconText = IconText(({ text }) => {
     const textStyle = text === 'engaging' ? 'font-bold' : text === 'instant' ? 'font-medium italic' : 'font-medium'
-    return <h3 className={`text-5xl md:text-5xl text-inherit ${textStyle}`}>
+    return <h3 className={`text-3xl md:text-5xl text-inherit ${textStyle}`}>
         {text}
     </h3>
 })
@@ -14,11 +14,11 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
 
-    return <div className='flex-col xs:flex-row flex   items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-36' >
-        <div className='flex flex-col items-center gap-24 '>
-            <h1 className='font-semibold text-5xl tdext-6xl text-center md:_text-left'>Give your customers conversations that are:</h1>
+    return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-2 md:mt-36' >
+        <div className='flex flex-col items-start md:items-center gap-24 animate-entrance'>
+            <h1 className='delay-1 font-semibold text-3xl md:text-5xl  text-left md:text-center'>Give your customers conversations that are:</h1>
 
-            <div className='flex gap-8 flex-wrap justify-center  '>
+            <div className='flex gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
                     color='#FF6565'
                     icon={
@@ -55,7 +55,7 @@ export const Intro = () => {
                     text='instant'
                 />
             </div>
-            <p className='text-xl font-medium text-black text-center leading-relaxed'>
+            <p className=' delay-3 text-lg md:text-xl font-medium text-black text-left md:text-center leading-relaxed max-w-3xl'>
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase</span>
             </p>

@@ -31,7 +31,7 @@ fn default_expires() -> u32 {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Source {
     // pub content: String,
-    pub url: String,
+    pub uri: String,
     pub expires: u32,
     pub created_at: u32,
     pub chunks: Chunks,
@@ -68,6 +68,11 @@ impl Source {
     pub fn save(&self) -> Result<Self> {
         let source = DB.source_cache_save(self.clone())?;
         Ok(source)
+    }
+
+    pub fn delete(&self) -> Result<()> {
+        DB.source_cache_delete(self.uri.as_str().trim())?;
+        Ok(())
     }
 
     pub fn content(&self) -> String {
@@ -191,12 +196,12 @@ impl Source {
             let mut hasher = ahash::AHasher::default();
             input.content.as_ref().unwrap().hash(&mut hasher);
             let content_hash = format!("_{}", hasher.finish());
-            let cached_source = Source::by_url(content_hash.as_str())
-                .map_err(SourceError::Default)?
-                .filter(|source| {
-                    !source.is_expired()
-                        && source.content() == input.content.as_ref().unwrap().as_str()
-                });
+            let cached_source =
+                Source::by_url(content_hash.as_str()).map_err(SourceError::Default)?;
+            // .filter(|source| {
+            //     !source.is_expired()
+            //         && source.content() == input.content.as_ref().unwrap().as_str()
+            // });
 
             match cached_source {
                 Some(source) => {
@@ -206,7 +211,7 @@ impl Source {
                     retrieved = true; // we're retrieving this source
                     return Ok((
                         Source {
-                            url: content_hash,
+                            uri: content_hash,
                             expires: input.expires,
                             created_at: chrono::Utc::now().timestamp() as u32,
                             chunks: Chunks::new(input.content.unwrap_or("".to_string()), "")
@@ -228,7 +233,7 @@ impl Source {
             return Ok((
                 Source {
                     // content: input.content.unwrap_or("".to_string()),
-                    url: input_url.to_string(),
+                    uri: input_url.to_string(),
                     expires: input.expires,
                     created_at: chrono::Utc::now().timestamp() as u32,
                     chunks: Chunks::new(
@@ -246,7 +251,7 @@ impl Source {
         let source = match input.content {
             Some(content) => Source {
                 // content,
-                url: input_url.to_string(),
+                uri: input_url.to_string(),
                 expires: input.expires,
                 created_at: chrono::Utc::now().timestamp() as u32,
                 chunks: Chunks::new(content, input_url.as_str())
@@ -273,7 +278,7 @@ impl Source {
 
                         let source = Self {
                             // content: content.clone(),
-                            url: input_url.to_string(),
+                            uri: input_url.to_string(),
                             expires: input.expires,
                             created_at: chrono::Utc::now().timestamp() as u32,
                             chunks: Chunks::new(content, input_url.as_str())
@@ -290,7 +295,11 @@ impl Source {
     }
 
     pub fn is_expired(&self) -> bool {
-        self.expires_timestamp() < chrono::Utc::now().timestamp() as u32
+        let expired = self.expires_timestamp() < chrono::Utc::now().timestamp() as u32;
+        if expired {
+            self.delete().expect("Failed to delete source");
+        };
+        expired
     }
 
     pub fn expires_timestamp(&self) -> u32 {

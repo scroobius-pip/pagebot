@@ -42,7 +42,7 @@ export const CTA = ({ mini }: { mini?: boolean; }) => {
             <div className='bg-slate-50 p-2 rounded-3xl self-start'>
                 <Logo className='h-10 text-[#9257FA]' />
             </div>
-            <p className='text-slate-50 text-xl font-medium '>
+            <p className='text-slate-50 text-lg md:text-xl font-medium '>
                 Add GPT <b>superpowers</b> to your website with a <b>single</b> line of code
             </p>
         </div>
