@@ -1,7 +1,7 @@
 import { render } from 'preact';
 import PgbtUI, { Message } from './ui';
 //@ts-ignore
-import * as cssText from 'bundle-text:./ui.css';
+// import * as cssText from 'bundle-text:./ui.css';
 // import './ui.module.css';
 type ExtractedData = {
     text: string,
@@ -117,16 +117,22 @@ export class PageBot {
 
 
 
-    public constructor(extractedData: ExtractedData, id: string) {
+    public constructor(extractedData: ExtractedData, id: string, shouldStyle: boolean = true) {
 
         const [customRoot, detachedMode] = PageBot.getRoot();
         if (!detachedMode)
             document.body.appendChild(customRoot);
 
-        const style = document.createElement('style');
-        style.textContent = cssText;
+        if (shouldStyle) {
+            const style = document.createElement('style');
+            import('bundle-text:./ui.css').then(cssText => {
+                style.textContent = cssText;
+            })
+            customRoot.appendChild(style);
 
-        customRoot.appendChild(style);
+        }
+
+
 
         this.detachedMode = detachedMode;
         this.id = id;
@@ -153,6 +159,7 @@ export class PageBot {
             root = customRoot;
             detachedMode = false;
         }
+
         return [root, detachedMode];
     }
 
@@ -405,13 +412,14 @@ const initializePageBot = () => {
 
     const currentScript = document.querySelectorAll('script[data-pgbt_id]')[0];
     const userId = currentScript?.getAttribute('data-pgbt_id');
+    const noStyle = currentScript?.getAttribute('data-pgbt_style') === 'false';
 
     if (!userId) {
         console.log('No user id provided, skipping');
         return;
     }
 
-    new PageBot(extractedData, userId);
+    new PageBot(extractedData, userId, !noStyle);
     observer.disconnect();
     console.log(`Observer disconnected after ${callCount} calls`);
 }
