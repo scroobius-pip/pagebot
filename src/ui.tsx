@@ -422,7 +422,7 @@ const MessageBox = (props: MessageBoxProps) => {
         <button
             onClick={props.onContactUs}
             className='pb_contact-button'
-        >Contact us</button>
+        >Contact Us</button>
     </div>
 }
 
@@ -451,7 +451,7 @@ const Message = (message: Message) => {
             // backgroundColor: message.type === 'user' ? theme.primaryColor : undefined,
         }}
 
-        className={`pb_message ${message.type}`}
+        className={`pb_message animate-entrance ${message.type}`}
     >
         <div className='pb_message-icon'>
             {
