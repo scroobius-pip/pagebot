@@ -5,6 +5,18 @@ import { Logo } from './icons'
 import { Accordion, AccordionItem, Snippet } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
 
+const CodeSnippet = ({ children, title }: any) => {
+    return <>
+        <br />
+        <span className='text-white-1 opacity-40 block'>{title}</span>
+        <span className='opacity-80 duration-400 hover:opacity-100 '>
+            {children}
+        </span>
+        <br />
+    </>
+}
+
+
 const FeaturesSection = () => {
     const [selectedPreview, setSelectedPreview] = useState<number>(0)
     const selectedPreviewRef = useRef<HTMLDivElement>(null)
@@ -36,7 +48,7 @@ const FeaturesSection = () => {
                 </p>
             </div>
 
-            <div className='grid grid-cols-6 md:grid-cols-12  h-screen'>
+            <div className='grid grid-cols-6 md:grid-cols-12 h-full md:h-screen'>
                 <Accordion variant='light'
                     fullWidth
                     showDivider={false}
@@ -64,6 +76,13 @@ const FeaturesSection = () => {
                         title={feature.title}
                     >
                         {feature.description.map((desc, i) => <p key={i}>{desc}</p>)}
+                        <div className="animate-entrance max-w-2xl flex flex-col gap-6 mt-6 md:hidden"
+                        // style={{
+                        //     display: i === selectedPreview ? 'flex' : 'none'
+                        // }}
+                        >
+                            {feature.image}
+                        </div>
                     </AccordionItem>)}
                 </Accordion>
                 <div className='rounded-2xl  bg-purple rounded-bl-none pl-24 pt-24 h-full w-screen   col-span-6  hidden md:flex justify-start items-start '>
@@ -102,14 +121,42 @@ const features: Features[] = [
             "Including existing REST APIs; for example in situations where the bot needs the current logged-in user’s information."
         ],
         image: <>
-            <Snippet hideSymbol size='lg' variant='solid' className='bg-black text-white  self-start w-h hidden md:flex rounded-2xl p-8'
+            <Snippet hideSymbol size='lg' variant='solid' className='bg-black   text-white  self-start w-h hidden md:flex rounded-2xl p-8'
                 classNames={{
-                    pre: 'whitespace-normal	font-bold overflow-x-auto '
+                    pre: 'whitespace-normal 	font-bold overflow-x-auto '
                 }}
             >
-                {`<meta name='pgbt:source' content='https://dummyjson.com/users/1' />`}
-                {/* {`<meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />`}
-                {`<meta name='pgbt:source' content='/pricing' />`} */}
+
+                <CodeSnippet
+                    title='JSON API'
+                >
+                    {`<meta name='pgbt:source' content='https://dummyjson.com/users/1' />`}
+                </CodeSnippet>
+
+                <CodeSnippet
+                    title='Raw Text'
+                >
+                    {`<meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />`}
+                </CodeSnippet>
+
+
+                <CodeSnippet
+                    title='Relative URL to webpage'
+                >
+                    {`<meta name='pgbt:source' content='/pricing' />`}
+                </CodeSnippet>
+                <CodeSnippet
+                    title='Absolute URL to webpage'
+                >
+                    {`<meta name='pgbt:source' content='https://arible.co' />`}
+                </CodeSnippet>
+
+                <CodeSnippet
+                    title='PDF'
+                >
+                    {`<meta name='pgbt:source' content='https://example.com/pricing.pdf' />`}
+                </CodeSnippet>
+                <br />
 
             </Snippet>
             <img src='/api.png' className='' />
@@ -128,7 +175,8 @@ const features: Features[] = [
                 {`<meta name='pgbt:qa' data-question="How many continents are there?" data-answer="7" />`}
 
             </Snippet>
-            <img src='/qa.png' className='' />
+            <img src='/qa.png' className='rounded-2xl' />
+
         </>
     },
     {
@@ -172,7 +220,6 @@ const features: Features[] = [
     }
 
 ]
-
 
 
 export default FeaturesSection

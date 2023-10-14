@@ -150,10 +150,15 @@ const MainChat = (props: {
     }>({
         // 'default': {
         //     message: {
-        //         text: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum.',
+        //         text: '',
         //         type: 'bot',
+        //         needsForm: {
+        //             descriptionText: 'Please enter your email and we\'ll get back to you, soon.',
+        //             titleText: 'PageBot needs your email.'
+        //         }
         //     },
         //     createdAt: new Date(),
+
         // },
         // 'default2': {
         //     message: {
@@ -269,7 +274,7 @@ const MainChat = (props: {
     }
 
     const getMessageUpdate = (message: Message, parsedMessage: ParsedMessage): Message => {
-
+        console.log(parsedMessage)
         switch (parsedMessage.type) {
             case "chunk":
                 message.text += parsedMessage.value;
@@ -439,7 +444,7 @@ const Message = (message: Message) => {
     const displayContent = message.needsForm ?
 
         <EmailForm
-            // theme={theme}
+
             titleText={message.needsForm.titleText} descriptionText={message.needsForm.descriptionText} />
         : <div
             className='pb_message-text'
@@ -453,6 +458,7 @@ const Message = (message: Message) => {
 
         className={`pb_message animate-entrance ${message.type}`}
     >
+
         <div className='pb_message-icon'>
             {
                 message.type === 'bot' ?

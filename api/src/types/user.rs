@@ -67,7 +67,7 @@ impl From<UserInput> for User {
             created_at: chrono::Utc::now().timestamp() as u32,
             id: Self::id(input.email.as_ref()),
             email: input.email.to_string(),
-            subscribed: false,
+            subscribed: true,
             ls_subscription_id: None,
             allowed_domains: None,
         }
