@@ -254,41 +254,40 @@ export class PageBot {
             }
             const messageData = JSON.parse(message);
 
-            if (messageData.chunk) {
+            if ('chunk' in messageData) {
                 return {
                     type: 'chunk',
                     value: messageData.chunk,
                 }
-            } else if (messageData.perf) {
+            } else if ('perf' in messageData) {
                 return {
                     type: 'perf',
                     value: messageData.perf,
                 }
-            } else if (messageData.not_found) {
+            } else if ('not_found' in messageData) {
                 return {
                     type: 'not_found',
                 }
-            } else if (messageData.error) {
+            } else if ('error' in messageData) {
                 return {
                     type: 'error',
                 }
-            } else if (messageData.email) {
+            } else if ('email' in messageData) {
                 return {
                     type: 'email',
                 }
-            } else if (messageData.none) {
+            } else if ('none' in messageData) {
                 return {
                     type: 'chunk',
                     value: '',
                 }
             }
 
-            throw new Error('Invalid message format');
         }
         catch (error) {
-            console.error(error, message)
+
             return {
-                type: 'error',
+                type: 'email',
             }
 
         }
@@ -341,7 +340,10 @@ export class PageBot {
                     if (done) break;
 
                     //message is prepended with data:<message>
-                    const message = textDecoder.decode(value)
+                    // const message = textDecoder.decode(value)
+                    const message = `data:{"perf":{"retrieval_time":"46","embedding_time":"12","search_time":"0","total_time":"1017","first_chunk_time":"958","token_count":1228,"cached":true}}
+data:{"chunk":""}
+data:{"email":""}`
                     const messageData = message.replaceAll('data:', '')
                         .split('\n');
 

@@ -274,7 +274,7 @@ const MainChat = (props: {
     }
 
     const getMessageUpdate = (message: Message, parsedMessage: ParsedMessage): Message => {
-        console.log(parsedMessage)
+
         switch (parsedMessage.type) {
             case "chunk":
                 message.text += parsedMessage.value;
@@ -295,6 +295,7 @@ const MainChat = (props: {
                 }
                 break;
             default:
+                console.error('Unknown message type', parsedMessage);
                 break;
 
         }
