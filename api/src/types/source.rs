@@ -87,7 +87,13 @@ impl Source {
         let document = Html::parse_document(html.as_ref());
         let mut content = String::new();
         for element in document.select(&selector) {
-            content.push_str(element.text().collect::<Vec<_>>().join("\n").as_str());
+            let contents = element
+                .text()
+                .chain(std::iter::once(element.value().attr("href").unwrap_or("")))
+                .collect::<Vec<_>>()
+                .join("\n");
+
+            content.push_str(contents.as_str());
         }
         content
     }
