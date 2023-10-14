@@ -53,8 +53,6 @@ impl From<&String> for Response {
             Response::NotFound("")
         } else if s.contains("_E") {
             Response::Email("")
-        } else if s.is_empty() {
-            Response::None("")
         } else {
             Response::Chunk(s.clone())
         }
