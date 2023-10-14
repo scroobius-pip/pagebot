@@ -51,8 +51,8 @@ const Navigation = () => {
                     }} className='text-white font-medium opacity-60 transition hover:opacity-100 hidden sm:flex' href='#'>Logout</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
-                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#FFFFFF' className='' />}
+                    <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
+                        endContent={<SparkleIcon size={24} strokeWidth={2} className='text-purple' />}
                     >
                         Dashboard
                     </Button>

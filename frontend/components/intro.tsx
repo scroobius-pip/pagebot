@@ -6,7 +6,7 @@ import { Spinner } from '@nextui-org/react';
 
 const TitleIconText = IconText(({ text }) => {
     const textStyle = text === 'engaging' ? 'font-bold' : text === 'instant' ? 'font-medium italic' : 'font-medium'
-    return <h3 className={`text-3xl md:text-5xl text-inherit ${textStyle}`}>
+    return <h3 className={`text-3xl md:text-5xl text-inherit capitalize ${textStyle}`}>
         {text}
     </h3>
 })
@@ -15,10 +15,10 @@ const TitleIconText = IconText(({ text }) => {
 export const Intro = () => {
 
     return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-2 md:mt-36' >
-        <div className='flex flex-col items-start md:items-center gap-24 animate-entrance'>
-            <h1 className='delay-1 font-semibold text-3xl md:text-5xl  text-left md:text-center'>Give your customers conversations that are:</h1>
+        <div className='flex flex-col items-start md:items-center gap-12 animate-entrance'>
+            <h1 className='delay-1 capitalize font-semibold text-3xl md:text-5xl  text-left md:text-center'>Give your customers conversations that are:</h1>
 
-            <div className='flex gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
+            <div className='flex gap-4 md:gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
                     color='#FF6565'
                     icon={

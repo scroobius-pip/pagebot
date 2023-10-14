@@ -1,15 +1,14 @@
 "use client"
 import { SectionIconTitle } from '@/components/SectionIconTitle';
 import { Section } from '@/components/section';
-import { DeleteIcon, Globe2Icon, LayoutDashboardIcon } from 'lucide-react';
-import { Tooltip } from '@nextui-org/tooltip';
-import { Button } from '@nextui-org/button';
-import { Input } from '@nextui-org/input'
+import { BadgeCheck, DeleteIcon, Globe2Icon, LayoutDashboardIcon } from 'lucide-react';
+
 import React, { useEffect, useState } from 'react';
 import { DocElement } from '@/components/documentation';
 import isJwtTokenExpired from 'jwt-check-expiry'
-import { Spinner } from '@nextui-org/spinner';
+
 import { Logo } from '@/components/icons';
+import { Button, Input, Spinner, Tooltip } from '@nextui-org/react';
 // declare LemonSqueezy: any
 declare global {
     var LemonSqueezy: any
@@ -18,6 +17,7 @@ declare global {
 interface Me {
     id: string
     allowed_domains: string[] | null
+    subscription_id: string | null
     subscribed: boolean
     email: string
     usage: {
@@ -124,12 +124,17 @@ export default function Dashboard() {
 
                     </div>
                 </div>
-                {!me?.subscribed && <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-12 self-start border-2 border-white'>
-                    <p className='font-medium'>
-                        Subscribe to remove 50 Message Limit
+                {!me?.subscription_id && <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-6 self-start border-2 border-white'>
+
+                    <h2 className='text-2xl'>Subscribe</h2>
+                    <p className='font-medium text-lg  w-auto capitalize'>
+                        Subscribe to remove monthly 50 Message Limit
                     </p>
                     <Button
-                        className='rounded-3xl max-w-xs lemonsqueezy-button bg-white text-black '
+                        endContent={
+                            <BadgeCheck size={32} />
+                        }
+                        className='rounded-2xl w-full lemonsqueezy-button bg-white text-black-1 text-xl font-medium  p-8'
                         // as='a' href={checkoutLink}
                         onClick={() => {
                             createLemonSqueezy()
@@ -177,39 +182,7 @@ export default function Dashboard() {
                         </div>
                     </div> */}
 
-                    <div>
-                        <h2 className='text-2xl font-medium mb-4'>Integration Steps</h2>
-                        <div>
-                            <div className='flex flex-row gap-4 flex-wrap'>
-
-                                <DocElement code={<>
-                                    {`<script data-pgbt_id="${me?.id || 'LOADING'}" src='https://x.thepagebot.com' />`}
-                                </>}
-                                    title='installation'
-                                    description='Put in the head tag of every page you want pagebot to appear in.'
-                                />
-                                <DocElement
-                                    code={<>
-                                        {`<meta name='pgbt:source' content='/' /> {*/ relative url to the current page */}`}
-                                        {``}
-                                        {`<meta name='pgbt:source' content='https://example.com' /> {*/ absolute url */}`}
-                                        {`<meta name='pgbt:source' content='https://example.com/api' /> {*/ api endpoint */}`}
-                                        {`<meta name='pgbt:source' content='https://example.com/api' data-expires='3600' /> {*/ cached for 1 hour */}`}
-                                    </>}
-                                    title='adding a source'
-                                    description='Specify the source of the knowledge-base. this can be a url, an api endpoint or a relative url of the current page. you can also specify how many seconds the cache should last (default is 1 day).'
-                                />
-                                <DocElement
-                                    code={<>
-                                        {`<meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />`}
-
-                                    </>}
-                                    title='adding predefined questions and answers'
-                                    description='Predefined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.'
-                                />
-                            </div>
-                        </div>
-                    </div>
+                    {Documentation(me)}
                 </div>
             </div>
 
@@ -273,4 +246,81 @@ const DomainInput: React.FC<{ onAdd: (domain: string) => void }> = (props) => {
         }
     </div >
 
+}
+
+function Documentation(me: Me | null) {
+    return <div>
+        <h2 className='text-2xl font-medium mb-4'>Integration Steps</h2>
+        <div>
+            <div className='flex flex-row gap-4 flex-wrap'>
+
+                <DocElement code={<>
+                    {`<script data-pgbt_id="${me?.id || 'LOADING'}" src='https://x.thepagebot.com' />`}
+                </>}
+                    title='installation'
+                >
+                    <p>Copy and paste this script tag into the head of your page.</p>
+
+                </DocElement>
+                <DocElement
+                    code={<>
+                        {`<meta name='pgbt:source' content='url or text' data-expires='60'/> `}
+                    </>}
+
+                    title='adding a source'
+                >
+                    <>
+                        <p>
+                            <b>content</b>
+                            <br />
+                            This can either be raw text, a relative or absolute url. If it is a url, pagebot  will fetch the url and use the response as the source.
+                        </p>
+                        <p>
+                            <b>data-expires</b>
+                            <br />
+                            <span className='font-medium'>Optional</span>
+                            <br />
+                            This is the number of seconds that pagebot will cache the source for. After this time, pagebot will fetch the source again.
+                            (default 86400 seconds)
+                            <br />
+                            <br />
+                            <span className='font-semibold text-lg'>
+                                PageBot automatically parses the contents of the current webpage and its index page as a source. This means you don't need to add the current page or the landing page as a source e.g content='/' is not required.
+                            </span>
+                        </p>
+                        <p>
+                            <b>Supported Formats</b>
+                            <br />
+                            <ul className='flex gap-4 p-4 px-8 mt-2 text-lg bg-white-1 items-start justify-start w-fit rounded-2xl'>
+                                <span>HTML</span>
+                                <span>Markdown</span>
+                                <span>Text</span>
+                                <span>JSON</span>
+                                <span>DOCX</span>
+                                <span>PDF</span>
+                                {/* <li>Markdown</li>
+                            <li>Text</li>
+                            <li>JSON</li>
+                            <li>DOCX</li>
+                            <li>PDF</li> */}
+                            </ul>
+
+                        </p>
+                    </>
+                </DocElement>
+                <DocElement
+                    code={<>
+                        {`<meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />`}
+
+                    </>}
+                    title='adding predefined questions and answers'
+                >
+
+                    <p>
+                        Predefined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.
+                    </p>
+                </DocElement>
+            </div>
+        </div>
+    </div>;
 }

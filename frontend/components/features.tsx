@@ -1,21 +1,11 @@
 "use client"
 
-import { ArrowRight } from 'lucide-react'
+import { ArrowBigDownDash, ArrowDown, ArrowDown01, ArrowRight } from 'lucide-react'
 import { Logo } from './icons'
-import { Accordion, AccordionItem, Snippet } from '@nextui-org/react'
+import { Accordion, AccordionItem, Button, Snippet } from '@nextui-org/react'
 import { useEffect, useRef, useState } from 'react'
-
-const CodeSnippet = ({ children, title }: any) => {
-    return <>
-        <br />
-        <span className='text-white-1 opacity-40 block'>{title}</span>
-        <span className='opacity-80 duration-400 hover:opacity-100 '>
-            {children}
-        </span>
-        <br />
-    </>
-}
-
+import Link from 'next/link'
+import { CodeSnippet } from './CodeSnippet'
 
 const FeaturesSection = () => {
     const [selectedPreview, setSelectedPreview] = useState<number>(0)
@@ -63,7 +53,9 @@ const FeaturesSection = () => {
                     onSelectionChange={(selection) => {
 
                         const currentKey = parseInt((selection as any).currentKey)
-
+                        if (currentKey > features.length - 3) {
+                            return
+                        }
                         setSelectedPreview(currentKey)
                     }}
                 >
@@ -181,37 +173,99 @@ const features: Features[] = [
     },
     {
         title: 'Automatic Human Handoff',
-        description: ["Pagebot detects when to hand off the conversation to you and forwards it via email."],
+        description: ["PageBot detects when to hand off the conversation to you and forwards it via email."],
         image: <>
             <img src='/handoff.png' className='' />
         </>
     },
     {
         title: 'Knowledge Gap Detection',
-        description: [],
+        description: ["Pagebot detects when it doesn't know the answer to a question and forwards it to you via email."],
         image: <>
-            knowledge
+            <img src='/gap.png' className='rounded-2xl' />
         </>
     },
     {
         title: 'Supports 130+ Languages; Automatically',
-        description: ["Pagebot automatically detects and understands the languages of your datasources and visitor's messages"]
-    },
-    {
-        title: 'Tiny Footprint',
-        description: ["Pagebot is only ~50kb gzipped; keeping your website fast."]
+        description: ["PageBot automatically detects and understands the languages of your datasources and visitor's messages"],
+        image: <>
+            <img src='/translate.png' className='rounded-2xl' />
+        </>
     },
     {
         title: 'Customizable; via CSS Overrides',
-        description: ["Customize the look and feel of the chat-bot to match your brand."]
+        description: ["Customize the look and feel of the chat-bot to match your brand."],
+        image: <>
+            <Snippet hideSymbol size='lg' variant='solid' className='bg-black   text-white  self-start w-h hidden md:flex rounded-2xl p-8'
+                classNames={{
+                    pre: 'whitespace-normal 	font-bold overflow-x-auto '
+                }}
+            >
+                <CodeSnippet>
+                    --pb_font-family: "Poppins",sans-serif;
+                </CodeSnippet>
+                <CodeSnippet>
+                    --pb_intro-title: "Hey there! 👋";
+                </CodeSnippet>
+                <CodeSnippet>
+                    --pb_intro-subtitle: "How can I help you?";
+                </CodeSnippet>
+                <CodeSnippet>
+                    --pb_primary-color: #1a202c;
+                </CodeSnippet>
+                <CodeSnippet>
+                    --pb_secondary-color: #f5f5f5;
+                </CodeSnippet>
+                <CodeSnippet>
+                    --pb_text-color: #1a202c;
+                </CodeSnippet>
+                <CodeSnippet>
+                    ...
+                </CodeSnippet>
+            </Snippet>
+            <img src='/css.png' className='' />
+        </>
     },
     {
+        title: 'Tiny Footprint',
+        description: ["PageBot is only ~30kb gzipped; keeping your website fast."],
+        image: <>
+            <h4 className='text-base opacity-80 italic font-semibold text-white '>~30kb gzipped</h4>
+
+            <div className='p-2 rounded-3xl bg-white m-auto '>
+                <div className='p-2 bg-white-1 rounded-3xl ' >
+                    <img
+
+                        height={128} width={128}
+                        src='/warmup.gif'
+                    />
+                </div>
+
+            </div>
+        </>
+    },
+
+    {
         title: 'Usage-based Billing',
-        description: ["Only pay for what you use; no monthly upfront costs."]
+        description: ["Only pay for what you use; no monthly upfront costs."],
+        image: <>
+
+
+            <Button as={Link} href='#pricing' className='w-60 py-12 bg-white'
+                endContent={
+                    <ArrowDown className='animate-bounce' size={32} />
+                }
+
+            >
+                <h2 className='text-xl'>Pricing</h2>
+
+            </Button>
+
+        </>
     },
     {
         title: 'No Pre-Training Required',
-        description: ["Unlike other chat-bots, Pagebot doesn't require you to upload your data for training via a dashboard.", "It uses the data-sources you specify via meta tags to answer questions.", "This means PageBot is ready to go as soon as you add it to your website."]
+        description: ["Unlike other chat-bots, PageBot doesn't require you to upload your data for training via a dashboard.", "It uses the data-sources you specify via meta tags to answer questions.", "This means PageBot is ready to go as soon as you add it to your website."]
     },
 
     {

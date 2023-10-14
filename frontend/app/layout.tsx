@@ -94,6 +94,11 @@ export default function RootLayout({
               <a href='https://www.linkedin.com/company/pagebotai' target='_blank' rel="noreferrer">
                 LinkedIn
               </a>
+              <a href='mailto:contact@thepagebot.com' className='' target='_blank' rel="noreferrer">
+                <span className='font-medium'>
+                  contact@thepagebot.com
+                </span>
+              </a>
             </div>
             <div className='flex flex-col gap-2'>
               <b>Legal</b>

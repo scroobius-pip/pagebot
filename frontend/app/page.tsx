@@ -11,6 +11,7 @@ import { Button } from '@nextui-org/button';
 import { ArrowRight, HeartHandshakeIcon, SparkleIcon } from 'lucide-react';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
+import { FaqSection } from '../components/FaqSection';
 export const runtime = 'edge';
 
 export default function Home() {
@@ -22,7 +23,7 @@ export default function Home() {
     <You />
     <FeaturesSection />
     <Pricing />
-    <div className='px-2 py-12 bg-white w-full  flex gap-2 justify-around '>
+    <section className='px-2 py-12 bg-white w-full  flex gap-2 justify-around '>
       {/*@ts-ignore */}
       <Button href='/login' as={Link} color='' fullWidth className='w-full py-8' endContent={
         <ArrowRight size={32} />
@@ -30,7 +31,10 @@ export default function Home() {
         <h2 className=''>Get Started For Free</h2>
 
       </Button>
-    </div>
+    </section>
+    {/* <section>
+      <FaqSection />
+    </section> */}
   </div>
 
 }
@@ -83,3 +87,6 @@ const CTA = () => <div className='bg-black w-full  text-white'>
     </div>
   </div>
 </div>
+
+
+
