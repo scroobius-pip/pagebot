@@ -64,12 +64,11 @@ export const Intro = () => {
             </Button>
         </div>
 
-        <div id='pgbt-root' className='rounded-2xl bg-white  shadow-2x max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
+        <div id='pgbt-root' className='rounded-2xl max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
 
-            {/* <Spinner size='lg' color='white' /> */}
-            <div className='p-2 roudnded-xl l bg-white bg-bdlack-1 rounded-3xl m-auto '>
+            <div className='p-2 roudnded-xl bg-white bg-bdlack-1 rounded-3xl m-auto '>
                 <img
-                    className='animate-pulse'
+                    className='animate-pulse '
 
                     height={128} width={128}
                     src='https://s.thepagebot.com/pagebot_walk.gif'
