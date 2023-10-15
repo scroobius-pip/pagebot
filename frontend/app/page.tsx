@@ -85,6 +85,7 @@ const CTA = () => {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`
       }
     })
+
     const json = await res.json() as {
       user_count: number,
       message_count: string,
