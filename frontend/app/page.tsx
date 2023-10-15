@@ -10,13 +10,30 @@ import { HeartHandshakeIcon, SparkleIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@nextui-org/react';
 import GetStarted from '@/components/GetStarted';
+import Marquee from "react-fast-marquee";
+
 export const runtime = 'edge';
 
 export default function Home() {
-
+  const libraries = ['wordpress', 'nextjs', 'reactjs', 'angular', 'php', 'vue']
   return <div className=''>
 
     <Intro />
+    <div className='bg-purple py-12 max-w-xl m-auto '>
+
+      <Marquee gradient gradientColor='#5C07ED' className='gap-2'>
+
+        {
+          libraries.map((lib, i) => <img
+            key={i}
+            style={{
+              filter: 'invert(1)'
+            }}
+            src={`/${lib}.svg`} alt={lib} className='h-12 mx-4' />)
+        }
+      </Marquee>
+
+    </div>
     <CTA />
     <div className='bg-white'>
       <You />

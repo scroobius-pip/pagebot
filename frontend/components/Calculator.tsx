@@ -26,7 +26,7 @@ export const Calculator = () => {
     const cost = (messageCount - 50) * 0.05
 
 
-    return <div className='flex flex-col gap-4 bg-white-1 p-8 rounded-2xl'>
+    return <div className='flex flex-col gap-4 bg-white-1 px-4 py-6 rounded-2xl'>
         <p className='text-2xl font-medium'><span ref={messageRef} className='text-purple font-semibold ring-[#FF6565] transition-all duration-100 p-1 rounded-full'>{messageCount}</span>
             messages monthly would cost:
         </p>

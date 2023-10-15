@@ -12,7 +12,7 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
 
-    return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-2 md:mt-36' >
+    return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-4 mt-2 md:mt-36' >
         <div className='flex flex-col items-start md:items-center gap-12 animate-entrance'>
             <h1 className='delay-1 capitalize font-semibold text-3xl md:text-5xl  text-left md:text-center text-white'>Give your customers conversations that are:</h1>
 
@@ -53,9 +53,9 @@ export const Intro = () => {
                     text='instant'
                 />
             </div>
-            <p className=' delay-3 text-base md:text-lg font-normal text-white text-left md:text-center leading-relaxed max-w-3xl'>
+            <p className='opacity-90 delay-3 text-base md:text-lg font-normal text-white text-left md:text-center leading-relaxed max-w-3xl'>
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
-                your website's content and <span className='font-meddium'>knowledgebase</span>
+                your website's content and <span className='font-meddium'>knowledgebase.</span>
             </p>
             <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
                 endContent={<SparkleIcon size={24} strokeWidth={2} color='#000' className='' />}
@@ -76,6 +76,7 @@ export const Intro = () => {
                 />
             </div>
         </div>
+
     </div>
 
 

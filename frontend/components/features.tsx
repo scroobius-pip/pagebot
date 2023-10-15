@@ -25,13 +25,13 @@ const FeaturesSection = () => {
                     <Logo className='h-6 text-black' />
                 </div>
                 <p className='text-slate-50 text-2xl font-medium  leading-relaxed'>
-                    PageBot is the most flexible AI chat-bot you’ll ever use.
+                    PageBot is the most flexible AI chatbot you’ll ever use.
                 </p>
 
             </div>
             <div className='flex flex-col md:flex-row gap-6  text-lg max-w-prose font-normal mb-12'>
                 <p>
-                    Add data-sources to your chat-bot dynamically via meta tags
+                    Add datasources to your chatbot dynamically via meta tags
                 </p>
                 <p>
                     Only pay for what you use; no monthly upfront costs
@@ -104,7 +104,7 @@ interface Features {
 
 const features: Features[] = [
     {
-        title: "Supports most data-sources; including your own APIs",
+        title: "Supports most file types; including your own APIs",
         description: [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
@@ -154,7 +154,7 @@ const features: Features[] = [
     },
     {
         title: "Pre-defined Q&A",
-        description: ["Add pre-defined questions and answers that your customers immediately see when they open the chat-bot.", "These aren't charged as they are not sent to the server."],
+        description: ["Add pre-defined questions and answers that your customers immediately see when they open the chatbot.", "These aren't charged as they are not sent to the server."],
         image: <>
             <Snippet hideSymbol size='lg' variant='solid' className='bg-black text-white-1  self-start w-h hidden md:flex rounded-2xl p-8'
                 classNames={{
