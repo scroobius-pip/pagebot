@@ -1,8 +1,5 @@
 "use client"
-import { Section } from './section'
-import { Card } from './Card'
 import { Calculator } from './Calculator'
-import { CTA } from './CTA'
 import { Button } from '@nextui-org/react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
@@ -17,7 +14,7 @@ const Pricing = () => {
                 </div>
                 <div className='grid grid-cols-12 gap-6 col-span-6'>
                     {items.map((item, i) => <div
-                        className='col-span-12 px-4 py-6 rounded-2xl bg-[#ECEFF6]'>
+                        className='col-span-12 px-4 py-6 rounded-2xl bg-white-1'>
                         <div className="flex flex-col gap-2 justify-between">
                             <div>
                                 <h4 className="text-2xl capitalize font-medium">

@@ -53,7 +53,7 @@ const FeaturesSection = () => {
                     onSelectionChange={(selection) => {
 
                         const currentKey = parseInt((selection as any).currentKey)
-                        if (currentKey > features.length - 3) {
+                        if (currentKey > features.length - 2) {
                             return
                         }
                         setSelectedPreview(currentKey)
@@ -69,9 +69,7 @@ const FeaturesSection = () => {
                     >
                         {feature.description.map((desc, i) => <p key={i}>{desc}</p>)}
                         <div className="animate-entrance max-w-2xl flex flex-col gap-6 mt-6 md:hidden"
-                        // style={{
-                        //     display: i === selectedPreview ? 'flex' : 'none'
-                        // }}
+
                         >
                             {feature.image}
                         </div>
@@ -81,7 +79,7 @@ const FeaturesSection = () => {
 
                     {
                         features.map(({ image }, index) => {
-                            return <div className="animate-entrance max-w-2xl flex flex-col gap-6"
+                            return <div key={index} className="animate-entrance max-w-2xl flex flex-col gap-6"
                                 style={{
                                     display: index === selectedPreview ? 'flex' : 'none'
                                 }}
@@ -106,7 +104,7 @@ interface Features {
 
 const features: Features[] = [
     {
-        title: "Supports most data-sources; including your own API’s",
+        title: "Supports most data-sources; including your own APIs",
         description: [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
@@ -228,9 +226,9 @@ const features: Features[] = [
     },
     {
         title: 'Tiny Footprint',
-        description: ["PageBot is only ~30kb gzipped; keeping your website fast."],
+        description: ["PageBot is only ~20kb gzipped; keeping your website fast."],
         image: <>
-            <h4 className='text-base opacity-80 italic font-semibold text-white '>~30kb gzipped</h4>
+            <h4 className='text-base opacity-80 italic font-semibold text-white '>~20kb gzipped</h4>
 
             <div className='p-2 rounded-3xl bg-white m-auto '>
                 <div className='p-2 bg-white-1 rounded-3xl ' >
@@ -250,14 +248,15 @@ const features: Features[] = [
         description: ["Only pay for what you use; no monthly upfront costs."],
         image: <>
 
+            <img src='/sub.png' className='rounded-2xl' />
 
-            <Button as={Link} href='#pricing' className='w-60 py-12 bg-white'
+            <Button as={Link} href='#pricing' className='w-60 py-8 bg-white'
                 endContent={
-                    <ArrowDown className='animate-bounce' size={32} />
+                    <ArrowDown className='' size={24} />
                 }
 
             >
-                <h2 className='text-xl'>Pricing</h2>
+                <h2 className='text-base'>Pricing</h2>
 
             </Button>
 
@@ -268,10 +267,10 @@ const features: Features[] = [
         description: ["Unlike other chat-bots, PageBot doesn't require you to upload your data for training via a dashboard.", "It uses the data-sources you specify via meta tags to answer questions.", "This means PageBot is ready to go as soon as you add it to your website."]
     },
 
-    {
-        title: 'Extremely fast response times; 1.5s on average',
-        description: ["PageBot's servers are written in Rust; a language that known for its speed and reliability."]
-    }
+    // {
+    //     title: 'Fast response times; 1.5s on average',
+    //     description: ["PageBot's servers are written in Rust; a language that known for its speed and reliability."]
+    // }
 
 ]
 

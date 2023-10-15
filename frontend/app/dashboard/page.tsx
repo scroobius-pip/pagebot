@@ -7,7 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { DocElement } from '@/components/documentation';
 import isJwtTokenExpired from 'jwt-check-expiry'
 
-import { Logo } from '@/components/icons';
 import { Button, Input, Spinner, Tooltip } from '@nextui-org/react';
 // declare LemonSqueezy: any
 declare global {

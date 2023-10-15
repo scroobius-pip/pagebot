@@ -1,8 +1,6 @@
-import { Section } from '@/components/section';
-import { LogoText, IconText } from '@/components/icons'
-import { CTA } from './CTA';
-import { Progress } from '@nextui-org/progress'
-import { Spinner } from '@nextui-org/react';
+import { IconText } from '@/components/icons'
+import { Button, Link } from '@nextui-org/react';
+import { SparkleIcon } from 'lucide-react';
 
 const TitleIconText = IconText(({ text }) => {
     const textStyle = text === 'engaging' ? 'font-bold' : text === 'instant' ? 'font-medium italic' : 'font-medium'
@@ -16,7 +14,7 @@ export const Intro = () => {
 
     return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-2 mt-2 md:mt-36' >
         <div className='flex flex-col items-start md:items-center gap-12 animate-entrance'>
-            <h1 className='delay-1 capitalize font-semibold text-3xl md:text-5xl  text-left md:text-center'>Give your customers conversations that are:</h1>
+            <h1 className='delay-1 capitalize font-semibold text-3xl md:text-5xl  text-left md:text-center text-white'>Give your customers conversations that are:</h1>
 
             <div className='flex gap-4 md:gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
@@ -43,7 +41,7 @@ export const Intro = () => {
                     text='pleasant'
                 />
                 <TitleIconText
-                    color='#5C07ED'
+                    color='#fff'
                     icon={
                         <svg className='h-12 md:h-12' viewBox="0 0 49 49" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M31.7 5.90041C27.4224 4.23857 22.7034 4.09834 18.3346 5.50324C13.9659 6.90815 10.2132 9.77272 7.70601 13.6164C5.19886 17.4601 4.0898 22.0491 4.56489 26.6135C5.03999 31.1779 7.07032 35.4401 10.3153 38.6851C13.5603 41.9301 17.8225 43.9604 22.3869 44.4355C26.9513 44.9106 31.5403 43.8015 35.384 41.2944C39.2277 38.7872 42.0923 35.0345 43.4972 30.6658C44.9021 26.297 44.7618 21.578 43.1 17.3004" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
@@ -55,16 +53,21 @@ export const Intro = () => {
                     text='instant'
                 />
             </div>
-            <p className=' delay-3 text-lg md:text-xl font-medium text-black text-left md:text-center leading-relaxed max-w-3xl'>
+            <p className=' delay-3 text-base md:text-lg font-normal text-white text-left md:text-center leading-relaxed max-w-3xl'>
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase</span>
             </p>
+            <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
+                endContent={<SparkleIcon size={24} strokeWidth={2} color='#000' className='' />}
+            >
+                Get Started For Free
+            </Button>
         </div>
 
-        <div id='pgbt-root' className='rounded-2xl bg-purple  max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
+        <div id='pgbt-root' className='rounded-2xl bg-white  shadow-2x max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
 
             {/* <Spinner size='lg' color='white' /> */}
-            <div className='p-2 roudnded-xl bg-white bg-bdlack-1 rounded-3xl m-auto '>
+            <div className='p-2 roudnded-xl l bg-white bg-bdlack-1 rounded-3xl m-auto '>
                 <img
                     className='animate-pulse'
 

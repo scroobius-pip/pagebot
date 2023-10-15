@@ -3,7 +3,6 @@ import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { fontSans } from "@/config/fonts";
 import { Providers } from "./providers";
-import { Link } from "@nextui-org/link";
 import clsx from "clsx";
 import { Logo, LogoText } from '@/components/icons';
 import Navigation from '@/components/Navigation';
@@ -77,7 +76,7 @@ export default function RootLayout({
         <Navigation />
 
 
-        <main className='flex-1 flex flex-col `'>
+        <main className='flex-1 flex flex-col bg-purple'>
           {children}
         </main>
         <footer className=" bg-black p-10  w-full flex text-white justify-around  ">

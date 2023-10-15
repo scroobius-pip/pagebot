@@ -1,7 +1,7 @@
 "use client"
-import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
+import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
 import { LogoText } from './icons'
-import { Link } from '@nextui-org/link'
+// import { Link } from '@nextui-org/link'
 import { SparkleIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import isJwtTokenExpired from 'jwt-check-expiry'
@@ -14,7 +14,7 @@ const Navigation = () => {
         (jwt && !isJwtTokenExpired(jwt) && setLoggedIn(true))
     }, [])
 
-    return <Navbar className='bg-purple py-2 flex-col text-white' maxWidth='xl' shouldHideOnScroll isBordered  >
+    return <Navbar className='bg-purple py-1 flex-col text-white text-sm' maxWidth='xl' shouldHideOnScroll   >
         <NavbarBrand>
             <Link href='/' className='text-white'>
                 <LogoText className='h-8' />
@@ -23,17 +23,17 @@ const Navigation = () => {
         <NavbarContent justify='center' className='hidden sm:flex'>
             {!loggedIn && <>
                 <NavbarItem className=''>
-                    <Link className='text-white font-medium opacity-60 transition hover:opacity-100' href='#features'>Features</Link>
+                    <Link className='text-white text-sm font-medium opacity-60 transition hover:opacity-100' href='#features'>Features</Link>
                 </NavbarItem>
                 <NavbarItem className=''>
-                    <Link className='text-white font-medium opacity-60 transition hover:opacity-100 ' href='#pricing'>Pricing</Link>
+                    <Link className='text-white text-sm font-medium opacity-60 transition hover:opacity-100 ' href='#pricing'>Pricing</Link>
                 </NavbarItem>
             </>}
         </NavbarContent>
         <NavbarContent justify='end' className='' >
             {!loggedIn ? <>
                 <NavbarItem>
-                    <Link className='text- font-medium opacity-60 transition hover:opacity-100 hidden sm:flex' href='/login'>Login</Link>
+                    <Link className='text-white text-sm font-medium opacity-60 transition hover:opacity-100 hidden sm:flex' href='/login'>Login</Link>
                 </NavbarItem>
                 <NavbarItem>
                     <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
@@ -48,11 +48,13 @@ const Navigation = () => {
                         localStorage.removeItem('jwt')
                         setLoggedIn(false)
 
-                    }} className='text-white font-medium opacity-60 transition hover:opacity-100 hidden sm:flex' href='#'>Logout</Link>
+                    }} className='text-white font-medium text-xs opacity-60 transition hover:opacity-100 hidden sm:flex' href='#'>Logout</Link>
                 </NavbarItem>
                 <NavbarItem>
-                    <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
-                        endContent={<SparkleIcon size={24} strokeWidth={2} className='text-purple' />}
+                    <Button
+                        as={Link} href='/dashboard' size='lg'
+                        className='rounded-3xl text-sm md:text-sm font-medium text-purple bg-white w-full md:w-auto '
+                        endContent={<SparkleIcon size={16} strokeWidth={2} className='text-purple' />}
                     >
                         Dashboard
                     </Button>
