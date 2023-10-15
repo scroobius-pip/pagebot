@@ -1,10 +1,6 @@
-import { FileTextIcon, InfoIcon, PercentCircleIcon } from 'lucide-react'
-import { SectionIconTitle } from './SectionIconTitle'
-import { Section } from './section'
-import { Card } from './Card'
-import { Snippet } from '@nextui-org/snippet'
-import { CTA } from './CTA'
 
+import { Card } from './Card'
+import { Snippet } from '@nextui-org/react'
 
 
 interface Doc {
@@ -17,9 +13,8 @@ interface Doc {
 
 export const DocElement = ({ code, title, children }: Doc) => {
     return <Card
-        className='flex-auto gap-12'
-        bg='#FFFCF9'
-        bc='#FFFCF9'
+        className='flex-auto gap-12 bg-white'
+
     >
         <>
             <div className='flex flex-col'>
@@ -33,10 +28,7 @@ export const DocElement = ({ code, title, children }: Doc) => {
                 >
                     {code}
                 </Snippet>
-                {/* {description && <div className=''>
-                    <InfoIcon className='inline mr-2 text-purple-600' />
-                    <span className='font-medium'>{description}</span>
-                </div>} */}
+
                 {children}
             </div>
         </>
