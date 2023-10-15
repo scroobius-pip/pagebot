@@ -9,6 +9,7 @@ pub static MESSAGE_COUNT: AtomicU64 = AtomicU64::new(0);
 pub static PAGE_COUNT: AtomicU64 = AtomicU64::new(0);
 
 pub fn read_stats() {
+    
     let mut file = File::open("stats.txt").unwrap_or_else(|_| {
         let mut file = File::create("stats.txt").expect("Failed to create stats.txt");
         file.write_all("0 0 0".as_bytes())

@@ -140,16 +140,17 @@ impl UsageItem {
 
 impl From<&UsageItem> for u32 {
     fn from(item: &UsageItem) -> Self {
-        let UsageItem {
-            message_count,
-            source_retrieval_count,
-            source_word_count,
-            ..
-        } = item;
+        // let UsageItem {
+        //     message_count,
+        //     source_retrieval_count,
+        //     source_word_count,
+        //     ..
+        // } = item;
 
-        *message_count as u32 * MESSAGE_UNIT
-            + *source_retrieval_count as u32 * SOURCE_RETRIEVAL_UNIT
-            + source_word_count * SOURCE_WORD_UNIT
+        // *message_count as u32 * MESSAGE_UNIT
+        //     + *source_retrieval_count as u32 * SOURCE_RETRIEVAL_UNIT
+        //     + source_word_count * SOURCE_WORD_UNIT
+        MESSAGE_UNIT
     }
 }
 
@@ -183,6 +184,6 @@ fn get_current_month_timestamp(date: DateTime<Utc>) -> u32 {
         .timestamp() as u32
 }
 
-const MESSAGE_UNIT: u32 = 1000;
-const SOURCE_RETRIEVAL_UNIT: u32 = 100;
-const SOURCE_WORD_UNIT: u32 = 1;
+const MESSAGE_UNIT: u32 = 1;
+// const SOURCE_RETRIEVAL_UNIT: u32 = 100;
+// const SOURCE_WORD_UNIT: u32 = 1;
