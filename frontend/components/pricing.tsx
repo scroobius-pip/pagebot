@@ -74,7 +74,7 @@ const items = [
     {
         title: 'source retrieval',
         description: 'Your knowledge-base retrieved by pagebot, e.g a PDF, a web-page, API calls to your backend.',
-        price: 'Unlimited Free'
+        price: 'Free'
     },
     // {
     //     title: 'source word count',
