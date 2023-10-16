@@ -295,7 +295,7 @@ const MainChat = (props: {
                 }
                 break;
             default:
-                console.error('Unknown message type', parsedMessage);
+                // console.error('Unknown message type', parsedMessage);
                 break;
 
         }
@@ -435,7 +435,7 @@ const MessageBox = (props: MessageBoxProps) => {
 
 const Message = (message: Message) => {
 
-    // const theme = getTheme();
+
     let messageText = message.text;
     let cleanText = messageText.replace(/\n\n/g, '');
     const html = parse(cleanText);

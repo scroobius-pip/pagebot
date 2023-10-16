@@ -285,7 +285,8 @@ export class PageBot {
 
         }
         catch (error) {
-
+            // alert('Error parsing message: ' + error);
+            console.error('Error parsing message: ' + error);
             return {
                 type: 'email',
             }
@@ -340,23 +341,20 @@ export class PageBot {
                     if (done) break;
 
                     //message is prepended with data:<message>
-                    // const message = textDecoder.decode(value)
-                    const message = `data:{"perf":{"retrieval_time":"46","embedding_time":"12","search_time":"0","total_time":"1017","first_chunk_time":"958","token_count":1228,"cached":true}}
-data:{"chunk":""}
-data:{"email":""}`
+                    const message = textDecoder.decode(value)
+
                     const messageData = message.replaceAll('data:', '')
                         .split('\n');
 
 
                     for (const message of messageData) {
                         const decodedMessage = PageBot.decodeMessage(message);
-                        // console.log('decodedMessage', decodedMessage);
                         yield decodedMessage;
                     }
                 }
 
             } else {
-                console.error('Error fetching data:', response.status, response.statusText);
+                console.error('PGBT: Error fetching data:', response.status, response.statusText);
                 throw new Error('Failed to fetch data');
             }
         }
