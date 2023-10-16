@@ -14,6 +14,7 @@ const Pricing = () => {
                 </div>
                 <div className='grid grid-cols-12 gap-6 col-span-6'>
                     {items.map((item, i) => <div
+                        key={i}
                         className='col-span-12 px-4 py-6 rounded-2xl bg-white-1'>
                         <div className="flex flex-col gap-4 justify-between">
                             <div>

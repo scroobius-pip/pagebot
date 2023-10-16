@@ -108,7 +108,9 @@ const features: Features[] = [
         description: [
             "PDF, HTML, JSON, CSV, TXT, PPTX, DOCX, MD",
             "+",
-            "Including existing REST APIs; for example in situations where the bot needs the current logged-in user’s information."
+            "Including existing REST APIs; for example in situations where the bot needs the current logged-in user’s information.",
+            "+",
+            "Client & Server Rendered websites"
         ],
         image: <>
             <Snippet hideSymbol size='lg' variant='solid' className='bg-black   text-white  self-start w-h hidden md:flex rounded-2xl p-8'
@@ -216,6 +218,11 @@ const features: Features[] = [
                 </CodeSnippet>
                 <CodeSnippet>
                     --pb_text-color: #1a202c;
+                </CodeSnippet>
+                <CodeSnippet>
+                    {` .pb_message {
+
+                    }`}
                 </CodeSnippet>
                 <CodeSnippet>
                     ...
