@@ -199,15 +199,16 @@ impl Source {
 
         // If there's no URL, we're dealing with a local source not from the requesting website.
         if input.url.is_none() && input.content.is_some() {
+            //we store the raw text to avoid having to recompute the embeddings
             let mut hasher = ahash::AHasher::default();
             input.content.as_ref().unwrap().hash(&mut hasher);
             let content_hash = format!("_{}", hasher.finish());
-            let cached_source =
-                Source::by_url(content_hash.as_str()).map_err(SourceError::Default)?;
-            // .filter(|source| {
-            //     !source.is_expired()
-            //         && source.content() == input.content.as_ref().unwrap().as_str()
-            // });
+            let cached_source = Source::by_url(content_hash.as_str())
+                .map_err(SourceError::Default)?
+                .filter(|source| {
+                    !source.is_expired()
+                        && source.content() == input.content.as_ref().unwrap().as_str()
+                });
 
             match cached_source {
                 Some(source) => {
@@ -344,8 +345,8 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
 impl Chunks {
     const CHUNK_SIZE: usize = 20;
     pub async fn new(content: String, url: &str) -> Result<Self> {
-        if content.is_empty() || url.is_empty() {
-            return Err(eyre::eyre!("Content or URL is empty"));
+        if content.is_empty() {
+            return Err(eyre::eyre!("Content is empty"));
         }
 
         let unchunked_sentences = content.unicode_sentences().collect::<Vec<_>>();
@@ -459,5 +460,16 @@ mod tests {
 
         let source = Source::fetch(url).await.expect("source");
         println!("{:?}", source);
+    }
+
+    #[tokio::test]
+    async fn raw_content() {
+        let input = SourceInput {
+            content: Some("Hello world".to_string()),
+            url: None,
+            expires: 86400,
+        };
+        let (source, _) = Source::new(input).await.expect("source");
+        assert_eq!(source.content(), "Hello world");
     }
 }
