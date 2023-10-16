@@ -9,18 +9,18 @@ const Pricing = () => {
         <div className='flex flex-col gap-24 '>
             <div className='flex gap-24 flex-col md:flex-row'>
                 <div className='flex flex-col justify-between col-span-6 gap-12'>
-                    <h2 className='text-4xl font-medium'>Pricing</h2>
-                    <p className='text-2xl'>Only pay for what you use; no monthly upfront costs</p>
+                    <h2 className='text-4xl font-bold'>Pricing</h2>
+                    <p className='text-2xl font-medium'>Only pay for what you use; no monthly upfront costs</p>
                 </div>
                 <div className='grid grid-cols-12 gap-6 col-span-6'>
                     {items.map((item, i) => <div
                         className='col-span-12 px-4 py-6 rounded-2xl bg-white-1'>
-                        <div className="flex flex-col gap-2 justify-between">
+                        <div className="flex flex-col gap-4 justify-between">
                             <div>
-                                <h4 className="text-2xl capitalize font-medium">
+                                <h4 className="text-2xl capitalize font-medium mb-4">
                                     {item.title}
                                 </h4>
-                                <p className='text-xl'>{item.description}</p>
+                                <p className='text-base'>{item.description}</p>
                             </div>
                             <p className="text-xl font-semibold">{item.price}</p>
                         </div>
@@ -53,7 +53,7 @@ const Pricing = () => {
             </div>
             <div className='flex flex-col gap-12'>
                 <div className='flex gap-12 flex-col'>
-                    <h4 className='text-3xl font-medium '>Cost Estimate Calculator</h4>
+                    <h4 className='text-3xl font-bold '>Cost Estimate Calculator</h4>
                     <p className='text-2xl max-w-prose font-boldd'>Here's an estimate below, you can adjust the numbers</p>
                 </div>
                 <Calculator />

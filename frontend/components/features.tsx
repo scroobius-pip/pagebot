@@ -18,18 +18,18 @@ const FeaturesSection = () => {
     return <div id='features' className='w-full bg-black text-white overflow-x-hidden py-36 pb-0'>
         <section className='max-w-[1400px] w-full m-auto p-12 pb-0 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
-                <h2 className='text-3xl font-medium'>Why PageBot ?</h2>
+                <h2 className='text-4xl font-bold'>Why PageBot ?</h2>
             </div>
             <div className='flex flex-col md:flex-row gap-6 items-center self-start '>
                 <div className='bg-white p-2 rounded-2xl self-start'>
                     <Logo className='h-6 text-black' />
                 </div>
-                <p className='text-slate-50 text-2xl font-medium  leading-relaxed'>
+                <p className='text-slate-50 text-2xl font-semibold  leading-relaxed'>
                     PageBot is the most flexible AI chatbot you’ll ever use.
                 </p>
 
             </div>
-            <div className='flex flex-col md:flex-row gap-6  text-lg max-w-prose font-normal mb-12'>
+            <div className='flex flex-col md:flex-row gap-6 text-lg font-semibold max-w-prose mb-12 opacity-80'>
                 <p>
                     Add datasources to your chatbot dynamically via meta tags
                 </p>

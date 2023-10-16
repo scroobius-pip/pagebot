@@ -14,7 +14,7 @@ export const Intro = () => {
 
     return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-4 mt-2 md:mt-36' >
         <div className='flex flex-col items-start md:items-center gap-12 animate-entrance'>
-            <h1 className='delay-1 capitalize font-semibold text-3xl md:text-5xl  text-left md:text-center text-white'>Give your customers conversations that are:</h1>
+            <h1 className='delay-1 capitalize font-bold text-3xl md:text-5xl  text-left md:text-center text-white'>Give your customers conversations that are:</h1>
 
             <div className='flex gap-4 md:gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
@@ -53,7 +53,7 @@ export const Intro = () => {
                     text='instant'
                 />
             </div>
-            <p className='opacity-90 delay-3 text-base md:text-lg font-normal text-white text-left md:text-center leading-relaxed max-w-3xl'>
+            <p className='opacity-90 delay-3 text-base md:text-lg font-medium text-white text-left md:text-center leading-relaxed max-w-3xl'>
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase.</span>
             </p>
@@ -64,7 +64,7 @@ export const Intro = () => {
             </Button>
         </div>
 
-        <div id='pgbt-root' className='rounded-2xl max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  '>
+        <div id='pgbt-root' className='rounded-2xl max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  animate-entrance'>
 
             <div className='p-2 roudnded-xl bg-white bg-bdlack-1 rounded-3xl m-auto '>
                 <img
