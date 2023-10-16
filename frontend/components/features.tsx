@@ -16,7 +16,7 @@ const FeaturesSection = () => {
     }, [])
 
     return <div id='features' className='w-full bg-black text-white overflow-x-hidden py-36 pb-0'>
-        <section className='max-w-[1400px] w-full m-auto p-12 pb-0 flex gap-12 flex-col '>
+        <section className='max-w-[1400px] w-full m-auto p-12 px-4 md:pb-0 flex gap-12 flex-col '>
             <div className='flex flex-col gap-14 justify-between '>
                 <h2 className='text-4xl font-bold'>Why PageBot ?</h2>
             </div>
@@ -42,7 +42,7 @@ const FeaturesSection = () => {
                 <Accordion variant='light'
                     fullWidth
                     showDivider={false}
-                    className='-mx-8  duration-150 rounded-b-2xl col-span-6 w-fdull'
+                    className='md:-mx-8 w-auto md:w-full  duration-150 rounded-b-2xl col-span-6'
                     itemClasses={{
                         base: 'bg-black rounded-xdl',
                         title: ' text-white font-semibold capitalize text-xl duration-150 transition',

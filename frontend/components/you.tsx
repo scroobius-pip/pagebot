@@ -51,7 +51,7 @@ export const You2 = () => <div className='flex flex-col gap-14 justify-between '
 
 
 export const You = () => {
-    return <section className='max-w-[1400px] py-36 w-full m-auto p-12'>
+    return <section className='max-w-[1400px] py-36 w-full m-auto px-4'>
         <div className='flex flex-col gap-14 justify-between '>
             <h2 className='text-4xl font-bold'>Is this you ?</h2>
             <div className='grid gap-6 grid-cols-3 md:grid-cols-6 lg:grid-cols-12'>

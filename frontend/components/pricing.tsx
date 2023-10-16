@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 
 const Pricing = () => {
-    return <section id='pricing' className='max-w-[1400px] w-full m-auto p-12 py-36 '>
+    return <section id='pricing' className='max-w-[1400px] w-full m-auto px-4 py-36 '>
         <div className='flex flex-col gap-24 '>
             <div className='flex gap-24 flex-col md:flex-row'>
                 <div className='flex flex-col justify-between col-span-6 gap-12'>
