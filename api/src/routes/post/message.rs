@@ -20,7 +20,7 @@ use axum::{
     Json,
 };
 use eyre::Result;
-use futures::{Stream, StreamExt};
+use futures::Stream;
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize)]
@@ -102,107 +102,60 @@ pub async fn main(
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
 
-    // let response_stream = get_response_stream(&evaluated_message, history)
-    //     .await
-    //     .map_err(|e| {
-    //         log::error!("Failed to get response: {}", e);
-    //         StatusCode::INTERNAL_SERVER_ERROR
-    //     })?;
-
-    // let mut response_stream = Box::into_pin(response_stream);
-
     let query = evaluated_message.query.clone();
     let gen_notification = notification.clone();
     let mut perf = evaluated_message.perf.clone();
     let response = get_response(evaluated_message.clone(), history);
 
     let stream = async_stream::stream! {
-    let first_chunk_timer = std::time::Instant::now();
-    match response.await {
-        Ok(operation) => {
+        let first_chunk_timer = std::time::Instant::now();
+        match response.await {
+            Ok(operation) => {
 
-            let first_chunk_time = first_chunk_timer.elapsed().as_millis();
-            perf.first_chunk_time = first_chunk_time.to_string();
-            perf.total_time = total_time.elapsed().as_millis().to_string();
-            let perf_response = Response::Perf(perf);
+                let first_chunk_time = first_chunk_timer.elapsed().as_millis();
+                perf.first_chunk_time = first_chunk_time.to_string();
+                perf.total_time = total_time.elapsed().as_millis().to_string();
+                let perf_response = Response::Perf(perf);
 
-            yield Ok(Event::default().data(serde_json::to_string(&perf_response).expect("Failed to serialize perf")));
+                yield Ok(Event::default().data(serde_json::to_string(&perf_response).expect("Failed to serialize perf")));
 
-            let mut not_found = false;
-            let response = match operation {
-                Operation::Ask(message) => {
-                    Response::Chunk(message)
-                },
-                Operation::Answer(message) => {
-                    Response::Chunk(message)
+                let mut not_found = false;
+                let response = match operation {
+                    Operation::Ask(message) => {
+                        Response::Chunk(message)
+                    },
+                    Operation::Answer(message) => {
+                        Response::Chunk(message)
 
-                },
-                Operation::Email => {
-                    Response::Email("")
-                },
-                Operation::NotFound => {
-                    not_found = true;
-                    Response::NotFound("")
+                    },
+                    Operation::Email => {
+                        Response::Email("")
+                    },
+                    Operation::NotFound => {
+                        not_found = true;
+                        Response::NotFound("")
+                    }
+                };
+
+                yield Ok(Event::default().data(serde_json::to_string(&response).expect("Failed to serialize response")));
+
+                if not_found {
+                    let q = query.clone();
+                    let notification = gen_notification.clone();
+                    tokio::spawn(async move {
+                         _ = notification
+                            .send(NotificationType::KnowledgeGap(q))
+                            .await;
+                     });
                 }
-            };
-
-            yield Ok(Event::default().data(serde_json::to_string(&response).expect("Failed to serialize response")));
-
-            if not_found {
-                let q = query.clone();
-                let notification = gen_notification.clone();
-                tokio::spawn(async move {
-                     _ = notification
-                        .send(NotificationType::KnowledgeGap(q))
-                        .await;
-                 });
+            },
+            Err(err) =>{
+                log::error!("Failed to get response: {}", err);
+                yield Ok(Event::default().data(serde_json::to_string(&Response::NotFound("Failed to get response")).unwrap()));
             }
-        },
-        Err(err) =>{
-            log::error!("Failed to get response: {}", err);
-            yield Ok(Event::default().data(serde_json::to_string(&Response::NotFound("Failed to get response")).unwrap()));
         }
-    }
-    // let mut send_elapsed = true;
 
-
-    // while let Some(response) = response_stream.next().await {
-
-    //     if send_elapsed {
-    //         let first_chunk_time = first_chunk_timer.elapsed().as_millis();
-    //         perf.first_chunk_time = first_chunk_time.to_string();
-    //         perf.total_time = total_time.elapsed().as_millis().to_string();
-    //         let response = Response::Perf(perf.clone());
-
-    //         yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
-    //         send_elapsed = false;
-    //     }
-
-    //     match response {
-    //         Ok(operation) => {
-    //             let response: Response = operation.into();
-    //             yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
-
-    //             if matches!(response, Response::NotFound(_)) {
-    //                 let q = query.clone();
-    //                 let notification = gen_notification.clone();
-
-    //               tokio::spawn(async move {
-    //                _ = notification
-    //                 .send(NotificationType::KnowledgeGap(q))
-    //                 .await;
-    //              });
-
-    //             }
-    //         },
-    //         Err(err) =>{
-    //             log::error!("Failed to get response: {}", err);
-    //             yield Ok(Event::default().data(serde_json::to_string(&Response::Error("Failed to get response")).unwrap()));
-    //         }
-    //     }
-    // }
-
-       };
+    };
 
     tokio::spawn(async move {
         MESSAGE_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);

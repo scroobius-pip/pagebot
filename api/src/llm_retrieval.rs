@@ -125,7 +125,7 @@ pub async fn get_response(
                 function_args
                     .response_message
                     .map(|response_message| Ok(Operation::Answer(response_message)))
-                    .unwrap_or_else(|| Ok(Operation::NotFound))
+                    .unwrap_or_else(|| Ok(Operation::Ask(Default::default())))
             }
             "ask_user" => {
                 let function_args = FunctionArgs::from_string(&function_call.arguments)?;
@@ -134,7 +134,7 @@ pub async fn get_response(
                 function_args
                     .response_message
                     .map(|response_message| Ok(Operation::Ask(response_message)))
-                    .unwrap_or_else(|| Ok(Operation::NotFound))
+                    .unwrap_or_else(|| Ok(Operation::Ask(Default::default())))
             }
             "email_user" => Ok(Operation::Email),
             "not_found" => Ok(Operation::NotFound),
