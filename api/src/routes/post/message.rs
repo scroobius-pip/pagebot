@@ -57,7 +57,6 @@ pub async fn main(
     Host(host): Host,
     Json(Request { message, history }): Json<Request>,
 ) -> Result<Sse<impl Stream<Item = Result<Event>>>, StatusCode> {
-    let total_time = std::time::Instant::now();
     let mut user = User::by_id(message.user_id)
         .map_err(|e| {
             log::error!("Failed to get user: {}", e);
@@ -85,6 +84,7 @@ pub async fn main(
     }
 
     let notification = Arc::new(Notification::new(user.email.clone()));
+    let total_time = std::time::Instant::now();
 
     let evaluated_message = message.evaluate(notification.clone()).await.map_err(|e| {
         log::error!("Failed to evaluate message: {}", e);
@@ -159,10 +159,10 @@ pub async fn main(
         match usage {
             Ok(usage) => {
                 if usage.message_count >= user.current_limit {
-                    if !user.subscribed {
-                        _ = notification.send(NotificationType::FreeLimitReached).await;
-                    } else {
+                    if user.subscribed {
                         _ = notification.send(NotificationType::MaxLimitReached).await;
+                    } else {
+                        _ = notification.send(NotificationType::FreeLimitReached).await;
                     }
 
                     user.disabled = true;
