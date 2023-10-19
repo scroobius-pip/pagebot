@@ -17,13 +17,13 @@ mod email_templates;
 mod embed_pool;
 mod jwt;
 mod lemonsqueezy;
+mod llm_retrieval;
 mod notification;
+mod openai;
 mod routes;
 mod stats;
 mod token_map;
 mod types;
-
-
 use routes::build_router;
 
 use env_logger::Env;

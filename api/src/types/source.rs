@@ -459,7 +459,7 @@ mod tests {
         let url: SerdeUrl = serde_json::from_str(format!("\"{}\"", st).as_str()).expect("url");
 
         let source = Source::fetch(url).await.expect("source");
-        println!("{:?}", source);
+        assert!(source.contains("credits"));
     }
 
     #[tokio::test]

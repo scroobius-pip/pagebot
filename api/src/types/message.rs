@@ -27,7 +27,7 @@ pub struct Message {
     pub page_url: SerdeUrl,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct EvaluatedMessage {
     pub user_id: u64,
     pub merged_sources: String,
@@ -38,12 +38,6 @@ pub struct EvaluatedMessage {
     pub perf: Perf,
 }
 
-// retrieval_time: String,
-// embedding_time: String,
-// search_time: String,
-// total_time: String,
-// token_count: usize,
-// cached: bool,
 const NEIGHBOUR_COUNT: usize = 2;
 impl Message {
     pub async fn evaluate(self, notification: Arc<Notification>) -> Result<EvaluatedMessage> {
@@ -235,7 +229,7 @@ pub fn count_tokens(text: &str) -> usize {
 }
 
 pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usize> {
-    let instant = std::time::Instant::now();
+    // let instant = std::time::Instant::now();
     let hnsw = Hnsw::new(90, embeddings.len(), 16, 50, DistCosine);
     let embedding_w_index: Vec<(&Vec<f32>, usize)> = embeddings
         .iter()
@@ -244,7 +238,7 @@ pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usiz
         .collect();
     hnsw.parallel_insert(&embedding_w_index);
     let neighbours = hnsw.search(query, 50, 60);
-    log::info!("hnsw search took {:?}", instant.elapsed());
+    // log::info!("hnsw search took {:?}", instant.elapsed());
     neighbours
         .into_iter()
         .map(|n| n.d_id)

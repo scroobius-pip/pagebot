@@ -33,6 +33,7 @@ pub async fn main(Json(event): Json<EventData>) -> GenericResponse<()> {
     if let Ok(Some(mut user)) = User::by_email(&user_email) {
         user.subscribed = matches!(status, SubscriptionAttributesStatus::Active);
         user.ls_subscription_id = Some(subscription_id);
+        user.current_limit = 10_000;
         _ = user.save();
     }
 

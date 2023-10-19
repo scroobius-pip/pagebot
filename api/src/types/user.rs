@@ -6,12 +6,16 @@ use crate::db::DB;
 
 use super::usage::{Usage, UsageOutput};
 
+pub const FREE_MESSAGE_COUNT: u32 = 50;
+
 #[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct User {
     pub created_at: u32,
     pub id: u64,
     pub email: String,
     pub subscribed: bool,
+    pub disabled: bool,
+    pub current_limit: u32,
     pub ls_subscription_id: Option<u64>,
     pub allowed_domains: Option<Vec<String>>,
 }
@@ -67,7 +71,9 @@ impl From<UserInput> for User {
             created_at: chrono::Utc::now().timestamp() as u32,
             id: Self::id(input.email.as_ref()),
             email: input.email.to_string(),
-            subscribed: true,
+            subscribed: false,
+            disabled: false,
+            current_limit: FREE_MESSAGE_COUNT,
             ls_subscription_id: None,
             allowed_domains: None,
         }
