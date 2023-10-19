@@ -18,20 +18,21 @@ use crate::{
 #[derive(Debug)]
 pub enum Operation {
     // Search(String), // search vector db for a term
-    Ask(String),    // ask a question back to the customer
-    Answer(String), // answer a question
-    Email,          // ask the customer for an email to forward to the admin
-    NotFound,       // the customer's question was not found
+    Ask((String, String)), // ask a question back to the customer, introspection
+    Answer((String, String)), // answer a question, introspection
+    // Introspection(String),
+    Email(String),    // ask the customer for an email to forward to the admin
+    NotFound(String), // the customer's question was not found
 }
 
 impl From<&String> for Operation {
     fn from(s: &String) -> Self {
         if s.contains("_N") {
-            Operation::NotFound
+            Operation::NotFound(Default::default())
         } else if s.contains("_E") {
-            Operation::Email
+            Operation::Email(Default::default())
         } else {
-            Operation::Answer(s.clone())
+            Operation::Answer((s.clone(), Default::default()))
         }
     }
 }
@@ -110,21 +111,35 @@ pub async fn get_response(
     if let Some(ChatChoice {
         message:
             ChatCompletionResponseMessage {
-                function_call: Some(function_call),
+                function_call,
+                content,
                 ..
             },
         ..
     }) = response.choices.first()
     {
+        if function_call.as_ref().is_none() && content.is_some() {
+            return Ok(Operation::Answer((
+                content.as_ref().unwrap().clone(),
+                "".into(),
+            )));
+        }
+
+        let function_call = function_call.as_ref().unwrap();
         match function_call.name.as_str() {
             "answer_user" => {
                 let function_args = FunctionArgs::from_string(&function_call.arguments)?;
 
-                log::info!("answer_user_args: {:?}", function_args);
+                // log::info!("answer_user_args: {:?}", function_args);
 
                 function_args
                     .response_message
-                    .map(|response_message| Ok(Operation::Answer(response_message)))
+                    .map(|response_message| {
+                        Ok(Operation::Answer((
+                            response_message,
+                            function_args.conclusion.unwrap_or_default(),
+                        )))
+                    })
                     .unwrap_or_else(|| Ok(Operation::Ask(Default::default())))
             }
             "ask_user" => {
@@ -133,15 +148,30 @@ pub async fn get_response(
 
                 function_args
                     .response_message
-                    .map(|response_message| Ok(Operation::Ask(response_message)))
+                    .map(|response_message| {
+                        Ok(Operation::Ask((
+                            response_message,
+                            function_args.conclusion.unwrap_or_default(),
+                        )))
+                    })
                     .unwrap_or_else(|| Ok(Operation::Ask(Default::default())))
             }
-            "email_user" => Ok(Operation::Email),
-            "not_found" => Ok(Operation::NotFound),
-            _ => Ok(Operation::NotFound),
+            "email_user" => {
+                let function_args = FunctionArgs::from_string(&function_call.arguments)?;
+                Ok(Operation::Email(
+                    function_args.justification.unwrap_or_default(),
+                ))
+            }
+            "not_found" => {
+                let function_args = FunctionArgs::from_string(&function_call.arguments)?;
+                Ok(Operation::NotFound(
+                    function_args.justification.unwrap_or_default(),
+                ))
+            }
+            _ => Ok(Operation::NotFound("function not found".to_string())),
         }
     } else {
-        Ok(Operation::NotFound)
+        Ok(Operation::Answer(Default::default()))
     }
 
     // response_stream
@@ -356,7 +386,7 @@ pub async fn get_response_stream(
                         Operation::from(&"".to_string())
                     }
                 }
-                _ => Operation::NotFound,
+                _ => Operation::NotFound("stream error".to_string()),
             };
             Ok(operation)
         });

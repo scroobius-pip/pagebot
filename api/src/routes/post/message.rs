@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::llm_retrieval::{get_response, get_response_stream, Operation};
+use crate::llm_retrieval::{get_response, Operation};
 use crate::types::user::FREE_MESSAGE_COUNT;
 use crate::{
     notification::{Notification, NotificationType},
@@ -44,10 +44,10 @@ pub enum Response {
 impl From<Operation> for Response {
     fn from(operation: Operation) -> Self {
         match operation {
-            Operation::Ask(message) => Response::Chunk(message),
-            Operation::Answer(message) => Response::Chunk(message),
-            Operation::Email => Response::Email(""),
-            Operation::NotFound => Response::NotFound(""),
+            Operation::Ask((message, _)) => Response::Chunk(message),
+            Operation::Answer((message, _)) => Response::Chunk(message),
+            Operation::Email(_) => Response::Email(""),
+            Operation::NotFound(_) => Response::NotFound(""),
         }
     }
 }
@@ -123,17 +123,20 @@ pub async fn main(
 
                 let mut not_found = false;
                 let response = match operation {
-                    Operation::Ask(message) => {
+                    Operation::Ask((message,llm_debug)) => {
+                        // println!("llm_debug: {:?}", llm_debug);
                         Response::Chunk(message)
                     },
-                    Operation::Answer(message) => {
+                    Operation::Answer((message,llm_debug)) => {
+                        // println!("llm_debug: {:?}", llm_debug);
                         Response::Chunk(message)
-
                     },
-                    Operation::Email => {
+                    Operation::Email(llm_debug) => {
+                        // println!("llm_debug: {:?}", llm_debug);
                         Response::Email("")
                     },
-                    Operation::NotFound => {
+                    Operation::NotFound(llm_debug) => {
+                        // println!("llm_debug: {:?}", llm_debug);
                         not_found = true;
                         Response::NotFound("")
                     }

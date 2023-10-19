@@ -343,7 +343,7 @@ impl From<Option<&HeaderValue>> for RemoteSourceType {
 }
 
 impl Chunks {
-    const CHUNK_SIZE: usize = 20;
+    const CHUNK_SIZE: usize = 10;
     pub async fn new(content: String, url: &str) -> Result<Self> {
         if content.is_empty() {
             return Err(eyre::eyre!("Content is empty"));
