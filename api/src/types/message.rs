@@ -95,7 +95,7 @@ impl Message {
 
         let embeddings_count = embeddings.len();
 
-        let similar_content_index = top_similar_indexes(embeddings, &query_embedding);
+        let similar_content_index = top_similar_indexes(embeddings, &query_embedding, 150);
         let similar_content_index_with_neighbours_index = similar_content_index
             .iter()
             // get all neighbours of indexes (left and right, including self)
@@ -228,7 +228,7 @@ pub fn count_tokens(text: &str) -> usize {
     tokens
 }
 
-pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usize> {
+pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32], kn: usize) -> Vec<usize> {
     // let instant = std::time::Instant::now();
     let hnsw = Hnsw::new(90, embeddings.len(), 16, 50, DistCosine);
     let embedding_w_index: Vec<(&Vec<f32>, usize)> = embeddings
@@ -237,7 +237,7 @@ pub fn top_similar_indexes(embeddings: Vec<Vec<f32>>, query: &[f32]) -> Vec<usiz
         .map(|(i, embedding)| (embedding, i))
         .collect();
     hnsw.parallel_insert(&embedding_w_index);
-    let neighbours = hnsw.search(query, 50, 60);
+    let neighbours = hnsw.search(query, kn, 60);
     // log::info!("hnsw search took {:?}", instant.elapsed());
     neighbours
         .into_iter()
