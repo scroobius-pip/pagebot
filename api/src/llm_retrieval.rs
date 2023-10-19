@@ -41,8 +41,8 @@ impl From<&String> for Operation {
 pub type OperationStream = Box<dyn Stream<Item = Result<Operation>> + Send>;
 #[derive(Deserialize, Debug)]
 struct FunctionArgs {
-    justification_1: String,
-    justification_2: Option<String>,
+    justification: Option<String>,
+    conclusion: Option<String>,
     response_message: Option<String>,
 }
 
@@ -148,7 +148,7 @@ fn generate_functions() -> Vec<ChatCompletionFunctions> {
             "justification": {
                 "type": "string",
                 "description": "Internal monologue steps: 1. Is the information enough to accurately respond to the request ? 2. What's the proposed action ? 3. Is this action appropriate ? What is the proposed action response ?"
-            },
+            }
         },
         "required": ["justification"]
     });
@@ -168,7 +168,7 @@ fn generate_functions() -> Vec<ChatCompletionFunctions> {
             "response_message": {
                 "type": "string",
                 "description": "The response message to provide to the customer."
-            },
+            }
 
         },
         "required": ["response_message", "justification","conclusion"]
@@ -371,7 +371,7 @@ Never answer questions unrelated to the page's information
 Output format:
 
 <<JUSTIFICATION: Internal monologue steps: 1. Is the information enough to accurately respond to the request ? 2. What's the proposed action ? 3. Is this action appropriate ? What is the proposed action response ?>>
-<<CONCLUSION: Expand on justification_1 to its logical conclusion>>
+<<CONCLUSION: Expand on justification to its logical conclusion>>
 <<CONFIDENCE: 0.8>>
 $
 _N, _E, and markdown
