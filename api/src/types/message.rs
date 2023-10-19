@@ -126,6 +126,7 @@ impl Message {
                 retrieval_time: retrieval_time.to_string(),
                 embedding_time: embedding_time.to_string(),
                 search_time: search_time.to_string(),
+                context: merged_similar_content.clone(),
                 ..Default::default()
             },
             user_id: self.user_id,

@@ -103,7 +103,7 @@ pub async fn get_response(
         .function_call("auto")
         .build()?;
     let response = OPENAI_CLIENT.chat().create(request).await.map_err(|e| {
-        println!("Error: {:?}", e);
+        log::error!("Error Creating OPENAI Chat Request: {:?}", e);
         e
     })?;
 
