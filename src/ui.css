@@ -104,6 +104,11 @@
     box-sizing: border-box;
 }
 
+.pb_main ul {
+    padding: 1.5em;
+    font-size: 0.9em;
+}
+
 .pb_main {
     transition: all 0.3s ease;
     /* background: rgba(233, 233, 233, 0.8); */
