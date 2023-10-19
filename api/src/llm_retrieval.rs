@@ -67,10 +67,10 @@ pub async fn get_response(
     };
     let information = &message.merged_sources;
 
-    // let system_message = format!(
-    //     "page_url:{}\ninformation:{}\n{}",
-    //     message.page_url, information, PROMPT_GUIDE
-    // );
+    let prompted_message = format!(
+        "{}\n<<INFORMATION:{}>>\n<<PAGEURL:{}>>\n<<QUERY:{}>>",
+        PROMPT_GUIDE_STREAM, message.page_url, information, message.query
+    );
 
     let chat_message = history
         .iter()
@@ -85,11 +85,7 @@ pub async fn get_response(
             function_call: None,
         })
         .chain(std::iter::once(ChatCompletionRequestMessage {
-            content: format!(
-                "information:{}, prompt:{}, user: {}",
-                information, PROMPT_GUIDE, message.query
-            )
-            .into(),
+            content: prompted_message.into(),
             name: None,
             role: Role::User,
             function_call: None,
