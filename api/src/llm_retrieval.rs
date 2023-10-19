@@ -318,7 +318,7 @@ pub async fn get_response_stream(
             };
             futures::future::ready(boolean)
         })
-        .skip(1) // skip the first response $/n
+        // .skip(1) // skip the first response $/n
         .map(|response| {
             let operation = match response {
                 Ok(CreateChatCompletionStreamResponse { choices, .. }) => {
@@ -331,9 +331,14 @@ pub async fn get_response_stream(
                         ..
                     }) = choices.first()
                     {
-                        Operation::from(content)
+                        if content.contains("$\n") {
+                            // let content = content.replace("$\n", "");
+                            Operation::from(&"".to_string())
+                        } else {
+                            Operation::from(content)
+                        }
                     } else {
-                        Operation::NotFound
+                        Operation::from(&"".to_string())
                     }
                 }
                 _ => Operation::NotFound,
