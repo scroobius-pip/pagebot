@@ -119,16 +119,26 @@ pub async fn get_response(
         ..
     }) = response.choices.first()
     {
-        println!("{:?}", function_call);
         match function_call.name.as_str() {
-            "answer_user" => FunctionArgs::from_string(&function_call.arguments)?
-                .response_message
-                .map(|response_message| Ok(Operation::Answer(response_message)))
-                .unwrap_or_else(|| Ok(Operation::NotFound)),
-            "ask_user" => FunctionArgs::from_string(&function_call.arguments)?
-                .response_message
-                .map(|response_message| Ok(Operation::Ask(response_message)))
-                .unwrap_or_else(|| Ok(Operation::NotFound)),
+            "answer_user" => {
+                let function_args = FunctionArgs::from_string(&function_call.arguments)?;
+
+                log::info!("answer_user_args: {:?}", function_args);
+
+                function_args
+                    .response_message
+                    .map(|response_message| Ok(Operation::Answer(response_message)))
+                    .unwrap_or_else(|| Ok(Operation::NotFound))
+            }
+            "ask_user" => {
+                let function_args = FunctionArgs::from_string(&function_call.arguments)?;
+                log::info!("ask_user_args: {:?}", function_args);
+
+                function_args
+                    .response_message
+                    .map(|response_message| Ok(Operation::Ask(response_message)))
+                    .unwrap_or_else(|| Ok(Operation::NotFound))
+            }
             "email_user" => Ok(Operation::Email),
             "not_found" => Ok(Operation::NotFound),
             _ => Ok(Operation::NotFound),

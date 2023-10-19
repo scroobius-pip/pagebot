@@ -160,7 +160,7 @@ pub async fn main(
         },
         Err(err) =>{
             log::error!("Failed to get response: {}", err);
-            yield Ok(Event::default().data(serde_json::to_string(&Response::Error("Failed to get response")).unwrap()));
+            yield Ok(Event::default().data(serde_json::to_string(&Response::NotFound("Failed to get response")).unwrap()));
         }
     }
     // let mut send_elapsed = true;
