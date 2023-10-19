@@ -95,7 +95,7 @@ impl Message {
 
         let embeddings_count = embeddings.len();
 
-        let similar_content_index = top_similar_indexes(embeddings, &query_embedding, 150);
+        let similar_content_index = top_similar_indexes(embeddings, &query_embedding, 50);
         let similar_content_index_with_neighbours_index = similar_content_index
             .iter()
             // get all neighbours of indexes (left and right, including self)
