@@ -102,6 +102,8 @@ pub async fn main(
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
 
+    log::info!("Evaluated message: {:?}", evaluated_message);
+
     let query = evaluated_message.query.clone();
     let gen_notification = notification.clone();
     let mut perf = evaluated_message.perf.clone();
