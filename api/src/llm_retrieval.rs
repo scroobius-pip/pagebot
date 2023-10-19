@@ -48,7 +48,8 @@ struct FunctionArgs {
 
 impl FunctionArgs {
     fn from_string(string: &str) -> Result<Self> {
-        let args: FunctionArgs = serde_json::from_str(string)?;
+        let args: FunctionArgs = serde_json::from_str(string)
+            .map_err(|e| eyre::eyre!("Error parsing function args: {:?}", e))?;
         Ok(args)
     }
 }
