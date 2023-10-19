@@ -297,27 +297,27 @@ pub async fn get_response_stream(
     let response_stream = OPENAI_CLIENT.chat().create_stream(request).await?;
 
     let response_stream = response_stream
-        .skip_while(|response| {
-            let boolean = match response {
-                Ok(CreateChatCompletionStreamResponse { choices, .. }) => {
-                    if let Some(ChatCompletionResponseStreamMessage {
-                        delta:
-                            ChatCompletionStreamResponseDelta {
-                                content: Some(content),
-                                ..
-                            },
-                        ..
-                    }) = choices.first()
-                    {
-                        !content.contains("$\n")
-                    } else {
-                        true
-                    }
-                }
-                _ => true,
-            };
-            futures::future::ready(boolean)
-        })
+        // .skip_while(|response| {
+        //     let boolean = match response {
+        //         Ok(CreateChatCompletionStreamResponse { choices, .. }) => {
+        //             if let Some(ChatCompletionResponseStreamMessage {
+        //                 delta:
+        //                     ChatCompletionStreamResponseDelta {
+        //                         content: Some(content),
+        //                         ..
+        //                     },
+        //                 ..
+        //             }) = choices.first()
+        //             {
+        //                 !content.contains("$\n")
+        //             } else {
+        //                 true
+        //             }
+        //         }
+        //         _ => true,
+        //     };
+        //     futures::future::ready(boolean)
+        // })
         // .skip(1) // skip the first response $/n
         .map(|response| {
             let operation = match response {
