@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::llm_retrieval::{get_response, Operation};
+use crate::llm_retrieval::{get_response, get_response_stream, Operation};
 use crate::types::user::FREE_MESSAGE_COUNT;
 use crate::{
     notification::{Notification, NotificationType},
@@ -14,13 +14,17 @@ use crate::{
     },
 };
 
+use async_openai::types::{
+    ChatCompletionResponseStreamMessage, ChatCompletionStreamResponseDelta,
+    CreateChatCompletionStreamResponse,
+};
 use axum::{
     extract::Host,
     response::{sse::Event, Sse},
     Json,
 };
 use eyre::Result;
-use futures::Stream;
+use futures::{Stream, StreamExt};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize)]
@@ -91,63 +95,118 @@ pub async fn main(
         StatusCode::INTERNAL_SERVER_ERROR
     })?;
 
+    let mut response_stream = get_response_stream(&evaluated_message, history)
+        .await
+        .map_err(|e| {
+            log::error!("Failed to get response: {}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
     let query = evaluated_message.query.clone();
     let gen_notification = notification.clone();
     let mut perf = evaluated_message.perf.clone();
-
-    let response = get_response(evaluated_message.clone(), history);
 
     let stream = async_stream::stream! {
 
         let first_chunk_timer = std::time::Instant::now();
 
-        match response.await {
-            Ok(operation) => {
-
-                let first_chunk_time = first_chunk_timer.elapsed().as_millis();
-                perf.first_chunk_time = first_chunk_time.to_string();
-                perf.total_time = total_time.elapsed().as_millis().to_string();
-                let perf_response = Response::Perf(perf);
-                yield Ok(Event::default().data(serde_json::to_string(&perf_response).expect("Failed to serialize perf")));
-
-                let mut not_found = false;
-                let response = match operation {
-                    Operation::Ask(message) => {
-                        Response::Chunk(message)
+        let mut send_elapsed = true;
+        while let Some(Ok(CreateChatCompletionStreamResponse { choices, .. })) =
+            response_stream.next().await
+        {
+            if let Some(ChatCompletionResponseStreamMessage {
+                delta:
+                    ChatCompletionStreamResponseDelta {
+                        content: Some(content),
+                        ..
                     },
-                    Operation::Answer(message) => {
-                        Response::Chunk(message)
+                ..
+            }) = choices.first()
+            {
+                if send_elapsed {
+                    let first_chunk_time = first_chunk_timer.elapsed().as_millis();
 
-                    },
-                    Operation::Email => {
-                        Response::Email("")
-                    },
-                    Operation::NotFound => {
-                        not_found = true;
-                        Response::NotFound("")
-                    }
-                };
+                    perf.first_chunk_time = first_chunk_time.to_string();
+                    perf.total_time = total_time.elapsed().as_millis().to_string();
 
-                yield Ok(Event::default().data(serde_json::to_string(&response).expect("Failed to serialize response")));
+                    let response = Response::Perf(perf.clone());
+                    yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
+                    send_elapsed = false;
+                }
 
-                if not_found {
+                let response: Response = content.into();
+                yield Ok(Event::default().data(serde_json::to_string(&response).unwrap()));
+
+                if matches!(response, Response::NotFound(_)) {
                     let notification_result = gen_notification
                         .clone()
                         .send(NotificationType::KnowledgeGap(query.clone()))
                         .await;
-
                     if let Err(e) = notification_result {
                         log::error!("Failed to send notification: {}", e);
                     }
                 }
-            },
-            Err(err) =>{
-                log::error!("Failed to get response: {}", err);
-                yield Ok(Event::default().data(serde_json::to_string(&Response::Error("Failed to get response")).unwrap()));
             }
         }
 
     };
+    // let query = evaluated_message.query.clone();
+    // let gen_notification = notification.clone();
+    // let mut perf = evaluated_message.perf.clone();
+
+    // let response = get_response(evaluated_message.clone(), history);
+
+    // let stream = async_stream::stream! {
+
+    //     let first_chunk_timer = std::time::Instant::now();
+
+    //     match response.await {
+    //         Ok(operation) => {
+
+    //             let first_chunk_time = first_chunk_timer.elapsed().as_millis();
+    //             perf.first_chunk_time = first_chunk_time.to_string();
+    //             perf.total_time = total_time.elapsed().as_millis().to_string();
+    //             let perf_response = Response::Perf(perf);
+    //             yield Ok(Event::default().data(serde_json::to_string(&perf_response).expect("Failed to serialize perf")));
+
+    //             let mut not_found = false;
+    //             let response = match operation {
+    //                 Operation::Ask(message) => {
+    //                     Response::Chunk(message)
+    //                 },
+    //                 Operation::Answer(message) => {
+    //                     Response::Chunk(message)
+
+    //                 },
+    //                 Operation::Email => {
+    //                     Response::Email("")
+    //                 },
+    //                 Operation::NotFound => {
+    //                     not_found = true;
+    //                     Response::NotFound("")
+    //                 }
+    //             };
+
+    //             yield Ok(Event::default().data(serde_json::to_string(&response).expect("Failed to serialize response")));
+
+    //             if not_found {
+    //                 let notification_result = gen_notification
+    //                     .clone()
+    //                     .send(NotificationType::KnowledgeGap(query.clone()))
+    //                     .await;
+
+    //                 if let Err(e) = notification_result {
+    //                     log::error!("Failed to send notification: {}", e);
+    //                 }
+    //             }
+    //         },
+    //         Err(err) =>{
+    //             log::error!("Failed to get response: {}", err);
+    //             yield Ok(Event::default().data(serde_json::to_string(&Response::Error("Failed to get response")).unwrap()));
+    //         }
+    //     }
+
+    // };
 
     tokio::spawn(async move {
         MESSAGE_COUNT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
