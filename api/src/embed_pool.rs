@@ -16,6 +16,16 @@ pub struct EmbedTask(
     Vec<String>,
 );
 
+use std::sync::Once;
+
+static INIT: Once = Once::new();
+
+// pub fn setup() {
+//     INIT.call_once(|| {
+//         EMBED_POOL.run();
+//     });
+// }
+
 impl EmbeddingModel {
     fn new() -> Self {
         let (queue_send, queue_recv) = crossbeam::channel::bounded::<EmbedTask>(5000);
@@ -26,36 +36,46 @@ impl EmbeddingModel {
     }
 
     pub fn run(&self) {
-        let thread_count = env::args()
-            .nth(1)
-            .and_then(|s| s.parse::<usize>().ok())
-            .unwrap_or(4);
+        INIT.call_once(|| {
+            #[cfg(not(debug_assertions))]
+            let thread_count = env::args()
+                .nth(1)
+                .and_then(|s| s.parse::<usize>().ok())
+                .unwrap_or(4);
+            #[cfg(debug_assertions)]
+            let thread_count = 1;
 
-        log::info!("Model Thread Count {}", thread_count);
-        let task_worker = |_worker_index: usize| {
-            let model =
-                SentenceEmbeddingsBuilder::remote(SentenceEmbeddingsModelType::AllMiniLmL6V2)
-                    .create_model()
-                    .expect("Failed to create model");
+            #[cfg(debug_assertions)]
+            println!("EmbedPool Started");
 
-            loop {
-                while let Ok(EmbedTask(sender, sentences)) = self.queue_recv.recv() {
-                    // log::info!("Worker {} received task", worker_index);
-                    let result = model.encode(&sentences).map_err(|e| e.into());
-                    sender.send(result).unwrap();
+            log::info!("Model Thread Count {}", thread_count);
+            let task_worker = |_worker_index: usize| {
+                #[cfg(debug_assertions)]
+                println!("Worker {} started", _worker_index);
+                let model =
+                    SentenceEmbeddingsBuilder::remote(SentenceEmbeddingsModelType::AllMiniLmL6V2)
+                        .create_model()
+                        .expect("Failed to create model");
+
+                loop {
+                    while let Ok(EmbedTask(sender, sentences)) = self.queue_recv.recv() {
+                        // log::info!("Worker {} received task", worker_index);
+                        let result = model.encode(&sentences).map_err(|e| e.into());
+                        sender.send(result).unwrap();
+                    }
                 }
-            }
-        };
+            };
 
-        let pool = rayon::ThreadPoolBuilder::new()
-            .num_threads(thread_count)
-            .build()
-            .unwrap();
+            let pool = rayon::ThreadPoolBuilder::new()
+                .num_threads(thread_count)
+                .build()
+                .unwrap();
 
-        pool.scope(|s| {
-            for i in 0..thread_count {
-                s.spawn(move |_| task_worker(i));
-            }
+            pool.scope(|s| {
+                for i in 0..thread_count {
+                    s.spawn(move |_| task_worker(i));
+                }
+            });
         });
     }
 

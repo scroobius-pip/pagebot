@@ -352,7 +352,6 @@ impl Chunks {
         let unchunked_sentences = content.unicode_sentences().collect::<Vec<_>>();
         //@todo: chunk by sentence length
         let chunked_sentences = unchunked_sentences.chunks(Self::CHUNK_SIZE);
-
         let chunked_sentences = chunked_sentences
             .map(|chunk| chunk.join(" "))
             .collect::<Vec<_>>();
@@ -471,5 +470,20 @@ mod tests {
         };
         let (source, _) = Source::new(input).await.expect("source");
         assert_eq!(source.content(), "Hello world");
+    }
+
+    #[tokio::test]
+    async fn pdf_content() {
+        EMBED_POOL.run();
+        let pdf_url = "https://arxiv.org/pdf/2310.07521.pdf";
+        let s_pdf_url: SerdeUrl =
+            serde_json::from_str(format!("\"{}\"", pdf_url).as_str()).expect("url");
+        let input = SourceInput {
+            content: None,
+            url: Some(s_pdf_url),
+            expires: 86400,
+        };
+        let (source, _) = Source::new(input).await.expect("source");
+        assert!(source.content().contains("Abstract"));
     }
 }
