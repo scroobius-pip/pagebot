@@ -211,6 +211,7 @@ impl Source {
             let mut hasher = ahash::AHasher::default();
             input.content.as_ref().unwrap().hash(&mut hasher);
             let content_hash = format!("_{}", hasher.finish());
+            //sounds odd to be caching already available content ? yeah we need to cache the embeddings chunks duh.
             let cached_source = Source::by_url(content_hash.as_str())
                 .map_err(SourceError::Default)?
                 .filter(|source| {
