@@ -89,7 +89,7 @@ export const You = () => {
 
                 </Card>
             </div>
-            <h1 className='text-4xl font-thin text-black-1 leading-relaxed max-w-2xl mt-36'>
+            <h1 className='text-4xl font-medium text-black-1 leading-relaxed max-w-2xl mt-36'>
                 We're on a mission to revolutionize customer service with GPT-powered chatbots for instant, effective support.
             </h1>
         </div>

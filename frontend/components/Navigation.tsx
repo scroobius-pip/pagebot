@@ -37,7 +37,7 @@ const Navigation = () => {
                 </NavbarItem>
                 <NavbarItem>
                     <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
-                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='hidden md:block' />}
+                        endContent={<SparkleIcon size={24} strokeWidth={3} color='#5C07ED' className='hidden md:block' />}
                     >
                         Get Started For Free
                     </Button>

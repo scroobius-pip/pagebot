@@ -62,10 +62,10 @@ const CTAButton = () => <div
     </b>
   </div>
   {/* size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto ' */}
-  <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
-    endContent={<SparkleIcon size={24} strokeWidth={2} color='#1E1E1E' />}
+  <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto capitalize '
+    endContent={<SparkleIcon size={24} strokeWidth={3} color='#1E1E1E' />}
   >
-    Get Started
+    Get Started For Free
   </Button>
 
 </div>;

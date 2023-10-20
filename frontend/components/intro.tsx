@@ -58,7 +58,7 @@ export const Intro = () => {
                 your website's content and <span className='font-meddium'>knowledgebase.</span>
             </p>
             <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
-                endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='' />}
+                endContent={<SparkleIcon size={24} strokeWidth={3} color='#5C07ED' className='' />}
             >
                 Get Started For Free
             </Button>
