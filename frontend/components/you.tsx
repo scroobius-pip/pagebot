@@ -56,7 +56,7 @@ export const You = () => {
             <h2 className='text-4xl font-bold'>Is this you ?</h2>
             <div className='grid gap-6 grid-cols-3 md:grid-cols-6 lg:grid-cols-12'>
                 <Card
-                    className='col-span-3 py-12 bg-black text-white'
+                    className='col-span-3 py-12 bg-purple text-white'
 
                     // bc='#86ffb6'
                     icon={<TimerIcon color='#FFFCF9' size={46} />}
@@ -89,8 +89,8 @@ export const You = () => {
 
                 </Card>
             </div>
-            <h1 className='text-3xl font-medium leading-relaxed max-w-2xl mt-36'>
-                "We're on a mission to revolutionize customer service with GPT-powered chatbots for instant, effective support."
+            <h1 className='text-4xl font-thin text-black-1 leading-relaxed max-w-2xl mt-36'>
+                We're on a mission to revolutionize customer service with GPT-powered chatbots for instant, effective support.
             </h1>
         </div>
 

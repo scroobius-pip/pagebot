@@ -19,7 +19,7 @@ export default function Home() {
   return <div className=''>
 
     <Intro />
-    <div className='bg-purple py-12 max-w-xl m-auto '>
+    <div className='bg-purple py-12 max-w-lg m-auto '>
 
       <Marquee gradient gradientColor='#5C07ED' className='gap-2'>
 
@@ -61,7 +61,8 @@ const CTAButton = () => <div
       cancel anytime
     </b>
   </div>
-  <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-2xl font-medium text-black bg-white w-full md:w-auto '
+  {/* size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto ' */}
+  <Button as={Link} href='/dashboard' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
     endContent={<SparkleIcon size={24} strokeWidth={2} color='#1E1E1E' />}
   >
     Get Started

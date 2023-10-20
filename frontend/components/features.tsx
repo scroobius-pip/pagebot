@@ -46,7 +46,7 @@ const FeaturesSection = () => {
                     itemClasses={{
                         base: 'bg-black rounded-xdl',
                         title: ' text-white font-semibold capitalize text-xl duration-150 transition',
-                        trigger: 'bg-black px-6 rounded-2xl data-[open=true]:rounded-b-none data-[open=true]:bg-black-1 data-[hover=true]:bg-black-1 duration-150 transition',
+                        trigger: 'bg-black px-6 rounded-2xl data-[open=true]:rounded-b-none data-[open=true]:bg-purple data-[hover=true]:bg-purple duration-150 transition',
                         indicator: '',
                         content: 'px-6 pb-6 bg-black-1 text-white font-medium text-md rounded-b-2xl'
                     }}

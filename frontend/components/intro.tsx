@@ -18,7 +18,7 @@ export const Intro = () => {
 
             <div className='flex gap-4 md:gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
-                    color='#FF6565'
+                    color='#FF1053'
                     icon={
                         <svg className='h-12 md:h-12' viewBox="0 0 49 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M24.5 6L20.7 17.6C20.5054 18.2024 20.1706 18.7501 19.7231 19.1979C19.2757 19.6457 18.7283 19.981 18.126 20.176L6.5 24L18.1 27.8C18.7024 27.9946 19.2501 28.3294 19.6979 28.7769C20.1457 29.2243 20.481 29.7717 20.676 30.374L24.5 42L28.3 30.4C28.4946 29.7976 28.8294 29.2499 29.2769 28.8021C29.7243 28.3543 30.2717 28.019 30.874 27.824L42.5 24L30.9 20.2C30.2976 20.0054 29.7499 19.6706 29.3021 19.2231C28.8543 18.7757 28.519 18.2283 28.324 17.626L24.5 6Z" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
@@ -27,7 +27,7 @@ export const Intro = () => {
                     text='engaging'
                 />
                 <TitleIconText
-                    color='#FFBB0C'
+                    color='#CEFF1A'
                     icon={
                         <svg className='h-12 md:h-12' viewBox="0 0 49 48" fill="none"  >
                             <path d="M24.5 15C24.5 13.22 25.0278 11.4799 26.0168 9.99987C27.0057 8.51983 28.4113 7.36628 30.0559 6.68509C31.7004 6.0039 33.51 5.82567 35.2558 6.17294C37.0016 6.5202 38.6053 7.37737 39.864 8.63604C41.1226 9.89472 41.9798 11.4984 42.3271 13.2442C42.6743 14.99 42.4961 16.7996 41.8149 18.4442C41.1337 20.0887 39.9802 21.4943 38.5001 22.4832C37.0201 23.4722 35.28 24 33.5 24M24.5 15C24.5 13.22 23.9722 11.4799 22.9832 9.99987C21.9943 8.51983 20.5887 7.36628 18.9442 6.68509C17.2996 6.0039 15.49 5.82567 13.7442 6.17294C11.9984 6.5202 10.3947 7.37737 9.13604 8.63604C7.87737 9.89472 7.0202 11.4984 6.67294 13.2442C6.32567 14.99 6.5039 16.7996 7.18509 18.4442C7.86628 20.0887 9.01983 21.4943 10.4999 22.4832C11.9799 23.4722 13.72 24 15.5 24M24.5 15V18M33.5 24C35.28 24 37.0201 24.5278 38.5001 25.5168C39.9802 26.5057 41.1337 27.9113 41.8149 29.5559C42.4961 31.2004 42.6743 33.01 42.3271 34.7558C41.9798 36.5016 41.1226 38.1053 39.864 39.364C38.6053 40.6226 37.0016 41.4798 35.2558 41.8271C33.51 42.1743 31.7004 41.9961 30.0559 41.3149C28.4113 40.6337 27.0057 39.4802 26.0168 38.0001C25.0278 36.5201 24.5 34.78 24.5 33M33.5 24H30.5M15.5 24C13.72 24 11.9799 24.5278 10.4999 25.5168C9.01983 26.5057 7.86628 27.9113 7.18509 29.5559C6.5039 31.2004 6.32567 33.01 6.67294 34.7558C7.0202 36.5016 7.87737 38.1053 9.13604 39.364C10.3947 40.6226 11.9984 41.4798 13.7442 41.8271C15.49 42.1743 17.2996 41.9961 18.9442 41.3149C20.5887 40.6337 21.9943 39.4802 22.9832 38.0001C23.9722 36.5201 24.5 34.78 24.5 33M15.5 24H18.5M24.5 33V30" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
@@ -57,8 +57,8 @@ export const Intro = () => {
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase.</span>
             </p>
-            <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-black bg-white w-full md:w-auto '
-                endContent={<SparkleIcon size={24} strokeWidth={2} color='#000' className='' />}
+            <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
+                endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='' />}
             >
                 Get Started For Free
             </Button>
@@ -70,8 +70,8 @@ export const Intro = () => {
                 <img
                     className='animate-pulse '
 
-                    height={128} width={128}
-                    src='https://s.thepagebot.com/pagebot_walk.gif'
+                    height={80} width={80}
+                    src='/pagebot_walk.gif'
                 />
             </div>
         </div>

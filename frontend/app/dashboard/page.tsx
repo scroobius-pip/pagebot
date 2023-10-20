@@ -97,9 +97,7 @@ export default function Dashboard() {
 
     return <>
         <Section disabled className='flex flex-col gap-14 w-full'>
-
             <div className='flex flex-col gap-12 w-full max-w-6xl m-auto'>
-
                 <div className='flex flex-col gap-2 bgf-[#FFFCF9] p-6 -mx-10 '>
                     <h2 className='text-3xl font-extrabold'>Usage</h2>
                     <div className="flex flex-wrap flex-row gap-4">
@@ -119,8 +117,6 @@ export default function Dashboard() {
                             </div>
                             {me ? <h3 className='text-6xl font-bold'>{me.usage.source_retrieval_count}</h3> : <Spinner size='md' color='current' />}
                         </div>
-
-
                     </div>
                 </div>
                 {!me?.subscription_id && <div className='bg-black rounded-3xl text-white p-12  flex flex-col gap-6 self-start border-2 border-white'>
