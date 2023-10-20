@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::llm_retrieval::{get_response, Operation};
+use crate::llm_retrieval::{get_response, get_response_stream, Operation};
 use crate::types::user::FREE_MESSAGE_COUNT;
 use crate::{
     notification::{Notification, NotificationType},
@@ -20,7 +20,7 @@ use axum::{
     Json,
 };
 use eyre::Result;
-use futures::Stream;
+use futures::{Stream, StreamExt};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Deserialize)]
@@ -79,7 +79,7 @@ pub async fn main(
         })?;
 
     if let Some(allowed_domains) = &user.allowed_domains {
-        if !allowed_domains.contains(&host) {
+        if !allowed_domains.iter().any(|domain| host.contains(domain)) {
             return Err(StatusCode::FORBIDDEN);
         }
     }
@@ -88,7 +88,7 @@ pub async fn main(
         let user_email = user.email.clone();
         tokio::spawn(async move {
             _ = Notification::new(user_email)
-                .send(NotificationType::FreeLimitReached)
+                .send(NotificationType::MaxLimitReached)
                 .await;
         });
         return Err(StatusCode::FORBIDDEN);
@@ -106,58 +106,59 @@ pub async fn main(
 
     let query = evaluated_message.query.clone();
     let gen_notification = notification.clone();
-    let mut perf = evaluated_message.perf.clone();
-    let response = get_response(evaluated_message.clone(), history);
+    let perf = evaluated_message.perf.clone();
+    let response_stream = get_response_stream(&evaluated_message, history)
+        .await
+        .map_err(|e| {
+            log::error!("Failed to get response stream: {}", e);
+            StatusCode::INTERNAL_SERVER_ERROR
+        })?;
+
+    let mut response_stream = Box::into_pin(response_stream);
 
     let stream = async_stream::stream! {
         let first_chunk_timer = std::time::Instant::now();
-        match response.await {
-            Ok(operation) => {
+        let mut perf_sent = false;
+        let mut not_found = false;
 
-                let first_chunk_time = first_chunk_timer.elapsed().as_millis();
-                perf.first_chunk_time = first_chunk_time.to_string();
-                perf.total_time = total_time.elapsed().as_millis().to_string();
-                let perf_response = Response::Perf(perf);
-
+        while let Some(Ok(response)) = response_stream.next().await {
+            if !perf_sent {
+                perf_sent = true;
+                let perf_response = Response::Perf(Perf {
+                    first_chunk_time: first_chunk_timer.elapsed().as_millis().to_string(),
+                    total_time: total_time.elapsed().as_millis().to_string(),
+                    ..perf.clone()
+                });
                 yield Ok(Event::default().data(serde_json::to_string(&perf_response).expect("Failed to serialize perf")));
-
-                let mut not_found = false;
-                let response = match operation {
-                    Operation::Ask((message,llm_debug)) => {
-                        // println!("llm_debug: {:?}", llm_debug);
-                        Response::Chunk(message)
-                    },
-                    Operation::Answer((message,llm_debug)) => {
-                        // println!("llm_debug: {:?}", llm_debug);
-                        Response::Chunk(message)
-                    },
-                    Operation::Email(llm_debug) => {
-                        // println!("llm_debug: {:?}", llm_debug);
-                        Response::Email("")
-                    },
-                    Operation::NotFound(llm_debug) => {
-                        // println!("llm_debug: {:?}", llm_debug);
-                        not_found = true;
-                        Response::NotFound("")
-                    }
-                };
-
-                yield Ok(Event::default().data(serde_json::to_string(&response).expect("Failed to serialize response")));
-
-                if not_found {
-                    let q = query.clone();
-                    let notification = gen_notification.clone();
-                    tokio::spawn(async move {
-                         _ = notification
-                            .send(NotificationType::KnowledgeGap(q))
-                            .await;
-                     });
-                }
-            },
-            Err(err) =>{
-                log::error!("Failed to get response: {}", err);
-                yield Ok(Event::default().data(serde_json::to_string(&Response::NotFound("Failed to get response")).unwrap()));
             }
+
+            match  response {
+                Operation::Ask((message, _)) => {
+                    yield Ok(Event::default().data(serde_json::to_string(&Response::Chunk(message)).expect("Failed to serialize chunk")));
+                }
+                Operation::Answer((message, _)) => {
+                    yield Ok(Event::default().data(serde_json::to_string(&Response::Chunk(message)).expect("Failed to serialize chunk")));
+                }
+                Operation::Email(_) => {
+                    yield Ok(Event::default().data(serde_json::to_string(&Response::Email("")).expect("Failed to serialize email")));
+                    break;
+                }
+                Operation::NotFound(_) => {
+                    not_found = true;
+                    yield Ok(Event::default().data(serde_json::to_string(&Response::NotFound("")).expect("Failed to serialize not found")));
+                    break;
+                }
+            }
+        }
+
+        if not_found {
+            let q = query.clone();
+            let notification = gen_notification.clone();
+            tokio::spawn(async move {
+                 _ = notification
+                    .send(NotificationType::KnowledgeGap(q))
+                    .await;
+             });
         }
 
     };
