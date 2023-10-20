@@ -17,7 +17,7 @@ const Navigation = () => {
     return <Navbar className='bg-purple py-1 flex-col text-white text-sm' maxWidth='xl' shouldHideOnScroll   >
         <NavbarBrand>
             <Link href='/' className='text-white'>
-                <LogoText className='h-8' />
+                <LogoText className='h-6 md:h-8' />
             </Link>
         </NavbarBrand>
         <NavbarContent justify='center' className='hidden sm:flex'>
@@ -37,7 +37,7 @@ const Navigation = () => {
                 </NavbarItem>
                 <NavbarItem>
                     <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
-                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='' />}
+                        endContent={<SparkleIcon size={24} strokeWidth={2} color='#5C07ED' className='hidden md:block' />}
                     >
                         Get Started For Free
                     </Button>
