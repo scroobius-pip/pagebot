@@ -20,12 +20,6 @@ use std::sync::Once;
 
 static INIT: Once = Once::new();
 
-// pub fn setup() {
-//     INIT.call_once(|| {
-//         EMBED_POOL.run();
-//     });
-// }
-
 impl EmbeddingModel {
     fn new() -> Self {
         let (queue_send, queue_recv) = crossbeam::channel::bounded::<EmbedTask>(5000);
@@ -42,6 +36,7 @@ impl EmbeddingModel {
                 .nth(1)
                 .and_then(|s| s.parse::<usize>().ok())
                 .unwrap_or(4);
+
             #[cfg(debug_assertions)]
             let thread_count = 1;
 
@@ -51,15 +46,17 @@ impl EmbeddingModel {
             log::info!("Model Thread Count {}", thread_count);
             let task_worker = |_worker_index: usize| {
                 #[cfg(debug_assertions)]
-                println!("Worker {} started", _worker_index);
+                println!("Worker {} initializing", _worker_index);
+
                 let model =
                     SentenceEmbeddingsBuilder::remote(SentenceEmbeddingsModelType::AllMiniLmL6V2)
                         .create_model()
                         .expect("Failed to create model");
 
+                #[cfg(debug_assertions)]
+                println!("Worker {} initialized", _worker_index);
                 loop {
                     while let Ok(EmbedTask(sender, sentences)) = self.queue_recv.recv() {
-                        // log::info!("Worker {} received task", worker_index);
                         let result = model.encode(&sentences).map_err(|e| e.into());
                         sender.send(result).unwrap();
                     }

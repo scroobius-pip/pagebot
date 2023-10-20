@@ -98,9 +98,17 @@ impl Source {
         content
     }
 
+    fn create_get_client() -> reqwest::Client {
+        reqwest::Client::builder()
+            .user_agent("PGBT")
+            .build()
+            .expect("Unable to build reqwest client")
+    }
+
     async fn fetch(url: SerdeUrl) -> Result<String> {
         let url = url.to_string();
-        let resp = reqwest::get(&url).await?;
+        let client = Self::create_get_client();
+        let resp = client.get(&url).send().await?;
         let remote_type: RemoteSourceType = resp.headers().get("content-type").into();
 
         let content = match remote_type {
@@ -119,7 +127,7 @@ impl Source {
                         url
                     );
 
-                    let resp = reqwest::get(scraper_api_url).await?;
+                    let resp: reqwest::Response = client.get(scraper_api_url).send().await?;
                     let body = resp.text().await?;
 
                     Self::parse_html(body)
@@ -441,14 +449,17 @@ mod tests {
     async fn pdf_content_should_be_parsed() {
         let w3 = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf";
         let pdf_url: SerdeUrl = serde_json::from_str(format!("\"{}\"", w3).as_str()).expect("url");
-        let input = SourceInput {
-            content: None,
-            url: Some(pdf_url),
-            expires: 86400,
-        };
-        let (source, _) = Source::new(input).await.expect("source");
-        println!("{:?}", source);
-        // assert!(source.content.contains("Dummy"));
+
+        let source = Source::fetch(pdf_url).await.expect("source");
+
+        assert!(source.contains("Dummy"));
+
+        let pdf_2 = "https://www.africau.edu/images/default/sample.pdf";
+        let pdf_url: SerdeUrl =
+            serde_json::from_str(format!("\"{}\"", pdf_2).as_str()).expect("url");
+        let source = Source::fetch(pdf_url).await.expect("source");
+
+        assert!(source.contains("Simple"))
     }
 
     #[tokio::test]
@@ -463,6 +474,7 @@ mod tests {
 
     #[tokio::test]
     async fn raw_content() {
+        EMBED_POOL.run();
         let input = SourceInput {
             content: Some("Hello world".to_string()),
             url: None,
@@ -470,20 +482,5 @@ mod tests {
         };
         let (source, _) = Source::new(input).await.expect("source");
         assert_eq!(source.content(), "Hello world");
-    }
-
-    #[tokio::test]
-    async fn pdf_content() {
-        EMBED_POOL.run();
-        let pdf_url = "https://arxiv.org/pdf/2310.07521.pdf";
-        let s_pdf_url: SerdeUrl =
-            serde_json::from_str(format!("\"{}\"", pdf_url).as_str()).expect("url");
-        let input = SourceInput {
-            content: None,
-            url: Some(s_pdf_url),
-            expires: 86400,
-        };
-        let (source, _) = Source::new(input).await.expect("source");
-        assert!(source.content().contains("Abstract"));
     }
 }
