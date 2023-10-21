@@ -18,7 +18,7 @@ export const Intro = () => {
 
             <div className='flex gap-4 md:gap-8 flex-wrap flex-col md:flex-row justify-start md:justify-center delay-2 '>
                 <TitleIconText
-                    color='#FF1053'
+                    color='#fff'
                     icon={
                         <svg className='h-12 md:h-12' viewBox="0 0 49 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M24.5 6L20.7 17.6C20.5054 18.2024 20.1706 18.7501 19.7231 19.1979C19.2757 19.6457 18.7283 19.981 18.126 20.176L6.5 24L18.1 27.8C18.7024 27.9946 19.2501 28.3294 19.6979 28.7769C20.1457 29.2243 20.481 29.7717 20.676 30.374L24.5 42L28.3 30.4C28.4946 29.7976 28.8294 29.2499 29.2769 28.8021C29.7243 28.3543 30.2717 28.019 30.874 27.824L42.5 24L30.9 20.2C30.2976 20.0054 29.7499 19.6706 29.3021 19.2231C28.8543 18.7757 28.519 18.2283 28.324 17.626L24.5 6Z" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
