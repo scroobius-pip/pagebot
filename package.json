@@ -5,9 +5,9 @@
   "scripts": {
     "start": "parcel src/index.html",
     "build": "parcel build",
-    "publish-minor": "npm run build && npm version minor && npm publish",
-    "publish-major": "npm run build && npm version major && npm publish",
-    "publish-patch": "npm run build && npm version patch && npm publish",
+    "publish-minor": "npm run clear-cache && npm run build && npm version minor && npm publish",
+    "publish-major": "npm run clear-cache && npm run build && npm version major && npm publish",
+    "publish-patch": "npm run clear-cache && npm run build && npm version patch && npm publish",
     "clear-cache": "rm -rf .parcel-cache dist"
   },
   "files": [
