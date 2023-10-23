@@ -57,11 +57,16 @@ export const Intro = () => {
                 PageBot is a <span className='font-semidbold'>GPT powered chatbot</span> that <span className='font-semibdold'>understands </span>
                 your website's content and <span className='font-meddium'>knowledgebase.</span>
             </p>
-            <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
-                endContent={<SparkleIcon size={24} strokeWidth={3} color='#5C07ED' className='' />}
-            >
-                Get Started For Free
-            </Button>
+            <div>
+                <Button as={Link} href='/login' size='lg' className='rounded-3xl text-sm md:text-lg font-medium text-purple bg-white w-full md:w-auto '
+                    endContent={<SparkleIcon size={24} strokeWidth={3} color='#5C07ED' className='' />}
+                >
+                    Get Started For Free
+                </Button>
+                <p className='opacity-90  text-white text-left md:text-center leading-relaxed text-sm capitalize mt-4 font-medium'>
+                    No credit card required
+                </p>
+            </div>
         </div>
 
         <div id='pgbt-root' className='rounded-2xl max-w-4xl p-0 md:p-24 md:pt-36  flex items-end justify-center h-[70vh] w-full  animate-entrance'>
