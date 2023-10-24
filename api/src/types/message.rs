@@ -41,15 +41,22 @@ pub struct EvaluatedMessage {
 const NEIGHBOUR_COUNT: usize = 2;
 impl Message {
     pub async fn evaluate(self, notification: Arc<Notification>) -> Result<EvaluatedMessage> {
-        let mut cached = true;
         let instant_now = std::time::Instant::now();
 
-        let pending_sources = self.sources.into_iter().map(Source::new);
+        let source_inputs = self.sources.into_iter().map(SourceInput::process);
+        let processed_source_inputs = join_all(source_inputs)
+            .await
+            .into_iter()
+            .filter_map(|source_input| source_input.ok())
+            .flatten();
+
+        let pending_sources = processed_source_inputs.map(Source::new);
         let sources = join_all(pending_sources).await;
 
         let retrieval_time = instant_now.elapsed().as_millis();
         let query_embedding = Chunks::query(self.query.clone()).await?;
 
+        let mut cached = true;
         let ((contents, embeddings), retrieval_count, token_count) = sources.into_iter().fold(
             ((vec![], vec![]), 0, 0),
             |((mut contents, mut embeddings), retrieval_count, token_count), source| match source {

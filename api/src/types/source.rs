@@ -7,12 +7,13 @@ use crate::{
 use axum::http::HeaderValue;
 use docx_rust::document::{ParagraphContent, RunContent};
 use eyre::{Report, Result};
+// use regex::Regex;
 use scraper::{Html, Selector};
 use serde::{Deserialize, Serialize};
 use serde_aux::prelude::deserialize_number_from_string;
+use sitemap::reader::{SiteMapEntity, SiteMapReader};
 use unicode_segmentation::UnicodeSegmentation;
 use url_serde::SerdeUrl;
-
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct SourceInput {
     content: Option<String>,
@@ -22,6 +23,54 @@ pub struct SourceInput {
         deserialize_with = "deserialize_number_from_string"
     )]
     expires: u32,
+}
+
+impl SourceInput {
+    fn is_sitemap(&self) -> bool {
+        self.url
+            .as_ref()
+            .map(|url| {
+                let url = url.to_string();
+                url.contains("sitemap") && url.contains("xml")
+            })
+            .unwrap_or(false)
+    }
+
+    async fn fetch_xml_urls(self) -> Result<Vec<Self>> {
+        let client = Source::create_get_client();
+        let url = self.url.as_ref().unwrap();
+        let resp = client.get(url.to_string()).send().await?;
+        let body = resp.text().await?;
+
+        let parser = SiteMapReader::new(body.as_bytes());
+
+        let source_inputs = parser
+            .into_iter()
+            .filter_map(|entity| match entity {
+                SiteMapEntity::Url(url_entry) => url_entry.loc.get_url().map(|url| {
+                    let serde_url: Result<SerdeUrl, _> =
+                        serde_json::from_str(format!("\"{}\"", url).as_str());
+                    Self {
+                        content: None,
+                        url: serde_url.ok(),
+                        expires: self.expires,
+                    }
+                }),
+                _ => None,
+            })
+            .collect::<Vec<_>>();
+
+        Ok(source_inputs)
+    }
+
+    pub async fn process(self) -> Result<Vec<Self>, SourceError> {
+        if self.is_sitemap() {
+            // @todo: cache sitemap by its url
+            self.fetch_xml_urls().await.map_err(SourceError::Default)
+        } else {
+            Ok(vec![self])
+        }
+    }
 }
 
 fn default_expires() -> u32 {
@@ -194,6 +243,14 @@ impl Source {
 
         Ok(content)
     }
+
+    // pub async fn from_xml(input: SourceInput) -> Vec<Result<(Self, bool), SourceError>> {
+    //     let client = Self::create_get_client();
+    //     let url = input.url.expect("URL for XML is required");
+    //     let resp = client.get(url.to_string()).send().await;
+
+    //     vec![]
+    // }
 
     pub async fn new(input: SourceInput) -> Result<(Self, bool), SourceError> {
         let mut retrieved: bool = false;
@@ -483,5 +540,61 @@ mod tests {
         };
         let (source, _) = Source::new(input).await.expect("source");
         assert_eq!(source.content(), "Hello world");
+    }
+
+    #[tokio::test]
+    async fn source_input_xml() {
+        let mut input = SourceInput {
+            content: None,
+            url: Some(serde_json::from_str("\"https://www.arible.co/sitemap.xml\"").expect("url")),
+            expires: 86400,
+        };
+        let source_inputs = input
+            .clone()
+            .process()
+            .await
+            .expect("source inputs")
+            .into_iter()
+            .filter_map(|source_input| {
+                source_input.url.map(|url| {
+                    assert_eq!(source_input.expires, 86400);
+                    url.to_string()
+                })
+            })
+            .collect::<Vec<_>>();
+
+        assert!(source_inputs.len() > 5);
+        assert!(source_inputs.contains(&"https://www.arible.co/styles".to_string()));
+
+        input.url =
+            Some(serde_json::from_str("\"https://www.arible.co/sitemap_1.xml\"").expect("url"));
+        assert!(input.is_sitemap());
+    }
+
+    #[test]
+    fn sitemap_formats() {
+        let is_sitemap = vec![
+            "https://www.arible.co/sitemap.xml",
+            "https://www.arible.co/sitemap_1.xml",
+        ]
+        .into_iter()
+        .map(|url| SourceInput {
+            content: None,
+            url: Some(serde_json::from_str(format!("\"{}\"", url).as_str()).expect("url")),
+            expires: 86400,
+        })
+        .all(|input| input.is_sitemap());
+
+        let is_not_sitemap = vec!["https://www.arible.co", "https://www.arible.co/sitemap"]
+            .into_iter()
+            .map(|url| SourceInput {
+                content: None,
+                url: Some(serde_json::from_str(format!("\"{}\"", url).as_str()).expect("url")),
+                expires: 86400,
+            })
+            .all(|input| !input.is_sitemap());
+
+        assert!(is_not_sitemap);
+        assert!(is_sitemap);
     }
 }
