@@ -60,6 +60,7 @@
 
     .pb_main-chat {
         max-height: calc(var(--pb_container-height) * 0.95) !important;
+        /* padding-bottom: 2em; */
     }
 
     .pb_parent-bottom.opened {
@@ -96,7 +97,8 @@
 
 @media only screen and (max-width: 768px) {
     .pb_container {
-        border-radius: 0;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
         /* max-height: 100vh; */
     }
 }
