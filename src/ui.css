@@ -19,6 +19,8 @@
     --pb_question-background: var(--pb_secondary-color);
 
     --pb_primary-color: #5C07ED;
+    /* --pb_primary-color: #171219; */
+    /* --pb_primary-color: rgb(23, 18, 25); */
     --pb_secondary-color: #F5F5F5;
     --pb_text-color: #1a202c;
     --pb_border-color: #e2e8f0;
@@ -47,8 +49,8 @@
 
 @media only screen and (max-width: 768px) {
     :root {
-        --pb_container-height: calc(100vh - var(--pb_container-padding) * 2);
-        --pb_container-width: calc(100vw - var(--pb_container-padding) * 2);
+        /* --pb_container-height: calc(100vh - var(--pb_container-padding) * 2);
+        --pb_container-width: calc(100vw - var(--pb_container-padding) * 2); */
     }
 
     .pb_parent-bottom {
@@ -502,8 +504,9 @@ h2 {
 .bot>.pb_message-icon {
     padding: 0.4em;
     border-radius: .4em;
-    background-color: #5c07ed1c;
-    color: var(--pb_primary-color);
+    /* background-color: #5c07ed1c; */
+    background-color: var(--pb_primary-color);
+    color: var(--pb_secondary-color);
     width: min-content;
 }
 

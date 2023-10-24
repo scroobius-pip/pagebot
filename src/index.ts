@@ -152,7 +152,7 @@ export class PageBot {
 
         if (!root) {
             const customRoot = document.createElement('div');
-            customRoot.style.position = 'absolute';
+            customRoot.style.position = 'fixed';
             customRoot.style.zIndex = "10000";
             customRoot.style.right = '0px'
             customRoot.style.bottom = '0px'

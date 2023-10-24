@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>My First Parcel App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script type="module" data-pgbt_id="1059050779408717183" data-pgbt_style="true" src="./index.ts"></script>
+    <!-- <script nomodule data-pgbt_id="1059050779408717183" src="./index.ts">    </script> -->
+    <meta name="pgbt:source"
+        content="Willow is an ESP IDF based project primarily targeting the ESP32-S3-BOX hardware from Espressif. Our goal is to provide Amazon Echo/Google Home competitive performance, accuracy, cost and functionality with Home Assistant, openHAB and other platforms."
+        data-expires="120" />
+    <meta name="pgbt:source" content="https://heywillow.io/" data-expires="120" />
+    <!-- <meta name="pgbt:source"
+        content="Arible Logo Could you please generate a professional photo for my LinkedIn profile? Meet Arible: Your AI Photographer Buddy. Create and edit photos of yourself by chatting with Arible. No camera or photographer required. Say Goodbye To Terrible Camera Photos Unlimited Portraits Based On Your Face 1000+ Ways To Express Yourself Powered by the community look different in 1000+ ways and share the love with everyone. Open-sourced For Everyone Both Flexible and Easy To Use Use Either The Discord Bot or Web Interface Discord Web Interface Mix & Replicate Any Photo A Nerd-free drag and drop interface Introducing RapidTake TM Don't have enough photos ? No Problem! The only AI Avatar Platform to have integrated Face Capture Faq What is Arible ? How Does This Work ? How Much Does This Cost ? What Do You Do With My Uploaded Photos ? What Are Styles ? Can I Use The Avatars For My Business ? Can I Stop My Subscription At Any Time ? Is My Person Information Safe ? How Do I Get In Touch ? 200% Cheaper Than Hiring a Photographer Photorealistic Portraits Indistinguishable From Real-Life 1 Hour Turn Around Time The Most Advanced AI Portrait Platform On The Market Unlimited Locations Unlimited Clothing & Styles 100% Refunds Terms & Conditions apply Starting @ $9.99 Arible Logo Arible AI is an AI avatar generator. We use the latest in AI technology to generate avatars that look like you Legal Terms of Service Privacy Policy Pages Style Directory - All Styles Stable Diffusion & MidJourney Prompt Database Professional Portraits & Headshots Avatars & Profile Pictures Discord Professional Photographer AI Beautiful QRCode AI Social Made with ❤️ by Simdi Earn 20% Commissions Referring Someone Instagram"
+        data-expires="1200" /> -->
+    <meta name="pgbt:source"
+        content="https://api.arible.co/user_admin/sim04ful@gmail.com?auth_token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhdXRoZW50aWNhdGVkIiwiZXhwIjoxNzgxMjg2NjAxLCJzdWIiOiI2ZGYwZmMwMC1hZWFjLTQyMmItODllNi1jOWNkNjkxNTZkYjciLCJlbWFpbCI6ImNoaXNpbWRpcmkuZWppbmtlb255ZUBnbWFpbC5jb20iLCJwaG9uZSI6IiIsImFwcF9tZXRhZGF0YSI6eyJwcm92aWRlciI6ImVtYWlsIiwicHJvdmlkZXJzIjpbImVtYWlsIiwiZ29vZ2xlIl19LCJ1c2VyX21ldGFkYXRhIjp7ImF2YXRhcl91cmwiOiJodHRwczovL2xoMy5nb29nbGV1c2VyY29udGVudC5jb20vYS9BR05teXhZWENpWUJFRXlETWFabm1FdVNlSW5ja0cwajE1THRfN0cyTTRoaT1zOTYtYyIsImVtYWlsIjoiY2hpc2ltZGlyaS5lamlua2VvbnllQGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmdWxsX25hbWUiOiJDaGlzaW1kaXJpIEVqaW5rZW9ueWUiLCJpc3MiOiJodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS91c2VyaW5mby92Mi9tZSIsIm5hbWUiOiJDaGlzaW1kaXJpIEVqaW5rZW9ueWUiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUdObXl4WVhDaVlCRUV5RE1hWm5tRXVTZUluY2tHMGoxNUx0XzdHMk00aGk9czk2LWMiLCJwcm92aWRlcl9pZCI6IjEwOTUyNDg4MDQzODEwMTMxMjE5NSIsInN1YiI6IjEwOTUyNDg4MDQzODEwMTMxMjE5NSJ9LCJyb2xlIjoiYXV0aGVudGljYXRlZCIsImFhbCI6ImFhbDEiLCJhbXIiOlt7Im1ldGhvZCI6Im9hdXRoIiwidGltZXN0YW1wIjoxNjgxMjY0MzE2fV0sInNlc3Npb25faWQiOiIzYTUyZDFjZi00MDE1LTRlOTAtOTEyZS1iYzZkMTFhZDZlMWUifQ.nF5OFgwR4DPV8nXJ2iQ4uWhLFCkHfZNquwqbwVX5y84"
+        data-expires="120" />
+    <meta name="pgbt:qa" data-question="What is arible?" data-answer="AI Avatars" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="How can I make ai avatar of my photo"
+        data-answer="upload your photo and get your ai avatar" />
+    <meta name="pgbt:qa" data-question="What do you offer?"
+        data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in Arabic, English, Spanish, Turkish, French, Italian, and Dutch. It has a tiny footprint, keeping your webpage fast with less than 50kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides. If you'd like to try it out, there is a one-month free trial available with the option to cancel anytime." />
+
+</head>
+
+<body>
+    <h1>Hello, World!</h1>
+    <div style="padding: 20px; background: #fcfcfc; height: 80vh;" id="pdgbt-root">
+        <!-- https://unpkg.com/pgbt@latest -->
+    </div>
+    <p>
+        Arible Logo
+        Could you please generate a professional photo for my LinkedIn profile?
+
+        Meet Arible: Your AI Photographer Buddy. Create and edit photos of yourself by chatting with Arible. No camera
+        or photographer required.
+
+        Say Goodbye To Terrible Camera Photos
+        Unlimited Portraits Based On Your Face
+
+
+
+
+
+
+
+        1000+ Ways To Express Yourself
+        Powered by the community look different in 1000+ ways and share the love with everyone.
+
+        Open-sourced For Everyone
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        Both Flexible and Easy To Use
+        Use Either The Discord Bot or Web Interface
+
+        Discord
+
+
+        Web Interface
+
+
+        Mix & Replicate Any Photo
+        A Nerd-free drag and drop interface
+
+        Introducing RapidTake TM
+        Don't have enough photos ? No Problem!
+        The only AI Avatar Platform to have integrated Face Capture
+
+
+        Faq
+        What is Arible ?
+
+        How Does This Work ?
+
+        How Much Does This Cost ?
+
+        What Do You Do With My Uploaded Photos ?
+
+        What Are Styles ?
+
+        Can I Use The Avatars For My Business ?
+
+        Can I Stop My Subscription At Any Time ?
+
+        Is My Person Information Safe ?
+
+        How Do I Get In Touch ?
+
+        200% Cheaper Than Hiring a Photographer
+        Photorealistic Portraits Indistinguishable From Real-Life
+
+        1 Hour Turn Around Time
+
+        The Most Advanced AI Portrait Platform On The Market
+
+        Unlimited Locations
+
+        Unlimited Clothing & Styles
+
+        100% Refunds Terms & Conditions apply
+
+        Starting @
+        $9.99
+        Arible Logo
+        Arible AI is an AI avatar generator. We use the latest in AI technology to generate avatars that look like you
+
+        Legal
+        Terms of Service
+        Privacy Policy
+        Pages
+        Style Directory - All Styles
+        Stable Diffusion & MidJourney Prompt Database
+        Professional Portraits & Headshots
+        Avatars & Profile Pictures
+        Discord
+        Professional Photographer AI
+        Beautiful QRCode AI
+        Social
+        Made with ❤️ by Simdi
+        Earn 20% Commissions Referring Someone
+        Instagram
+
+    </p>
+</body>
+
+</html>
