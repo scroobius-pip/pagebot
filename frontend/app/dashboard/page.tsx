@@ -249,18 +249,40 @@ function Documentation(me: Me | null) {
         <div>
             <div className='flex flex-row gap-4 flex-wrap'>
 
-                <DocElement code={<>
+                <DocElement codes={[<>
                     {`<script data-pgbt_id="${me?.id || 'LOADING'}" src='https://x.thepagebot.com' />`}
-                </>}
+                </>]}
                     title='installation'
                 >
-                    <p>Copy and paste this script tag into the head of your page.</p>
+                    <p className='font-bold text-purple'>Copy and paste this script tag into the head of your page.</p>
 
                 </DocElement>
                 <DocElement
-                    code={<>
-                        {`<meta name='pgbt:source' content='url or text' data-expires='60'/> `}
-                    </>}
+
+                    codes={
+                        [
+                            <>
+                                <p className='text-sm opacity-70'>Relative Url</p>
+                                {`<meta name='pgbt:source' content='/'/> `}
+                            </>,
+                            <>
+                                <p className='text-sm opacity-70'>Client or Server Rendered Webpage</p>
+                                {`<meta name='pgbt:source' content='https://arible.co' data-expires='604800'/> `}
+                            </>,
+                            <>
+                                <p className='text-sm opacity-70'>API GET Request</p>
+                                {`<meta name='pgbt:source' content='https://dummyjson.com/users/search?q=John' data-expires='60'/> `}
+                            </>,
+                            <>
+                                <p className='text-sm opacity-70'>SITEMAP</p>
+                                {`<meta name='pgbt:source' content='https://arible.co/sitemap.xml' data-expires='6.048e5'/> `}
+                            </>,
+                            <>
+                                <p className='text-sm opacity-70'>SITEMAP</p>
+                                {`<meta name='pgbt:source' content='Name's Bond, James Bond'/> `}
+                            </>
+                        ]
+                    }
 
                     title='adding a source'
                 >
@@ -276,45 +298,53 @@ function Documentation(me: Me | null) {
                             <span className='font-medium'>Optional</span>
                             <br />
                             This is the number of seconds that pagebot will cache the source for. After this time, pagebot will fetch the source again.
-                            (default 86400 seconds)
+                            Defaults to 1 month in seconds (2.6e+6 seconds)
                             <br />
                             <br />
-                            <span className='font-semibold text-lg'>
-                                PageBot automatically parses the contents of the current webpage and its index page as a source. This means you don't need to add the current page or the landing page as a source e.g content='/' is not required.
+                            <span className=' text-md'>
+                                PageBot automatically parses the contents of the current webpage and its index page as a source. This means <b> you don't need to add the current page or the landing page as a source e.g content='/' is not required.</b>
                             </span>
                         </p>
+                        <p className='text-purple font-bold'>We discourage using sitemap datasources, due to potential performance issues of having to retrieve a large number of urls.</p>
                         <p>
                             <b>Supported Formats</b>
                             <br />
-                            <ul className='flex gap-4 p-4 px-8 mt-2 text-lg bg-white-1 items-start justify-start w-fit rounded-2xl'>
+                            <ul className='flex gap-4 p-4 px-8 mt-2 text-sm font-medium bg-white-1 items-start justify-start w-fit rounded-2xl'>
                                 <span>HTML</span>
                                 <span>Markdown</span>
                                 <span>Text</span>
                                 <span>JSON</span>
                                 <span>DOCX</span>
                                 <span>PDF</span>
-                                {/* <li>Markdown</li>
-                            <li>Text</li>
-                            <li>JSON</li>
-                            <li>DOCX</li>
-                            <li>PDF</li> */}
+                                <span>SITEMAP</span>
                             </ul>
-
                         </p>
                     </>
                 </DocElement>
                 <DocElement
-                    code={<>
+                    codes={[<>
                         {`<meta name='pgbt:qa' data-question='What is the meaning of life?' data-answer='42' />`}
 
-                    </>}
-                    title='adding predefined questions and answers'
+                    </>]}
+                    title='adding pre-defined questions and answers'
+                >
+
+                    <p className='text-purple font-bold'>
+                        Pre-defined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.
+                    </p>
+                </DocElement>
+                {/* <DocElement
+                    codes={[<>
+
+
+                    </>]}
+                    title='Customization'
                 >
 
                     <p>
-                        Predefined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.
+
                     </p>
-                </DocElement>
+                </DocElement> */}
             </div>
         </div>
     </div>;

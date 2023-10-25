@@ -193,7 +193,7 @@ export class PageBot {
             .reduce((acc: Array<Source>, el: HTMLMetaElement) => {
                 const expiresAttribute = el.getAttribute('data-expires') as string;
                 const content = el.content;
-                const expires = expiresAttribute ? parseInt(expiresAttribute) : undefined;
+                const expires = expiresAttribute ? Math.round(parseFloat(expiresAttribute)) : undefined;
 
                 const existingSource = acc.find(s => s.content === content);
 

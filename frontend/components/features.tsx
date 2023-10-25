@@ -110,6 +110,8 @@ const features: Features[] = [
             "+",
             "Including existing REST APIs; for example in situations where the bot needs the current logged-in user’s information.",
             "+",
+            "sitemap.xml",
+            "+",
             "Client & Server Rendered websites"
         ],
         image: <>
@@ -147,6 +149,11 @@ const features: Features[] = [
                     title='PDF'
                 >
                     {`<meta name='pgbt:source' content='https://example.com/pricing.pdf' />`}
+                </CodeSnippet>
+                <CodeSnippet
+                    title='SITEMAPS'
+                >
+                    {`<meta name='pgbt:source' content='https://www.arible.co/sitemap.xml' />`}
                 </CodeSnippet>
                 <br />
 

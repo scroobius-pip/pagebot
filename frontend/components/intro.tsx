@@ -12,7 +12,7 @@ const TitleIconText = IconText(({ text }) => {
 
 export const Intro = () => {
 
-    return <div className=' flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-4 mt-2 md:mt-36' >
+    return <div className='flex-col xs:flex-row flex  items-center gap-24 max-w-[1400px] w-full m-auto py-12 px-4 mt-2 md:mt-36' >
         <div className='flex flex-col items-start md:items-center gap-12 animate-entrance'>
             <h1 className='delay-1 capitalize font-bold text-3xl md:text-5xl  text-left md:text-center text-white'>Give your customers conversations that are:</h1>
 

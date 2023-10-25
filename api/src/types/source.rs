@@ -74,7 +74,7 @@ impl SourceInput {
 }
 
 fn default_expires() -> u32 {
-    86400 // 1 day
+    86400 * 30 // 30 days
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
