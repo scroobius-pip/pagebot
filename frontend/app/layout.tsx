@@ -34,26 +34,20 @@ export default function RootLayout({
       <head >
 
         <script async data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
-        {/* <meta name="pgbt:source" content="url.pdf" data-expires='3600' />
-        <meta name='pgbt:source' content='url.pdf' data-expires='3600' />
-        <meta name='pgbt:source' content='url.html' data-expires='3600' />
-        <meta name='pgbt:source' content='url.csv' data-expires='3600' /> */}
-        {/* <meta name='pgbt:source' content='https://api.arible.co/stats' data-expires='60' /> */}
-        <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
-        <meta name='pgbt:source' content='https://dummyjson.com/users/1' />
-        <meta name='pgbt:source' content="if user's age is greater than 30, reply with a Sir or Ma'am" />
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in Arabic, English, Spanish, Turkish, French, Italian, and Dutch. It has a tiny footprint, keeping your webpage fast with less than 50kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides. If you'd like to try it out, there is a one-month free trial available with the option to cancel anytime." />
-        <meta name='pgbt:qa' data-question="What's the meaning of life ?" data-answer="21 * 2" />
 
-        <meta name='pgbt:qa' data-question="What's the capital of France?" data-answer="Paris" />
-        <meta name='pgbt:qa' data-question="How many continents are there?" data-answer="7" />
-        <meta name='pgbt:qa' data-question="Who wrote Romeo and Juliet?" data-answer="William Shakespeare" />
-        <meta name='pgbt:qa' data-question="What's the speed of light in vacuum?" data-answer="299,792,458 meters per second" />
-        <meta name='pgbt:qa' data-question="Which planet is known as the Red Planet?" data-answer="Mars" />
-        <meta name='pgbt:qa' data-question="What is H2O commonly referred to as?" data-answer="Water" />
-        <meta name='pgbt:qa' data-question="Which element has the symbol Au?" data-answer="Gold" />
+        <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
+        <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in 100+ Languages. It has a tiny footprint, keeping your webpage fast with less than 30kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides." />
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-D84T9KV8ZV"></script>
+        <script dangerouslySetInnerHTML={{
+          __html: `
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments)}
+          gtag('js', new Date());
+          gtag('config', 'G-D84T9KV8ZV');
+          `}}
+        />
 
         <style>
           {`
