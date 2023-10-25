@@ -122,9 +122,13 @@ const CTA = () => {
         <CTAButton />
         <div className='flex flex-row gap-2.5'>
           <HeartHandshakeIcon color='white' />
-          <p className='text-white text- font-medium'>
+          {stats.user_count >= 500 ? <p className='text-white text- font-medium'>
             <b>{stats.user_count} users</b> are already using PageBot
-          </p>
+          </p> :
+            <p className='text-white text- font-medium'>
+              <b>{stats.message_count} messages</b> have been sent using PageBot
+            </p>
+          }
         </div>
       </div>
     </div>

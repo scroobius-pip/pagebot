@@ -333,18 +333,7 @@ function Documentation(me: Me | null) {
                         Pre-defined questions and answers are not charged as they are never sent to the server. you should use this to save costs and reduce waiting time.
                     </p>
                 </DocElement>
-                {/* <DocElement
-                    codes={[<>
 
-
-                    </>]}
-                    title='Customization'
-                >
-
-                    <p>
-
-                    </p>
-                </DocElement> */}
             </div>
         </div>
     </div>;
