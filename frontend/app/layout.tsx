@@ -39,7 +39,7 @@ export default function RootLayout({
         <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
         <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in 100+ Languages. It has a tiny footprint, keeping your webpage fast with less than 30kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides." />
 
-        {/* <script async src="https://www.googletagmanager.com/gtag/js?id=G-D84T9KV8ZV"></script>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-D84T9KV8ZV"></script>
         <script dangerouslySetInnerHTML={{
           __html: `
           window.dataLayer = window.dataLayer || [];
@@ -47,7 +47,7 @@ export default function RootLayout({
           gtag('js', new Date());
           gtag('config', 'G-D84T9KV8ZV');
           `}}
-        /> */}
+        />
 
         <style>
           {`
