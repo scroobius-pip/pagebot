@@ -240,12 +240,12 @@
     height: var(--pb_logo-size);
 }
 
-.pb_container h1 {
+.pb_main-intro h1 {
     font-size: 2em;
     font-weight: 600;
 }
 
-.pb_container h2 {
+.pb_main-intro h2 {
     font-size: 1.5em;
     font-weight: 500;
 }
