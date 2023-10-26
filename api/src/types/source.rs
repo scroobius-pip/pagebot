@@ -106,7 +106,7 @@ pub enum SourceError {
     ContentEmpty(String),
     Default(Report),
 }
-const MIN_CONTENT_LENGTH: usize = 10;
+const MIN_CONTENT_LENGTH: usize = 100;
 
 impl Source {
     pub fn by_url(url: &str) -> Result<Option<Source>> {
