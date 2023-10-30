@@ -38,7 +38,28 @@ export default function RootLayout({
 
         <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
         <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in 100+ Languages. It has a tiny footprint, keeping your webpage fast with less than 30kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides." />
+        <meta name="pgbt:qa" data-question="How do I add my data to PageBot ?" data-answer={`
+      
+        To add data to PageBot, you use meta tags with different content sources. Here are some examples:
+        \n\n
+        1.Raw Text:  \`<meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />\`
+        \n
+        2.Relative URL to webpage:  \`<meta name='pgbt:source' content='/pricing' />\`
+        \n
+        3.Absolute URL to webpage:  \`<meta name='pgbt:source' content='https://arible.co' />\`
+        \n
+        4.PDF:  \`<meta name='pgbt:source' content='https://example.com/pricing.pdf' />\`
+        \n
+        5.SITEMAPS:  \`<meta name='pgbt:source' content='https://www.arible.co/sitemap.xml' />\`
+        
+        6.API: \`<meta name='pgbt:source' content='https://dummyjson.com/users/1' />\`
+        \n\n
+        These meta tags allow PageBot to retrieve data from different sources and use it in the chatbot. Since specifying data sources is done with code, it makes PageBot very flexible
+        
+        `} />
 
+        <meta name="pgbt:qa" data-question="Is there a free plan ?" data-answer="Yes!, PageBot allows 50 free messages monthly. Data-sources are unlimited" />
+        <meta name="pgbt:qa" data-question="What type of data can be used for PageBot ?" data-answer="PDF, DOCX, WEBPAGES, REST APIs, RAW TEXT, CSV, SITEMAPS" />
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-D84T9KV8ZV"></script>
         <script dangerouslySetInnerHTML={{
           __html: `
