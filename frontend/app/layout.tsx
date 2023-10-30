@@ -59,7 +59,8 @@ export default function RootLayout({
         `} />
 
         <meta name="pgbt:qa" data-question="Is there a free plan ?" data-answer="Yes!, PageBot allows 50 free messages monthly. Data-sources are unlimited" />
-        <meta name="pgbt:qa" data-question="What type of data can be used for PageBot ?" data-answer="PDF, DOCX, WEBPAGES, REST APIs, RAW TEXT, CSV, SITEMAPS" />
+        <meta name="pgbt:qa" data-question="What type of data can be used for PageBot ?" data-answer="PDF, HTML, JSON, CSV, DOCX, WEBPAGES, REST APIs, RAW TEXT, CSV, SITEMAPS" />
+        {/* <meta name="pgbt:qa" data-question="Hi, what is the status of my orders ?" data-answer="Hey Sam!, \ You have two items in your order still processing." /> */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-D84T9KV8ZV"></script>
         <script dangerouslySetInnerHTML={{
           __html: `

@@ -162,6 +162,27 @@ const features: Features[] = [
         </>
     },
     {
+        title: "Connect existing REST APIs",
+        description: ["PageBot can retrieve information via GET Requests to any existing API or even your own Backend"],
+        image: <>
+            <Snippet hideSymbol size='lg' variant='solid' className='bg-black   text-white  self-start w-h hidden md:flex rounded-2xl p-8'
+                classNames={{
+                    pre: 'whitespace-normal 	font-bold overflow-x-auto '
+                }}
+            >
+                <CodeSnippet
+                    title='JSON API'
+                >
+                    {`<meta name='pgbt:source' content='https://api.mysite/orders?status=pending&userId=1234' />`}
+                </CodeSnippet>
+            </Snippet>
+            <img src='/orders_screenshot.png' className='' />
+            {/* <h1 style={{ fontSize: 50 }}>
+                Connect Existing APIs
+            </h1> */}
+        </>
+    },
+    {
         title: "Pre-defined Q&A",
         description: ["Add pre-defined questions and answers that your customers immediately see when they open the chatbot.", "These aren't charged as they are not sent to the server."],
         image: <>
