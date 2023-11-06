@@ -33,7 +33,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head >
 
-        <script async data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
+        <script data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
         <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
@@ -58,6 +58,13 @@ export default function RootLayout({
         
         `} />
 
+        <script dangerouslySetInnerHTML={
+          {
+            __html: 'window.lemonSqueezyAffiliateConfig = { store: "pagebot" };'
+          }
+        }
+        />
+        <script src="https://lmsqueezy.com/affiliate.js" defer />
         <meta name="pgbt:qa" data-question="Is there a free plan ?" data-answer="Yes!, PageBot allows 50 free messages monthly. Data-sources are unlimited" />
         <meta name="pgbt:qa" data-question="What type of data can be used for PageBot ?" data-answer="PDF, HTML, JSON, CSV, DOCX, WEBPAGES, REST APIs, RAW TEXT, CSV, SITEMAPS" />
         {/* <meta name="pgbt:qa" data-question="Hi, what is the status of my orders ?" data-answer="Hey Sam!, \ You have two items in your order still processing." /> */}
