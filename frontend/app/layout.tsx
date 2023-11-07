@@ -33,9 +33,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head >
 
-        <script data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+        <script data-pgbt_id="1059050779408717183" src='https://x.thepagebot.com' />
         <meta name='pgbt:source' content='pricing is {(messageCount - 50)*0.05usd' />
         <meta name="pgbt:qa" data-question="What do you offer?" data-answer="PageBot offers a customer service agent that understands your website's content and knowledge base. It can provide instant responses to your customers' questions and supports various data sources such as PDF, HTML, JSON, CSV, TXT, DOCX, and MD. PageBot also supports multilingual conversations in 100+ Languages. It has a tiny footprint, keeping your webpage fast with less than 30kb of JavaScript. Additionally, PageBot offers a usage-based billing system, allowing you to pay only for what you use. You can customize its appearance using CSS overrides." />
         <meta name="pgbt:qa" data-question="How do I add my data to PageBot ?" data-answer={`

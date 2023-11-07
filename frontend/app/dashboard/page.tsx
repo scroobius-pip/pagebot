@@ -278,7 +278,7 @@ function Documentation(me: Me | null) {
                                 {`<meta name='pgbt:source' content='https://arible.co/sitemap.xml' data-expires='6.048e5'/> `}
                             </>,
                             <>
-                                <p className='text-sm opacity-70'>SITEMAP</p>
+                                <p className='text-sm opacity-70'>RAW TEXT</p>
                                 {`<meta name='pgbt:source' content='Name's Bond, James Bond'/> `}
                             </>
                         ]
